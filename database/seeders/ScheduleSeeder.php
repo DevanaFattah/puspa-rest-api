@@ -17,20 +17,26 @@ class ScheduleSeeder extends Seeder
 {
     public function run(): void
     {
-        $therapists = Therapist::all();
-        if ($therapists->isEmpty()) {
-            $user = User::create([
-                'name' => 'Alief Arifun',
-                'email' => 'alief@puspa.test',
-                'password' => bcrypt('password'),
-            ]);
-            $therapist = Therapist::create([
-                'user_id' => $user->id,
-                'therapist_name' => 'Alief Arifun',
-                'therapist_section' => 'paedagog',
-                'therapist_phone' => '081234567890',
-            ]);
-            $therapists = collect([$therapist]);
+        $sections = ['paedagog', 'okupasi', 'wicara', 'fisio'];
+        $therapistMap = [];
+
+        foreach ($sections as $sec) {
+            $existing = Therapist::where('therapist_section', $sec)->first();
+            if (!$existing) {
+                $user = User::create([
+                    'name' => 'Terapis ' . ucfirst($sec),
+                    'email' => 'terapis_' . $sec . '_' . rand(100, 999) . '@puspa.test',
+                    'password' => bcrypt('password'),
+                ]);
+
+                $existing = Therapist::create([
+                    'user_id' => $user->id,
+                    'therapist_name' => 'Terapis ' . ucfirst($sec) . ' Specialist',
+                    'therapist_section' => $sec,
+                    'therapist_phone' => '0812' . rand(10000000, 99999999),
+                ]);
+            }
+            $therapistMap[$sec] = $existing;
         }
 
         $childNames = [
@@ -38,7 +44,10 @@ class ScheduleSeeder extends Seeder
             'Alfin', 'Bintang', 'Citra', 'Dimas', 'Erlangga', 'Farah', 'Gilang', 'Hafiz', 'Intan', 'Joko',
             'Kania', 'Lestari', 'Mahendra', 'Nadia', 'Octavia', 'Putra', 'Qonita', 'Rian', 'Salsa', 'Taufik',
             'Umar', 'Vina', 'Wahyudi', 'Xavier', 'Yusuf', 'Zainab', 'Adit', 'Bagus', 'Cinta', 'Danish',
-            'Elina', 'Fikri', 'Gita', 'Hanif', 'Irma', 'Jamal', 'Kiki', 'Laras', 'Mita', 'Naufal'
+            'Elina', 'Fikri', 'Gita', 'Hanif', 'Irma', 'Jamal', 'Kiki', 'Laras', 'Mita', 'Naufal',
+            'Opik', 'Pandu', 'Qori', 'Rizky', 'Syahputra', 'Tia', 'Uli', 'Vino', 'Wanda', 'Yoga',
+            'Zain', 'Arjun', 'Bella', 'Chandra', 'Daffa', 'Eva', 'Fadhil', 'Galih', 'Hana', 'Irfan',
+            'Jasmine', 'Kenzie', 'Latifah', 'Mahesa', 'Nisa'
         ];
 
         $guardianNames = [
@@ -47,7 +56,9 @@ class ScheduleSeeder extends Seeder
             'Guruh', 'Hariyanto', 'Ika Permata', 'Jainuri', 'Kusuma', 'Luki', 'Marzuki', 'Nurhaliza', 'Oki',
             'Purnomo', 'Qori', 'Rahmat', 'Sri Wahyuni', 'Teguh', 'Utami', 'Vera', 'Wibowo', 'Yanti', 'Zulfikar',
             'Aris', 'Bambang', 'Cici', 'Dedi', 'Endang', 'Faisal', 'Grace', 'Hadi', 'Indah', 'Johan', 'Kartika',
-            'Lukman', 'Maya', 'Nugroho', 'Olga', 'Pasha', 'Ria'
+            'Lukman', 'Maya', 'Nugroho', 'Olga', 'Pasha', 'Ria', 'Slamet', 'Tania', 'Usman', 'Violita',
+            'Wawan', 'Yulia', 'Zainuddin', 'Adelia', 'Bahrul', 'Cynthia', 'Doni', 'Elvira', 'Firman', 'Ghani',
+            'Hestu', 'Ismail', 'Juita', 'Kristian', 'Lia'
         ];
 
         $therapyTypes = ['paedagog', 'okupasi', 'wicara', 'fisio'];
@@ -61,7 +72,7 @@ class ScheduleSeeder extends Seeder
             ['15:40', '16:40'],
         ];
 
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 75; $i++) {
             $childName = $childNames[$i % count($childNames)];
             $guardianName = $guardianNames[$i % count($guardianNames)];
             $rmNumber = 'RM-' . str_pad((string)($i + 1), 6, '0', STR_PAD_LEFT);
@@ -86,13 +97,13 @@ class ScheduleSeeder extends Seeder
                 'child_birth_date' => Carbon::now()->subYears(rand(3, 10))->toDateString(),
                 'child_gender' => ($i % 2 == 0) ? 'laki-laki' : 'perempuan',
                 'child_address' => 'Surabaya No. ' . ($i + 1),
-                'child_complaint' => 'Perkembangan anak',
+                'child_complaint' => 'Perkembangan anak ' . ($i + 1),
                 'child_service_choice' => 'Terapi Rutin',
             ]);
 
-            // Pick therapist
-            $therapist = $therapists[$i % $therapists->count()];
+            // Pick therapy type & matched therapist
             $therapyType = $therapyTypes[$i % count($therapyTypes)];
+            $therapist = $therapistMap[$therapyType];
             $status = $statuses[$i % count($statuses)];
             $dayOfWeek = ($i % 7) + 1; // 1-7
             $slot = $timeSlots[$i % count($timeSlots)];
