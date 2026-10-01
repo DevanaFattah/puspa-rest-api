@@ -1,0 +1,21 @@
+$kind: http-request
+url: http://127.0.0.1:8000/api/v1/schedules
+method: POST
+headers:
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+        "child_id": "01m3p0aszqckapsx0p826cdy5r",
+        "therapist_id": "01m3p0ar28mg171kvet3gden0t",
+        "therapy_type": "paedagog",
+        "day_of_week": 1,
+        "start_time": "15:30",
+        "end_time": "16:30",
+        "total_meetings": 4,
+        "period_start": "2026-10-01",
+        "period_end": "2026-10-31",
+        "status": "aktif"
+    }
+order: 2000

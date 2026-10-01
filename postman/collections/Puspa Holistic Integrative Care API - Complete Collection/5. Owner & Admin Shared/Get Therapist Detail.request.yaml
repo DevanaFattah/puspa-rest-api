@@ -1,0 +1,6 @@
+$kind: http-request
+url: http://127.0.0.1:8000/api/v1/therapists/01m3p0ar28mg171kvet3gden0t
+method: GET
+headers:
+  Accept: application/json
+order: 4000

@@ -1,0 +1,6 @@
+$kind: http-request
+url: http://127.0.0.1:8000/api/v1/my/children/01m3p0aszqckapsx0p826cdy5r
+method: GET
+headers:
+  Accept: application/json
+order: 7000

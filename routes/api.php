@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ProfileController as AdminProfileManagement;
+use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\ObservationController as AdminObservationManagement;
 use App\Http\Controllers\Admin\UserController as AdminUserManagement;
 use App\Http\Controllers\Admin\AssessmentController as AdminAssessmentManagement;
@@ -134,6 +135,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/children', [OwnerAdminUserManagement::class, 'indexChild']);
         Route::get('/children/{child}', [AdminUserManagement::class, 'showChild'])
             ->whereUlid('child', '[0-9A-HJ-NP-TV-Z]{26}');
+
+        // ================== SCHEDULES (JADWAL TERAPI) ==================
+        Route::get('/schedules', [ScheduleController::class, 'index']);
+        Route::post('/schedules', [ScheduleController::class, 'store']);
+        Route::get('/schedules/{schedule}', [ScheduleController::class, 'show'])
+            ->whereUlid('schedule', '[0-9A-HJ-NP-TV-Z]{26}');
+        Route::put('/schedules/{schedule}', [ScheduleController::class, 'update'])
+            ->whereUlid('schedule', '[0-9A-HJ-NP-TV-Z]{26}');
+        Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])
+            ->whereUlid('schedule', '[0-9A-HJ-NP-TV-Z]{26}');
     });
 
     // ================== ROLE ADMIN ==================

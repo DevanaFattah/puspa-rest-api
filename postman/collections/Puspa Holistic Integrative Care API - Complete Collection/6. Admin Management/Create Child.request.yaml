@@ -1,0 +1,20 @@
+$kind: http-request
+url: http://127.0.0.1:8000/api/v1/children
+method: POST
+headers:
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+        "family_id": "01M3P024T4DF062NCEJZXFZEH0",
+        "medical_record_number": "RM-000125",
+        "child_name": "Ananda",
+        "child_birth_place": "Surabaya",
+        "child_birth_date": "2020-01-01",
+        "child_gender": "perempuan",
+        "child_address": "Surabaya",
+        "child_complaint": "Fisioterapi",
+        "child_service_choice": "Fisioterapi"
+    }
+order: 11000

@@ -1,0 +1,12 @@
+$kind: collection
+description: Koleksi LENGKAP seluruh API endpoints (Auth, Notifications, Schedules, Owner, Admin, Assessor, Therapist, Parent).
+variables:
+  baseUrl: http://127.0.0.1:8000/api/v1
+  baseurl: http://127.0.0.1:8000/api/v1
+  token: 2|a2t3zWhRxUQSjWyNbkCsE5F5U1SBHqEAOeltJ2ube917419e
+auth:
+  - id: 784f45e0-e8f3-461b-9fce-52fe1995b74a
+    type: bearer
+    name: bearer auth
+    credentials:
+      token: "{{token}}"

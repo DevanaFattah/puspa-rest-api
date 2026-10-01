@@ -1,0 +1,6 @@
+$kind: http-request
+url: http://127.0.0.1:8000/api/v1/users/01m3p0aqj56t3enwgmtxne8tz9/promote-to-assessor
+method: GET
+headers:
+  Accept: application/json
+order: 5000

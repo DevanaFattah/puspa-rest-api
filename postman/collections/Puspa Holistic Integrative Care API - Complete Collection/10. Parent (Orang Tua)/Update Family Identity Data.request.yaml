@@ -1,0 +1,13 @@
+$kind: http-request
+url: http://127.0.0.1:8000/api/v1/my/identity
+method: PUT
+headers:
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+        "father_name": "Ayah Budi",
+        "mother_name": "Ibu Siti"
+    }
+order: 11000

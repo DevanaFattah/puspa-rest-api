@@ -1,0 +1,15 @@
+$kind: http-request
+url: http://127.0.0.1:8000/api/v1/therapists
+method: POST
+headers:
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+        "user_id": "01m3p0aqj56t3enwgmtxne8tz9",
+        "therapist_name": "Alief Arifun",
+        "therapist_section": "paedagog",
+        "therapist_phone": "081234567890"
+    }
+order: 8000

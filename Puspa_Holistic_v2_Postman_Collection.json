@@ -1,0 +1,400 @@
+{
+    "info": {
+        "name": "Puspa Holistic Integrative Care API (v2)",
+        "description": "Collection API lengkap untuk aplikasi Puspa Holistic Integrative Care, termasuk fitur baru Penjadwalan Terapi & Presensi.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://127.0.0.1:8000/api/v1",
+            "type": "string"
+        },
+        {
+            "key": "baseurl",
+            "value": "http://127.0.0.1:8000/api/v1",
+            "type": "string"
+        },
+        {
+            "key": "token",
+            "value": "YOUR_BEARER_TOKEN_HERE",
+            "type": "string"
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "item": [
+        {
+            "name": "1. Auth & Public",
+            "item": [
+                {
+                    "name": "Public Registration (Orang Tua / Wali)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/registration",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "registration"
+                            ]
+                        },
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"guardian_name\": \"Ibu Siti\",\n    \"guardian_phone\": \"081234567890\",\n    \"guardian_type\": \"ibu\",\n    \"temp_email\": \"siti@example.com\",\n    \"child_name\": \"Budi Santoso\",\n    \"child_birth_place\": \"Surabaya\",\n    \"child_birth_date\": \"2019-05-15\",\n    \"child_gender\": \"laki-laki\",\n    \"child_address\": \"Jl. Mawar No. 10, Surabaya\",\n    \"child_complaint\": \"Keterlambatan bicara (speech delay)\",\n    \"child_service_choice\": \"Paedagog, Terapi Wicara\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Login Admin",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/auth/login",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "auth",
+                                "login"
+                            ]
+                        },
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"admin@puspa.test\",\n    \"password\": \"password\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Register Employee (Admin/Terapist)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/auth/register",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "auth",
+                                "register"
+                            ]
+                        },
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Dr. Ahmad\",\n    \"email\": \"ahmad@puspa.test\",\n    \"password\": \"password\",\n    \"password_confirmation\": \"password\",\n    \"role\": \"terapis\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Refresh Token",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/auth/refresh",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "auth",
+                                "refresh"
+                            ]
+                        },
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    }
+                },
+                {
+                    "name": "Logout",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/auth/logout",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "auth",
+                                "logout"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "2. Modul Jadwal Terapi (Schedules)",
+            "item": [
+                {
+                    "name": "1. GET Ambil Semua Jadwal (With Filters & Pagination)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/schedules?page=1&per_page=10&day_of_week=1&status=aktif&therapy_type=paedagog&search=Rayhan",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "schedules?page=1&per_page=10&day_of_week=1&status=aktif&therapy_type=paedagog&search=Rayhan"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "2. POST Tambah Master Jadwal Baru",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/schedules",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "schedules"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"child_id\": \"01m3p0aszqckapsx0p826cdy5r\",\n    \"therapist_id\": \"01m3p0ar28mg171kvet3gden0t\",\n    \"therapy_type\": \"paedagog\",\n    \"day_of_week\": 1,\n    \"start_time\": \"15:30\",\n    \"end_time\": \"16:30\",\n    \"total_meetings\": 4,\n    \"period_start\": \"2026-10-01\",\n    \"period_end\": \"2026-10-31\",\n    \"status\": \"aktif\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "3. GET Detail Master Jadwal (+ List Sesi Pertemuan)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/schedules/01m3p0aszvmsnch7k0gyv9b6gb",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "schedules",
+                                "01m3p0aszvmsnch7k0gyv9b6gb"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "4. PUT Edit Master Jadwal",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/schedules/01m3p0aszvmsnch7k0gyv9b6gb",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "schedules",
+                                "01m3p0aszvmsnch7k0gyv9b6gb"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"day_of_week\": 2,\n    \"start_time\": \"16:00\",\n    \"end_time\": \"17:00\",\n    \"status\": \"aktif\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "5. DELETE Hapus Master Jadwal",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/schedules/01m3p0aszvmsnch7k0gyv9b6gb",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "schedules",
+                                "01m3p0aszvmsnch7k0gyv9b6gb"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

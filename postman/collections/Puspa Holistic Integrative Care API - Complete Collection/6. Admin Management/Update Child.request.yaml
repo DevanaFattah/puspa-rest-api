@@ -1,0 +1,12 @@
+$kind: http-request
+url: http://127.0.0.1:8000/api/v1/children/01m3p0aszqckapsx0p826cdy5r
+method: PUT
+headers:
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+        "child_name": "Rayhan Pratama"
+    }
+order: 12000

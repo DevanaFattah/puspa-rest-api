@@ -1,0 +1,15 @@
+$kind: http-request
+url: http://127.0.0.1:8000/api/v1/schedules/01m3p0aszvmsnch7k0gyv9b6gb
+method: PUT
+headers:
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+        "day_of_week": 2,
+        "start_time": "16:00",
+        "end_time": "17:00",
+        "status": "aktif"
+    }
+order: 4000

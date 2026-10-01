@@ -1,0 +1,6 @@
+$kind: http-request
+url: http://127.0.0.1:8000/api/v1/schedules/01m3p0aszvmsnch7k0gyv9b6gb
+method: DELETE
+headers:
+  Accept: application/json
+order: 5000

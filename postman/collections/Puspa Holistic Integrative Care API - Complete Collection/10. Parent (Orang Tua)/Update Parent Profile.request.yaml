@@ -1,0 +1,12 @@
+$kind: http-request
+url: http://127.0.0.1:8000/api/v1/my/profile/01m3p0aqj56t3enwgmtxne8tz9
+method: POST
+headers:
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+        "guardian_name": "Ibu Siti"
+    }
+order: 5000

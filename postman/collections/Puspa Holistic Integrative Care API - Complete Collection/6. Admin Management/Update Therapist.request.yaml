@@ -1,0 +1,12 @@
+$kind: http-request
+url: http://127.0.0.1:8000/api/v1/therapists/01m3p0ar28mg171kvet3gden0t
+method: PUT
+headers:
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+        "therapist_name": "Alief Arifun S.Pd"
+    }
+order: 9000

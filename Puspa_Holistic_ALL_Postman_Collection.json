@@ -1,0 +1,2706 @@
+{
+    "info": {
+        "name": "Puspa Holistic Integrative Care API - Complete Collection",
+        "description": "Koleksi LENGKAP seluruh API endpoints (Auth, Notifications, Schedules, Owner, Admin, Assessor, Therapist, Parent).",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://127.0.0.1:8000/api/v1",
+            "type": "string"
+        },
+        {
+            "key": "baseurl",
+            "value": "http://127.0.0.1:8000/api/v1",
+            "type": "string"
+        },
+        {
+            "key": "token",
+            "value": "YOUR_BEARER_TOKEN_HERE",
+            "type": "string"
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "item": [
+        {
+            "name": "1. Auth & Public",
+            "item": [
+                {
+                    "name": "Public Registration (Orang Tua / Wali)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/registration",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "registration"
+                            ]
+                        },
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"guardian_name\": \"Ibu Siti\",\n    \"guardian_phone\": \"081234567890\",\n    \"guardian_type\": \"ibu\",\n    \"temp_email\": \"siti@example.com\",\n    \"child_name\": \"Budi Santoso\",\n    \"child_birth_place\": \"Surabaya\",\n    \"child_birth_date\": \"2019-05-15\",\n    \"child_gender\": \"laki-laki\",\n    \"child_address\": \"Jl. Mawar No. 10, Surabaya\",\n    \"child_complaint\": \"Keterlambatan bicara (speech delay)\",\n    \"child_service_choice\": \"Paedagog, Terapi Wicara\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Login User / Admin / Owner / Therapist",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/auth/login",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "auth",
+                                "login"
+                            ]
+                        },
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"identifier\": \"adminAnnisa\",\n    \"password\": \"Annisa123.\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Register Employee (Admin/Terapist)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/auth/register",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "auth",
+                                "register"
+                            ]
+                        },
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Dr. Ahmad\",\n    \"email\": \"ahmad@puspa.test\",\n    \"password\": \"password\",\n    \"password_confirmation\": \"password\",\n    \"role\": \"terapis\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Refresh Token",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/auth/refresh",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "auth",
+                                "refresh"
+                            ]
+                        },
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    }
+                },
+                {
+                    "name": "Forgot Password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/auth/forgot-password",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "auth",
+                                "forgot-password"
+                            ]
+                        },
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"user@example.com\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Reset Password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/auth/reset-password",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "auth",
+                                "reset-password"
+                            ]
+                        },
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"token\": \"RESET_TOKEN_HERE\",\n    \"email\": \"user@example.com\",\n    \"password\": \"newpassword\",\n    \"password_confirmation\": \"newpassword\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Logout",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/auth/logout",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "auth",
+                                "logout"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Protected Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/auth/protected",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "auth",
+                                "protected"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Password",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/profile/update-password",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "profile",
+                                "update-password"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"current_password\": \"password\",\n    \"new_password\": \"newpassword123\",\n    \"new_password_confirmation\": \"newpassword123\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "2. Notifications",
+            "item": [
+                {
+                    "name": "Get All Notifications",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/notifications",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "notifications"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Mark All as Read",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/notifications/read-all",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "notifications",
+                                "read-all"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Mark Single Read",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/notifications/1/read",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "notifications",
+                                "1",
+                                "read"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Single Notification",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/notifications/1",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "notifications",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete All Notifications",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/notifications",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "notifications"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "3. Modul Jadwal Terapi (Schedules)",
+            "item": [
+                {
+                    "name": "1. GET Ambil Semua Jadwal (With Filters & Pagination)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/schedules?page=1&per_page=10&day_of_week=1&status=aktif&therapy_type=paedagog&search=Rayhan",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "schedules?page=1&per_page=10&day_of_week=1&status=aktif&therapy_type=paedagog&search=Rayhan"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "2. POST Tambah Master Jadwal Baru",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/schedules",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "schedules"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"child_id\": \"01m3p0aszqckapsx0p826cdy5r\",\n    \"therapist_id\": \"01m3p0ar28mg171kvet3gden0t\",\n    \"therapy_type\": \"paedagog\",\n    \"day_of_week\": 1,\n    \"start_time\": \"15:30\",\n    \"end_time\": \"16:30\",\n    \"total_meetings\": 4,\n    \"period_start\": \"2026-10-01\",\n    \"period_end\": \"2026-10-31\",\n    \"status\": \"aktif\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "3. GET Detail Master Jadwal (+ List Sesi Pertemuan)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/schedules/01m3p0aszvmsnch7k0gyv9b6gb",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "schedules",
+                                "01m3p0aszvmsnch7k0gyv9b6gb"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "4. PUT Edit Master Jadwal",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/schedules/01m3p0aszvmsnch7k0gyv9b6gb",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "schedules",
+                                "01m3p0aszvmsnch7k0gyv9b6gb"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"day_of_week\": 2,\n    \"start_time\": \"16:00\",\n    \"end_time\": \"17:00\",\n    \"status\": \"aktif\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "5. DELETE Hapus Master Jadwal",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/schedules/01m3p0aszvmsnch7k0gyv9b6gb",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "schedules",
+                                "01m3p0aszvmsnch7k0gyv9b6gb"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "4. Owner",
+            "item": [
+                {
+                    "name": "Owner Dashboard Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/owners/dashboard",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "owners",
+                                "dashboard"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Unverified Users (Admin/Therapist)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/users/therapist/unverified",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "users",
+                                "therapist",
+                                "unverified"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Activate Account",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/users/01m3p0aqj56t3enwgmtxne8tz9/activate",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "users",
+                                "01m3p0aqj56t3enwgmtxne8tz9",
+                                "activate"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Deactivate Account",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/users/01m3p0aqj56t3enwgmtxne8tz9/deactive",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "users",
+                                "01m3p0aqj56t3enwgmtxne8tz9",
+                                "deactive"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Promote to Assessor",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/users/01m3p0aqj56t3enwgmtxne8tz9/promote-to-assessor",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "users",
+                                "01m3p0aqj56t3enwgmtxne8tz9",
+                                "promote-to-assessor"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "5. Owner & Admin Shared",
+            "item": [
+                {
+                    "name": "Get Admins List",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/admins",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "admins"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Admin Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/admins/01m3p0aqj56t3enwgmtxne8tz9",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "admins",
+                                "01m3p0aqj56t3enwgmtxne8tz9"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Therapists List (Filter by section: paedagog, okupasi, wicara, fisio)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/therapists?section=paedagog",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "therapists?section=paedagog"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Therapist Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/therapists/01m3p0ar28mg171kvet3gden0t",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "therapists",
+                                "01m3p0ar28mg171kvet3gden0t"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Children List",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/children",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "children"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Child Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/children/01m3p0aszqckapsx0p826cdy5r",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "children",
+                                "01m3p0aszqckapsx0p826cdy5r"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "6. Admin Management",
+            "item": [
+                {
+                    "name": "Admin Dashboard Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/admins/dashboard/stats",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "admins",
+                                "dashboard",
+                                "stats"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Today Therapy Schedule",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/admins/dashboard/today-schedule",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "admins",
+                                "dashboard",
+                                "today-schedule"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Admin Profile",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/admins/profile",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "admins",
+                                "profile"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Admin Profile",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/admins/01m3p0aqj56t3enwgmtxne8tz9/profile",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "admins",
+                                "01m3p0aqj56t3enwgmtxne8tz9",
+                                "profile"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Admin Utama\",\n    \"phone\": \"08123456789\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Create Admin",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/admins",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "admins"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Admin Baru\",\n    \"email\": \"adminbaru@puspa.test\",\n    \"password\": \"password\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Update Admin",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/admins/01m3p0aqj56t3enwgmtxne8tz9",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "admins",
+                                "01m3p0aqj56t3enwgmtxne8tz9"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Admin Updated\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Admin",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/admins/01m3p0aqj56t3enwgmtxne8tz9",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "admins",
+                                "01m3p0aqj56t3enwgmtxne8tz9"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Therapist",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/therapists",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "therapists"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"user_id\": \"01m3p0aqj56t3enwgmtxne8tz9\",\n    \"therapist_name\": \"Alief Arifun\",\n    \"therapist_section\": \"paedagog\",\n    \"therapist_phone\": \"081234567890\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Update Therapist",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/therapists/01m3p0ar28mg171kvet3gden0t",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "therapists",
+                                "01m3p0ar28mg171kvet3gden0t"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"therapist_name\": \"Alief Arifun S.Pd\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Therapist",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/therapists/01m3p0ar28mg171kvet3gden0t",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "therapists",
+                                "01m3p0ar28mg171kvet3gden0t"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Child",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/children",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "children"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"family_id\": \"01M3P024T4DF062NCEJZXFZEH0\",\n    \"medical_record_number\": \"RM-000125\",\n    \"child_name\": \"Ananda\",\n    \"child_birth_place\": \"Surabaya\",\n    \"child_birth_date\": \"2020-01-01\",\n    \"child_gender\": \"perempuan\",\n    \"child_address\": \"Surabaya\",\n    \"child_complaint\": \"Fisioterapi\",\n    \"child_service_choice\": \"Fisioterapi\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Update Child",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/children/01m3p0aszqckapsx0p826cdy5r",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "children",
+                                "01m3p0aszqckapsx0p826cdy5r"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"child_name\": \"Rayhan Pratama\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Child",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/children/01m3p0aszqckapsx0p826cdy5r",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "children",
+                                "01m3p0aszqckapsx0p826cdy5r"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Observation Date",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/observations/1",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "observations",
+                                "1"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"scheduled_date\": \"2026-10-10\",\n    \"scheduled_time\": \"10:00\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Observation Agreement",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/observations/1/agreement",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "observations",
+                                "1",
+                                "agreement"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"status\": \"agreed\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Admin Assessments List",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/assessments/scheduled/admin",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "assessments",
+                                "scheduled",
+                                "admin"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "7. Observations",
+            "item": [
+                {
+                    "name": "Get Observations by Status (pending/scheduled/completed)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/observations/pending?search=Rayhan",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "observations",
+                                "pending?search=Rayhan"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Observation Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/observations/1/detail?type=scheduled",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "observations",
+                                "1",
+                                "detail?type=scheduled"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Submit Observation Result",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/observations/1/submit",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "observations",
+                                "1",
+                                "submit"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"notes\": \"Hasil observasi cukup baik\",\n    \"answers\": []\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "8. Assessor & Therapist",
+            "item": [
+                {
+                    "name": "Assessor/Therapist Dashboard Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/asse-thera/dashboard",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "asse-thera",
+                                "dashboard"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Assessor/Therapist Profile",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/asse-thera/profile",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "asse-thera",
+                                "profile"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Profile",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/asse-thera/01m3p0ar28mg171kvet3gden0t/profile",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "asse-thera",
+                                "01m3p0ar28mg171kvet3gden0t",
+                                "profile"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"therapist_name\": \"Alief Arifun\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Upcoming Schedules",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/asse-thera/upcoming-schedules",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "asse-thera",
+                                "upcoming-schedules"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "9. Assessment Management",
+            "item": [
+                {
+                    "name": "Update Assessment Date",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/assessments/1",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "assessments",
+                                "1"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"scheduled_date\": \"2026-10-15\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Get Assessment Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/assessments/1/detail",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "assessments",
+                                "1",
+                                "detail"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Upload Assessment Report File",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/assessments/1/report-upload",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "assessments",
+                                "1",
+                                "report-upload"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Answers by Type",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/assessments/1/answer/paedagog_assessor",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "assessments",
+                                "1",
+                                "answer",
+                                "paedagog_assessor"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Assessor Assessments List (scheduled/completed)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/assessments/scheduled",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "assessments",
+                                "scheduled"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Questions by Type",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/assessments/paedagog/question",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "assessments",
+                                "paedagog",
+                                "question"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Parent Assessments List",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/assessments/completed/parent",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "assessments",
+                                "completed",
+                                "parent"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Submit Assessor Assessment",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/assessments/1/submit/paedagog_assessor",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "assessments",
+                                "1",
+                                "submit",
+                                "paedagog_assessor"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"answers\": []\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "10. Parent (Orang Tua)",
+            "item": [
+                {
+                    "name": "Parent Dashboard Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/my/dashboard/stats",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "my",
+                                "dashboard",
+                                "stats"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Parent Dashboard Chart Data",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/my/dashboard/chart",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "my",
+                                "dashboard",
+                                "chart"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Parent Upcoming Schedules",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/my/dashboard/upcoming-schedules",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "my",
+                                "dashboard",
+                                "upcoming-schedules"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Parent Profile",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/my/profile",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "my",
+                                "profile"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Parent Profile",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/my/profile/01m3p0aqj56t3enwgmtxne8tz9",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "my",
+                                "profile",
+                                "01m3p0aqj56t3enwgmtxne8tz9"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"guardian_name\": \"Ibu Siti\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Get My Children List",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/my/children",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "my",
+                                "children"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get My Child Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/my/children/01m3p0aszqckapsx0p826cdy5r",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "my",
+                                "children",
+                                "01m3p0aszqckapsx0p826cdy5r"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Add My Child",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/my/children",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "my",
+                                "children"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"child_name\": \"Bambang\",\n    \"child_birth_place\": \"Surabaya\",\n    \"child_birth_date\": \"2021-01-01\",\n    \"child_gender\": \"laki-laki\",\n    \"child_address\": \"Surabaya\",\n    \"child_complaint\": \"Keluhan\",\n    \"child_service_choice\": \"Wicara\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Update My Child",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/my/children/01m3p0aszqckapsx0p826cdy5r",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "my",
+                                "children",
+                                "01m3p0aszqckapsx0p826cdy5r"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"child_name\": \"Bambang Updated\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Delete My Child",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/my/children/01m3p0aszqckapsx0p826cdy5r",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "my",
+                                "children",
+                                "01m3p0aszqckapsx0p826cdy5r"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Family Identity Data",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/my/identity",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "my",
+                                "identity"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"father_name\": \"Ayah Budi\",\n    \"mother_name\": \"Ibu Siti\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Get Children Assessments List",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/my/assessments",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "my",
+                                "assessments"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Parent Question by Type",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/my/assessments/parent_general/question",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "my",
+                                "assessments",
+                                "parent_general",
+                                "question"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Submit Parent Assessment",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/my/assessments/1/submit/umum_parent",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "my",
+                                "assessments",
+                                "1",
+                                "submit",
+                                "umum_parent"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"answers\": []\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Get Parent Assessment Answers",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/my/assessments/1/answer/umum_parent",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "my",
+                                "assessments",
+                                "1",
+                                "answer",
+                                "umum_parent"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Download Assessment Report File",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/my/assessments/1/report-download",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "my",
+                                "assessments",
+                                "1",
+                                "report-download"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Assessment Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://127.0.0.1:8000/api/v1/my/assessments/1",
+                            "protocol": "http",
+                            "host": [
+                                "127",
+                                "0",
+                                "0",
+                                "1"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "v1",
+                                "my",
+                                "assessments",
+                                "1"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
