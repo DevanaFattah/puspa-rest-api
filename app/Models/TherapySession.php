@@ -29,11 +29,14 @@ class TherapySession extends Model
         'therapist_id',
         'status',
         'notes',
+        'checked_in_at',
+        'attendance_token',
     ];
 
     protected $casts = [
         'session_number' => 'integer',
-        'session_date' => 'date',
+        'session_date'   => 'date',
+        'checked_in_at'  => 'datetime',
     ];
 
     public function schedule(): BelongsTo

@@ -25,6 +25,7 @@ class Reschedule extends Model
         'original_session_id',
         'new_session_id',
         'requested_by',
+        'reason',
     ];
 
     public function originalSession(): BelongsTo

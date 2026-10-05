@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\ProfileController as AdminProfileManagement;
 use App\Http\Controllers\Admin\ScheduleController;
+use App\Http\Controllers\Admin\AttendanceController;
+use App\Http\Controllers\Admin\RescheduleController;
 use App\Http\Controllers\Admin\ObservationController as AdminObservationManagement;
 use App\Http\Controllers\Admin\UserController as AdminUserManagement;
 use App\Http\Controllers\Admin\AssessmentController as AdminAssessmentManagement;
@@ -145,6 +147,20 @@ Route::middleware('auth:sanctum')->group(function () {
             ->whereUlid('schedule', '[0-9A-HJ-NP-TV-Z]{26}');
         Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])
             ->whereUlid('schedule', '[0-9A-HJ-NP-TV-Z]{26}');
+
+        // ================== PRESENSI & RESCHEDULE ==================
+        Route::get('/sessions/today', [AttendanceController::class, 'todaySessions']);
+        Route::get('/sessions/rescheduled', [AttendanceController::class, 'rescheduledSessions']);
+        Route::get('/sessions/export', [AttendanceController::class, 'exportAttendance']);
+        Route::post('/sessions/qr-scan', [AttendanceController::class, 'scanQrCode']);
+        Route::get('/sessions/{session}/qr', [AttendanceController::class, 'getQrCode'])
+            ->whereUlid('session', '[0-9A-HJ-NP-TV-Z]{26}');
+        Route::post('/sessions/{session}/attendance', [AttendanceController::class, 'markAttendance'])
+            ->whereUlid('session', '[0-9A-HJ-NP-TV-Z]{26}');
+        Route::put('/sessions/{session}/attendance', [AttendanceController::class, 'updateAttendance'])
+            ->whereUlid('session', '[0-9A-HJ-NP-TV-Z]{26}');
+        Route::post('/sessions/{session}/reschedule', [RescheduleController::class, 'store'])
+            ->whereUlid('session', '[0-9A-HJ-NP-TV-Z]{26}');
     });
 
     // ================== ROLE ADMIN ==================
@@ -265,6 +281,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/stats', [ParentDashboard::class, 'index']);
             Route::get('/chart', [ParentDashboard::class, 'chartData']);
             Route::get('/upcoming-schedules', [ParentDashboard::class, 'upcomingSchedules']);
+            Route::get('/today-therapy-sessions', [ParentDashboard::class, 'todayTherapySessions']);
         });
 
         Route::get('/profile', [ParentProfileManagement::class, 'showProfile']);

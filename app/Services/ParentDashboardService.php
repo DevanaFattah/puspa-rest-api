@@ -218,6 +218,51 @@ class ParentDashboardService
     }
 
     /**
+     * Get today's therapy sessions for parent's children with QR code token
+     */
+    public function getTodayTherapySessions(string $familyId): array
+    {
+        $children = Child::where('family_id', $familyId)->pluck('id');
+
+        if ($children->isEmpty()) {
+            return [];
+        }
+
+        $sessions = \App\Models\TherapySession::with([
+            'schedule.child',
+            'schedule.therapist',
+            'substituteTherapist'
+        ])
+        ->whereHas('schedule', function ($q) use ($children) {
+            $q->whereIn('child_id', $children);
+        })
+        ->whereDate('session_date', Carbon::today())
+        ->get();
+
+        $attendanceService = app(AttendanceService::class);
+
+        return $sessions->map(function ($session) use ($attendanceService) {
+            $token = $attendanceService->generateQrToken($session);
+            $therapist = $session->substituteTherapist ?? $session->schedule?->therapist;
+
+            return [
+                'session_id' => $session->id,
+                'session_number' => $session->session_number,
+                'session_date' => $session->session_date?->format('Y-m-d'),
+                'child_id' => $session->schedule?->child_id,
+                'child_name' => $session->schedule?->child?->child_name ?? '-',
+                'therapy_type' => $session->schedule?->therapy_type ?? '-',
+                'therapist_name' => $therapist?->therapist_name ?? '-',
+                'start_time' => $session->schedule?->start_time ? substr($session->schedule->start_time, 0, 5) : '-',
+                'end_time' => $session->schedule?->end_time ? substr($session->schedule->end_time, 0, 5) : '-',
+                'status' => $session->status,
+                'checked_in_at' => $session->checked_in_at?->toIso8601String(),
+                'attendance_token' => $token,
+            ];
+        })->toArray();
+    }
+
+    /**
      * Get empty stats structure
      */
     private function getEmptyStats(): array

@@ -97,4 +97,28 @@ class DashboardController extends Controller
             200
         );
     }
+
+    /**
+     * Get today's therapy sessions for parent with QR code token
+     */
+    public function todayTherapySessions(): JsonResponse
+    {
+        $guardian = auth()->user()->guardian;
+
+        if (!$guardian) {
+            return $this->errorResponse(
+                'Guardian not found',
+                ['message' => ['Guardian profile tidak ditemukan']],
+                404
+            );
+        }
+
+        $sessions = $this->dashboardService->getTodayTherapySessions($guardian->family_id);
+
+        return $this->successResponse(
+            $sessions,
+            'Today therapy sessions for parent',
+            200
+        );
+    }
 }
