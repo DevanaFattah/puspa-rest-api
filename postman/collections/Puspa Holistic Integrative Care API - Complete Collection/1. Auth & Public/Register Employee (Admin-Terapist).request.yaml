@@ -1,0 +1,19 @@
+$kind: http-request
+name: Register Employee (Admin/Terapist)
+url: http://127.0.0.1:8000/api/v1/auth/register
+method: POST
+headers:
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+        "name": "Dr. Ahmad",
+        "email": "ahmad@puspa.test",
+        "password": "password",
+        "password_confirmation": "password",
+        "role": "terapis"
+    }
+auth:
+  type: noauth
+order: 3000

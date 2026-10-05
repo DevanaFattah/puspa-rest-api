@@ -1,0 +1,8 @@
+$kind: http-request
+url: http://127.0.0.1:8000/api/v1/observations/1/detail?type=scheduled
+method: GET
+headers:
+  Accept: application/json
+queryParams:
+  type: scheduled
+order: 2000

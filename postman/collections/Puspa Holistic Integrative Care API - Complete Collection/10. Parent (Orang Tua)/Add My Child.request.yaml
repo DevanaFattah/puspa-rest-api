@@ -1,0 +1,18 @@
+$kind: http-request
+url: http://127.0.0.1:8000/api/v1/my/children
+method: POST
+headers:
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+        "child_name": "Bambang",
+        "child_birth_place": "Surabaya",
+        "child_birth_date": "2021-01-01",
+        "child_gender": "laki-laki",
+        "child_address": "Surabaya",
+        "child_complaint": "Keluhan",
+        "child_service_choice": "Wicara"
+    }
+order: 8000

@@ -18,9 +18,10 @@ class TherapistService
         private DeleteTherapistAction $deleteTherapistAction,
     ) {}
 
-    public function index(): Collection
+    public function index(?string $section = null): Collection
     {
         return Therapist::with('user:id,username,email,is_active')
+            ->when($section, fn($q) => $q->where('therapist_section', $section))
             ->latest()
             ->get();
     }

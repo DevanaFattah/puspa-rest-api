@@ -1,0 +1,7 @@
+$kind: http-request
+name: Get Unverified Users (Admin/Therapist)
+url: http://127.0.0.1:8000/api/v1/users/therapist/unverified
+method: GET
+headers:
+  Accept: application/json
+order: 2000

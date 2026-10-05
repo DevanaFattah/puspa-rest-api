@@ -40,9 +40,10 @@ class UserController extends Controller
         return $this->successResponse($response, 'Daftar Semua Admin', 200);
     }
 
-    public function indexTherapist(): JsonResponse
+    public function indexTherapist(\Illuminate\Http\Request $request): JsonResponse
     {
-        $therapists = $this->therapistService->index();
+        $section = $request->input('section') ?? $request->input('therapy_type');
+        $therapists = $this->therapistService->index($section);
         $response = TherapistResource::collection($therapists);
 
         return $this->successResponse($response, 'Daftar Semua Terapis', 200);

@@ -1,0 +1,15 @@
+# Use this workspace to collaborate
+workspace:
+  id: e0a0e22a-7411-497b-8c7f-efae2881233b
+
+# Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
+
+cloudResources:
+  collections:
+    ../postman/collections/Puspa Holistic Integrative Care API - Complete Collection: 6f50c3c5-5c54-4f70-adf4-38dd8f926f20
+
+# All resources in the `postman/` folder are automatically registered in Local View.
+# Point to additional files outside the `postman/` folder to register them individually. Example:
+#localResources:
+#  collections:
+#    - ../tests/E2E Test Collection/

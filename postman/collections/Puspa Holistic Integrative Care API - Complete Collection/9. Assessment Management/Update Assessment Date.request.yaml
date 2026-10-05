@@ -1,0 +1,12 @@
+$kind: http-request
+url: http://127.0.0.1:8000/api/v1/assessments/1
+method: PATCH
+headers:
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+        "scheduled_date": "2026-10-15"
+    }
+order: 1000

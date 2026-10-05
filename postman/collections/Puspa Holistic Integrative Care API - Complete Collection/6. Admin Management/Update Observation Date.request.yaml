@@ -1,0 +1,13 @@
+$kind: http-request
+url: http://127.0.0.1:8000/api/v1/observations/1
+method: PUT
+headers:
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+        "scheduled_date": "2026-10-10",
+        "scheduled_time": "10:00"
+    }
+order: 14000

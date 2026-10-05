@@ -34,6 +34,9 @@ class DatabaseSeeder extends Seeder
             ParentSpeechAssessmentQuestionSeeder::class,
             ParentPedagogicalAssessmentQuestionSeeder::class,
             ParentPhysioAssessmentQuestionSeeder::class,
+
+            // Schedule & Therapy Sessions Dummy Data
+            ScheduleSeeder::class,
         ]);
     }
 }

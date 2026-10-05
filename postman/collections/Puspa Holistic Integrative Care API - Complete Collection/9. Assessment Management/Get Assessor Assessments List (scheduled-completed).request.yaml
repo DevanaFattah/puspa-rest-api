@@ -1,0 +1,7 @@
+$kind: http-request
+name: Get Assessor Assessments List (scheduled/completed)
+url: http://127.0.0.1:8000/api/v1/assessments/scheduled
+method: GET
+headers:
+  Accept: application/json
+order: 5000

@@ -1,0 +1,14 @@
+$kind: http-request
+url: http://127.0.0.1:8000/api/v1/admins
+method: POST
+headers:
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+        "name": "Admin Baru",
+        "email": "adminbaru@puspa.test",
+        "password": "password"
+    }
+order: 5000

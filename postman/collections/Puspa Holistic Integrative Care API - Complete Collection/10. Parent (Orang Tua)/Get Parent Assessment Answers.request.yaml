@@ -1,0 +1,6 @@
+$kind: http-request
+url: http://127.0.0.1:8000/api/v1/my/assessments/1/answer/umum_parent
+method: GET
+headers:
+  Accept: application/json
+order: 15000

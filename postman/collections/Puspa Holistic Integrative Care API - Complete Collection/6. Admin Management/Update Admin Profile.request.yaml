@@ -1,0 +1,13 @@
+$kind: http-request
+url: http://127.0.0.1:8000/api/v1/admins/01m3p0aqj56t3enwgmtxne8tz9/profile
+method: POST
+headers:
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+        "name": "Admin Utama",
+        "phone": "08123456789"
+    }
+order: 4000

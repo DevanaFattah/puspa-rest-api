@@ -1,46 +1,83 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Puspa API Documentation",
-        "description": "Dokumentasi API lengkap untuk layanan Puspa",
-        "contact": {
-            "email": "admin@puspa.sinus.ac.id"
-        },
-        "version": "1.0.0"
+        "title": "Puspa Holistic Integrative Care API",
+        "description": "Dokumentasi Swagger OpenAPI v2 untuk aplikasi Puspa Holistic Integrative Care",
+        "version": "2.0.0"
     },
     "servers": [
         {
-            "url": "http://localhost:8000",
-            "description": "API Server"
+            "url": "http://127.0.0.1:8000/api/v1",
+            "description": "Local Development API Server"
         }
     ],
     "paths": {
-        "/admins": {
+        "/schedules": {
             "get": {
                 "tags": [
-                    "Admins"
+                    "Schedules"
                 ],
-                "summary": "Mendapatkan daftar semua admin",
-                "operationId": "getAdminsList",
-                "responses": {
-                    "200": {
-                        "description": "Operasi berhasil",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/AdminResource"
-                                    }
-                                }
-                            }
+                "summary": "Mengambil daftar master jadwal terapi (with filters & pagination)",
+                "operationId": "bdea5ade44d91a49b037f3ccab7910be",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Halaman paginasi",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
                         }
                     },
-                    "401": {
-                        "description": "Unauthenticated"
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Jumlah per halaman",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
                     },
-                    "403": {
-                        "description": "Forbidden (bukan super admin)"
+                    {
+                        "name": "day_of_week",
+                        "in": "query",
+                        "description": "Filter hari (1=Senin..7=Minggu)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter status (aktif, non_aktif, selesai)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "therapy_type",
+                        "in": "query",
+                        "description": "Filter jenis terapi (okupasi, fisio, wicara, paedagog)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Cari nama anak, RM, atau nama wali",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar Master Jadwal Terapi"
                     }
                 },
                 "security": [
@@ -51,623 +88,150 @@
             },
             "post": {
                 "tags": [
-                    "Admins"
+                    "Schedules"
                 ],
-                "summary": "Membuat data admin baru",
-                "operationId": "storeAdmin",
+                "summary": "Membuat master jadwal baru (Otomatis me-generate sesi pertemuan)",
+                "operationId": "68f4ee66ee292663799d2d3cffaed608",
                 "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/AdminCreateRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Admin berhasil dibuat"
-                    },
-                    "422": {
-                        "description": "Validation Error"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/admins/{admin_id}": {
-            "get": {
-                "tags": [
-                    "Admins"
-                ],
-                "summary": "Mendapatkan detail satu admin",
-                "operationId": "getAdminById",
-                "parameters": [
-                    {
-                        "name": "adminId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Operasi berhasil",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/AdminResource"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Data admin tidak ditemukan"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "put": {
-                "tags": [
-                    "Admins"
-                ],
-                "summary": "Memperbarui data admin",
-                "operationId": "updateAdmin",
-                "parameters": [
-                    {
-                        "name": "adminId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/AdminUpdateRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Update berhasil"
-                    },
-                    "404": {
-                        "description": "Data admin tidak ditemukan"
-                    },
-                    "422": {
-                        "description": "Validation Error"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Admins"
-                ],
-                "summary": "Menghapus data admin",
-                "operationId": "deleteAdmin",
-                "parameters": [
-                    {
-                        "name": "adminId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Data berhasil dihapus"
-                    },
-                    "404": {
-                        "description": "Data admin tidak ditemukan"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/auth/register": {
-            "post": {
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Registrasi pengguna baru",
-                "description": "Mendaftarkan pengguna baru dan mengirimkan email verifikasi.",
-                "operationId": "registerUser",
-                "requestBody": {
-                    "description": "Data registrasi pengguna",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UserRegisterRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Registrasi berhasil",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Registrasi berhasil. Silakan melakukan verifikasi!"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "user_id": {
-                                                    "description": "ULID dari pengguna yang baru dibuat",
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation Error"
-                    }
-                }
-            }
-        },
-        "/auth/login": {
-            "post": {
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Login pengguna",
-                "description": "Mengautentikasi pengguna dan mengembalikan access token.",
-                "operationId": "loginUser",
-                "requestBody": {
-                    "description": "Kredensial login",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UserLoginRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Login berhasil",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Login berhasil"
-                                        },
-                                        "data": {
-                                            "$ref": "#/components/schemas/LoginResource"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Kredensial tidak valid"
-                    },
-                    "403": {
-                        "description": "Akun belum aktif atau belum diverifikasi"
-                    }
-                }
-            }
-        },
-        "/auth/logout": {
-            "post": {
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Logout pengguna",
-                "description": "Mencabut (revoke) token pengguna yang sedang login.",
-                "operationId": "logoutUser",
-                "responses": {
-                    "200": {
-                        "description": "Logout berhasil"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/auth/protected": {
-            "get": {
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Protected route",
-                "description": "Protected route example.",
-                "operationId": "7cd02503e789fc0346399eef296a1076",
-                "responses": {
-                    "200": {
-                        "description": "Successful"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/observations/pending": {
-            "get": {
-                "tags": [
-                    "Observations"
-                ],
-                "summary": "Daftar observasi berstatus 'Pending'",
-                "description": "Mengambil daftar semua observasi yang menunggu penjadwalan. (Khusus Admin)",
-                "operationId": "getPendingObservations",
-                "responses": {
-                    "200": {
-                        "description": "Berhasil mengambil data",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/ObservationsPendingResource"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/observations/scheduled": {
-            "get": {
-                "tags": [
-                    "Observations"
-                ],
-                "summary": "Daftar observasi berstatus 'Scheduled'",
-                "description": "Mengambil daftar semua observasi yang sudah dijadwalkan.",
-                "operationId": "getScheduledObservations",
-                "responses": {
-                    "200": {
-                        "description": "Berhasil mengambil data",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/ObservationsScheduledResource"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/observations/completed": {
-            "get": {
-                "tags": [
-                    "Observations"
-                ],
-                "summary": "Daftar observasi berstatus 'Completed'",
-                "description": "Mengambil daftar semua observasi yang sudah selesai. (Khusus Terapis)",
-                "operationId": "getCompletedObservations",
-                "responses": {
-                    "200": {
-                        "description": "Berhasil mengambil data",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/ObservationsCompletedResource"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/observations/scheduled/{observationId}": {
-            "get": {
-                "tags": [
-                    "Observations"
-                ],
-                "summary": "Detail observasi yang sudah dijadwalkan",
-                "operationId": "getScheduledObservationDetail",
-                "parameters": [
-                    {
-                        "name": "observationId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Berhasil mengambil data",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ObservationScheduledDetailResource"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Tidak ditemukan"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/observations/completed/{observationId}": {
-            "get": {
-                "tags": [
-                    "Observations"
-                ],
-                "summary": "Detail observasi yang sudah selesai",
-                "operationId": "getCompletedObservationDetail",
-                "parameters": [
-                    {
-                        "name": "observationId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Berhasil mengambil data",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ObservationCompletedDetailResource"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Tidak ditemukan"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/observations/question/{observationId}": {
-            "get": {
-                "tags": [
-                    "Observations"
-                ],
-                "summary": "Daftar pertanyaan untuk sebuah observasi",
-                "operationId": "getObservationQuestions",
-                "parameters": [
-                    {
-                        "name": "observationId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Berhasil mengambil data",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/ObservationQuestionResource"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Observasi tidak ditemukan"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/observations/{observationId}": {
-            "put": {
-                "tags": [
-                    "Observations"
-                ],
-                "summary": "Update tanggal jadwal observasi",
-                "description": "Memperbarui tanggal jadwal untuk observasi yang berstatus 'Pending'. (Khusus Admin)",
-                "operationId": "updateObservationDate",
-                "parameters": [
-                    {
-                        "name": "observationId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/ObservationUpdateRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Berhasil diperbarui"
-                    },
-                    "404": {
-                        "description": "Tidak ditemukan"
-                    },
-                    "422": {
-                        "description": "Validation Error"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/observations/submit/{observationId}": {
-            "post": {
-                "tags": [
-                    "Observations"
-                ],
-                "summary": "Submit hasil observasi",
-                "operationId": "submitObservation",
-                "parameters": [
-                    {
-                        "name": "observationId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/ObservationSubmitRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Berhasil disimpan"
-                    },
-                    "403": {
-                        "description": "Observasi sudah selesai"
-                    },
-                    "404": {
-                        "description": "Observasi tidak ditemukan"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/auth/forgot-password": {
-            "post": {
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Kirim link reset password",
-                "description": "Mengirim email berisi link untuk mereset password pengguna.",
-                "operationId": "forgotPassword",
-                "requestBody": {
-                    "description": "Email pengguna yang terdaftar",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "email"
+                                    "child_id",
+                                    "therapist_id",
+                                    "therapy_type",
+                                    "day_of_week",
+                                    "start_time",
+                                    "end_time",
+                                    "total_meetings",
+                                    "period_start",
+                                    "period_end"
                                 ],
                                 "properties": {
-                                    "email": {
+                                    "child_id": {
                                         "type": "string",
-                                        "format": "email",
-                                        "example": "john.doe@example.com"
+                                        "example": "01M3P024T4DF062NCEJZXFZEH1"
+                                    },
+                                    "therapist_id": {
+                                        "type": "string",
+                                        "example": "01M3P024T4DF062NCEJZXFZEH2"
+                                    },
+                                    "therapy_type": {
+                                        "type": "string",
+                                        "example": "paedagog"
+                                    },
+                                    "day_of_week": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "start_time": {
+                                        "type": "string",
+                                        "example": "15:30"
+                                    },
+                                    "end_time": {
+                                        "type": "string",
+                                        "example": "16:30"
+                                    },
+                                    "total_meetings": {
+                                        "type": "integer",
+                                        "example": 4
+                                    },
+                                    "period_start": {
+                                        "type": "string",
+                                        "example": "2026-10-05"
+                                    },
+                                    "period_end": {
+                                        "type": "string",
+                                        "example": "2026-11-05"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "aktif"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Berhasil menambahkan jadwal baru"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/schedules/{schedule}": {
+            "get": {
+                "tags": [
+                    "Schedules"
+                ],
+                "summary": "Mengambil detail master jadwal beserta sesi pertemuan",
+                "operationId": "8c1b48c006db3aa00cfec0f7c780b786",
+                "parameters": [
+                    {
+                        "name": "schedule",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail Master Jadwal Terapi"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Schedules"
+                ],
+                "summary": "Memperbarui data master jadwal",
+                "operationId": "d9266123f607bcc1d263a2bb5d092c4c",
+                "parameters": [
+                    {
+                        "name": "schedule",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "day_of_week": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "start_time": {
+                                        "type": "string",
+                                        "example": "16:00"
+                                    },
+                                    "end_time": {
+                                        "type": "string",
+                                        "example": "17:00"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "aktif"
                                     }
                                 },
                                 "type": "object"
@@ -677,234 +241,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Link berhasil dikirim"
-                    },
-                    "404": {
-                        "description": "Pengguna dengan email tersebut tidak ditemukan"
-                    },
-                    "422": {
-                        "description": "Email tidak valid"
-                    }
-                }
-            }
-        },
-        "/auth/reset-password": {
-            "post": {
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Reset password pengguna",
-                "description": "Mengatur ulang password pengguna menggunakan token dari email.",
-                "operationId": "resetPassword",
-                "requestBody": {
-                    "description": "Data untuk reset password",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/ResetPasswordRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Password berhasil diatur ulang"
-                    },
-                    "422": {
-                        "description": "Data tidak valid (misal: token salah, email tidak cocok, atau validasi password gagal)"
-                    }
-                }
-            }
-        },
-        "/registration": {
-            "post": {
-                "tags": [
-                    "Registration"
-                ],
-                "summary": "Pendaftaran Keluarga Baru",
-                "description": "Mendaftarkan satu keluarga baru (wali & anak) dan secara otomatis membuat jadwal observasi awal.",
-                "operationId": "storeNewFamilyRegistration",
-                "requestBody": {
-                    "description": "Data lengkap pendaftaran",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/RegistrationRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Pendaftaran Berhasil",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Pendaftaran Berhasil"
-                                        },
-                                        "data": {
-                                            "type": "object",
-                                            "example": []
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation Error (misal: email sudah ada, atau data tidak valid)"
-                    }
-                }
-            }
-        },
-        "/therapists": {
-            "get": {
-                "tags": [
-                    "Therapists"
-                ],
-                "summary": "Mendapatkan daftar semua terapis",
-                "operationId": "getTherapistsList",
-                "responses": {
-                    "200": {
-                        "description": "Operasi berhasil",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/TherapistResource"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden (bukan admin)"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "post": {
-                "tags": [
-                    "Therapists"
-                ],
-                "summary": "Membuat data terapis baru",
-                "operationId": "storeTherapist",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/TherapistCreateRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Terapis berhasil dibuat"
-                    },
-                    "422": {
-                        "description": "Validation Error"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/therapists/{therapist_id}": {
-            "get": {
-                "tags": [
-                    "Therapists"
-                ],
-                "summary": "Mendapatkan detail satu terapis",
-                "operationId": "getTherapistById",
-                "parameters": [
-                    {
-                        "name": "therapistId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Operasi berhasil",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/TherapistResource"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Data terapis tidak ditemukan"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "put": {
-                "tags": [
-                    "Therapists"
-                ],
-                "summary": "Memperbarui data terapis",
-                "operationId": "updateTherapist",
-                "parameters": [
-                    {
-                        "name": "therapistId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/TherapistUpdateRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Update berhasil"
-                    },
-                    "404": {
-                        "description": "Data terapis tidak ditemukan"
-                    },
-                    "422": {
-                        "description": "Validation Error"
+                        "description": "Berhasil memperbarui jadwal"
                     }
                 },
                 "security": [
@@ -915,13 +252,13 @@
             },
             "delete": {
                 "tags": [
-                    "Therapists"
+                    "Schedules"
                 ],
-                "summary": "Menghapus data terapis",
-                "operationId": "deleteTherapist",
+                "summary": "Menghapus master jadwal dan seluruh sesinya",
+                "operationId": "d8585d8c2fd9d255be9a674b4671c24d",
                 "parameters": [
                     {
-                        "name": "therapistId",
+                        "name": "schedule",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -931,91 +268,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Data berhasil dihapus"
-                    },
-                    "404": {
-                        "description": "Data terapis tidak ditemukan"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/email/verify/{id}/{hash}": {
-            "get": {
-                "tags": [
-                    "Email Verification"
-                ],
-                "summary": "Verifikasi alamat email pengguna",
-                "description": "Endpoint ini diakses dari link yang dikirim ke email pengguna. Memerlukan signature yang valid.",
-                "operationId": "verifyEmail",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "hash",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "expires",
-                        "in": "query",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "signature",
-                        "in": "query",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Email berhasil diverifikasi"
-                    },
-                    "400": {
-                        "description": "Tautan tidak valid atau kadaluwarsa"
-                    },
-                    "404": {
-                        "description": "Pengguna tidak ditemukan"
-                    }
-                }
-            }
-        },
-        "/email/resend-verification": {
-            "post": {
-                "tags": [
-                    "Email Verification"
-                ],
-                "summary": "Kirim ulang email verifikasi",
-                "description": "Mengirim ulang email verifikasi ke pengguna yang sedang login.",
-                "operationId": "resendVerification",
-                "responses": {
-                    "202": {
-                        "description": "Link baru berhasil dikirim"
-                    },
-                    "200": {
-                        "description": "Email sudah terverifikasi sebelumnya"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
+                        "description": "Berhasil menghapus jadwal"
                     }
                 },
                 "security": [
@@ -1027,846 +280,9 @@
         }
     },
     "components": {
-        "schemas": {
-            "AdminCreateRequest": {
-                "required": [
-                    "username",
-                    "email",
-                    "password",
-                    "admin_name",
-                    "admin_phone"
-                ],
-                "properties": {
-                    "username": {
-                        "type": "string",
-                        "example": "superadmin"
-                    },
-                    "email": {
-                        "type": "string",
-                        "format": "email",
-                        "example": "super.admin@example.com"
-                    },
-                    "password": {
-                        "description": "Min. 8 karakter, 1 huruf besar, 1 angka, 1 simbol",
-                        "type": "string",
-                        "format": "password",
-                        "example": "Password123!"
-                    },
-                    "admin_name": {
-                        "type": "string",
-                        "example": "Super Admin"
-                    },
-                    "admin_phone": {
-                        "type": "string",
-                        "example": "081234567890"
-                    }
-                },
-                "type": "object"
-            },
-            "AdminUpdateRequest": {
-                "description": "Semua field bersifat opsional. Hanya field yang dikirim yang akan diupdate.",
-                "properties": {
-                    "username": {
-                        "type": "string",
-                        "example": "superadmin_updated"
-                    },
-                    "email": {
-                        "type": "string",
-                        "format": "email",
-                        "example": "super.admin.new@example.com"
-                    },
-                    "password": {
-                        "description": "Kirim hanya jika ingin mengubah password",
-                        "type": "string",
-                        "format": "password",
-                        "example": "NewPassword123!"
-                    },
-                    "admin_name": {
-                        "type": "string",
-                        "example": "Super Admin Name Updated"
-                    },
-                    "admin_phone": {
-                        "type": "string",
-                        "example": "081234567891"
-                    }
-                },
-                "type": "object"
-            },
-            "ObservationSubmitRequest": {
-                "required": [
-                    "answers",
-                    "conclusion",
-                    "recommendation"
-                ],
-                "properties": {
-                    "answers": {
-                        "description": "Daftar jawaban untuk setiap pertanyaan",
-                        "type": "array",
-                        "items": {
-                            "required": [
-                                "question_id",
-                                "answer"
-                            ],
-                            "properties": {
-                                "question_id": {
-                                    "description": "ID dari pertanyaan yang dijawab",
-                                    "type": "integer",
-                                    "example": 27
-                                },
-                                "answer": {
-                                    "description": "Jawaban (true/false) untuk pertanyaan",
-                                    "type": "boolean",
-                                    "example": true
-                                },
-                                "note": {
-                                    "description": "Catatan opsional untuk jawaban",
-                                    "type": "string",
-                                    "example": "Anak menunjukkan kemajuan.",
-                                    "nullable": true
-                                }
-                            },
-                            "type": "object"
-                        }
-                    },
-                    "conclusion": {
-                        "description": "Kesimpulan akhir dari terapis",
-                        "type": "string",
-                        "example": "Anak menunjukkan perkembangan yang baik sesuai usianya."
-                    },
-                    "recommendation": {
-                        "description": "Rekomendasi tindak lanjut dari terapis",
-                        "type": "string",
-                        "example": "Disarankan untuk melanjutkan sesi terapi motorik halus."
-                    }
-                },
-                "type": "object"
-            },
-            "ObservationUpdateRequest": {
-                "required": [
-                    "scheduled_date"
-                ],
-                "properties": {
-                    "scheduled_date": {
-                        "description": "Tanggal baru untuk jadwal observasi",
-                        "type": "string",
-                        "format": "date",
-                        "example": "2025-10-15"
-                    }
-                },
-                "type": "object"
-            },
-            "RegistrationRequest": {
-                "required": [
-                    "child_name",
-                    "child_gender",
-                    "child_birth_place",
-                    "child_birth_date",
-                    "child_address",
-                    "child_complaint",
-                    "child_service_choice",
-                    "email",
-                    "guardian_name",
-                    "guardian_phone",
-                    "guardian_type"
-                ],
-                "properties": {
-                    "child_name": {
-                        "type": "string",
-                        "example": "Citra Lestari"
-                    },
-                    "child_gender": {
-                        "type": "string",
-                        "enum": [
-                            "laki-laki",
-                            "perempuan"
-                        ],
-                        "example": "Perempuan"
-                    },
-                    "child_birth_place": {
-                        "type": "string",
-                        "example": "Surakarta"
-                    },
-                    "child_birth_date": {
-                        "type": "string",
-                        "format": "date",
-                        "example": "2018-05-20"
-                    },
-                    "child_school": {
-                        "type": "string",
-                        "example": "SDN 1 Pagi",
-                        "nullable": true
-                    },
-                    "child_address": {
-                        "type": "string",
-                        "example": "Jl. Merdeka No. 10"
-                    },
-                    "child_complaint": {
-                        "type": "string",
-                        "example": "Sulit berkonsentrasi saat belajar"
-                    },
-                    "child_service_choice": {
-                        "type": "string",
-                        "example": "Terapi Okupasi"
-                    },
-                    "email": {
-                        "type": "string",
-                        "format": "email",
-                        "example": "wali.baru@example.com"
-                    },
-                    "guardian_name": {
-                        "type": "string",
-                        "example": "Budi Santoso"
-                    },
-                    "guardian_phone": {
-                        "type": "string",
-                        "example": "081234567890"
-                    },
-                    "guardian_type": {
-                        "type": "string",
-                        "enum": [
-                            "ayah",
-                            "ibu",
-                            "wali"
-                        ],
-                        "example": "ayah"
-                    }
-                },
-                "type": "object"
-            },
-            "ResetPasswordRequest": {
-                "required": [
-                    "token",
-                    "email",
-                    "password",
-                    "password_confirmation"
-                ],
-                "properties": {
-                    "token": {
-                        "description": "Token yang diterima dari email",
-                        "type": "string"
-                    },
-                    "email": {
-                        "type": "string",
-                        "format": "email",
-                        "example": "john.doe@example.com"
-                    },
-                    "password": {
-                        "type": "string",
-                        "format": "password",
-                        "example": "NewPassword123!"
-                    },
-                    "password_confirmation": {
-                        "type": "string",
-                        "format": "password",
-                        "example": "NewPassword123!"
-                    }
-                },
-                "type": "object"
-            },
-            "TherapistCreateRequest": {
-                "required": [
-                    "username",
-                    "email",
-                    "password",
-                    "therapist_name",
-                    "therapist_section",
-                    "therapist_phone"
-                ],
-                "properties": {
-                    "username": {
-                        "type": "string",
-                        "example": "dr.johndoe"
-                    },
-                    "email": {
-                        "type": "string",
-                        "format": "email",
-                        "example": "dr.johndoe@example.com"
-                    },
-                    "password": {
-                        "type": "string",
-                        "format": "password",
-                        "example": "Password123!"
-                    },
-                    "therapist_name": {
-                        "type": "string",
-                        "example": "Dr. John Doe"
-                    },
-                    "therapist_section": {
-                        "type": "string",
-                        "enum": [
-                            "Okupasi",
-                            "Fisio",
-                            "Wicara",
-                            "Paedagog"
-                        ],
-                        "example": "Okupasi"
-                    },
-                    "therapist_phone": {
-                        "type": "string",
-                        "example": "081234567890"
-                    }
-                },
-                "type": "object"
-            },
-            "TherapistUpdateRequest": {
-                "description": "Semua field bersifat opsional. Hanya field yang dikirim yang akan diupdate.",
-                "properties": {
-                    "username": {
-                        "type": "string",
-                        "example": "dr.johndoe.updated"
-                    },
-                    "email": {
-                        "type": "string",
-                        "format": "email",
-                        "example": "dr.johndoe.new@example.com"
-                    },
-                    "password": {
-                        "description": "Kirim hanya jika ingin mengubah password",
-                        "type": "string",
-                        "format": "password",
-                        "example": "NewPassword123!"
-                    },
-                    "therapist_name": {
-                        "type": "string",
-                        "example": "Dr. John Doe, S.Psi"
-                    },
-                    "therapist_section": {
-                        "type": "string",
-                        "enum": [
-                            "Okupasi",
-                            "Fisio",
-                            "Wicara",
-                            "Paedagog"
-                        ],
-                        "example": "Fisio"
-                    },
-                    "therapist_phone": {
-                        "type": "string",
-                        "example": "081234567891"
-                    }
-                },
-                "type": "object"
-            },
-            "UserLoginRequest": {
-                "required": [
-                    "identifier",
-                    "password"
-                ],
-                "properties": {
-                    "identifier": {
-                        "description": "Bisa berupa username atau email",
-                        "type": "string",
-                        "example": "johndoe"
-                    },
-                    "password": {
-                        "type": "string",
-                        "format": "password",
-                        "example": "Password123!"
-                    }
-                },
-                "type": "object"
-            },
-            "UserRegisterRequest": {
-                "required": [
-                    "username",
-                    "email",
-                    "password"
-                ],
-                "properties": {
-                    "username": {
-                        "type": "string",
-                        "example": "johndoe"
-                    },
-                    "email": {
-                        "type": "string",
-                        "format": "email",
-                        "example": "john.doe@example.com"
-                    },
-                    "password": {
-                        "description": "Min. 8 karakter, 1 huruf besar, 1 angka, 1 simbol",
-                        "type": "string",
-                        "format": "password",
-                        "example": "Password123!"
-                    },
-                    "password_confirmation": {
-                        "type": "string",
-                        "format": "password",
-                        "example": "Password123!"
-                    }
-                },
-                "type": "object"
-            },
-            "AdminDetailResource": {
-                "properties": {
-                    "id": {
-                        "description": "Admin profile ID",
-                        "type": "string"
-                    },
-                    "user_id": {
-                        "description": "User ID terkait",
-                        "type": "string"
-                    },
-                    "email": {
-                        "description": "Email admin",
-                        "type": "string",
-                        "format": "email"
-                    },
-                    "username": {
-                        "description": "Username admin",
-                        "type": "string"
-                    },
-                    "admin_name": {
-                        "description": "Nama lengkap admin",
-                        "type": "string"
-                    },
-                    "admin_phone": {
-                        "description": "Nomor telepon admin",
-                        "type": "string"
-                    },
-                    "created_at": {
-                        "description": "Creation timestamp",
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "updated_at": {
-                        "description": "Update timestamp",
-                        "type": "string",
-                        "format": "date-time"
-                    }
-                },
-                "type": "object"
-            },
-            "AdminResource": {
-                "properties": {
-                    "id": {
-                        "description": "Admin profile ID",
-                        "type": "string"
-                    },
-                    "user_id": {
-                        "description": "User ID terkait",
-                        "type": "string"
-                    },
-                    "email": {
-                        "description": "Email admin",
-                        "type": "string",
-                        "format": "email"
-                    },
-                    "username": {
-                        "description": "Username admin",
-                        "type": "string"
-                    },
-                    "admin_name": {
-                        "description": "Nama lengkap admin",
-                        "type": "string"
-                    },
-                    "admin_phone": {
-                        "description": "Nomor telepon admin",
-                        "type": "string"
-                    },
-                    "created_at": {
-                        "description": "Creation timestamp",
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "updated_at": {
-                        "description": "Update timestamp",
-                        "type": "string",
-                        "format": "date-time"
-                    }
-                },
-                "type": "object"
-            },
-            "LoginResource": {
-                "properties": {
-                    "id": {
-                        "description": "User ID",
-                        "type": "string"
-                    },
-                    "username": {
-                        "description": "Username",
-                        "type": "string"
-                    },
-                    "email": {
-                        "description": "Email address",
-                        "type": "string",
-                        "format": "email"
-                    },
-                    "role": {
-                        "description": "User role",
-                        "type": "string"
-                    },
-                    "token_type": {
-                        "type": "string",
-                        "example": "Bearer"
-                    },
-                    "access_token": {
-                        "description": "Authentication token",
-                        "type": "string"
-                    },
-                    "created_at": {
-                        "description": "Creation timestamp",
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "updated_at": {
-                        "description": "Update timestamp",
-                        "type": "string",
-                        "format": "date-time"
-                    }
-                },
-                "type": "object"
-            },
-            "ObservationCompletedDetailResource": {
-                "properties": {
-                    "id": {
-                        "description": "Observation ID",
-                        "type": "integer"
-                    },
-                    "child_name": {
-                        "description": "Child's full name",
-                        "type": "string"
-                    },
-                    "child_birth_place_date": {
-                        "description": "Child's birth place and date",
-                        "type": "string"
-                    },
-                    "child_age": {
-                        "description": "Child's current age in years",
-                        "type": "integer"
-                    },
-                    "child_gender": {
-                        "description": "Child's gender",
-                        "type": "string"
-                    },
-                    "child_school": {
-                        "description": "Child's school",
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "child_address": {
-                        "description": "Child's home address",
-                        "type": "string"
-                    },
-                    "total_score": {
-                        "description": "Total score accumulated from the answers",
-                        "type": "integer"
-                    },
-                    "recommendation": {
-                        "description": "Therapist's recommendation after the observation",
-                        "type": "string"
-                    },
-                    "conclusion": {
-                        "description": "Therapist's conclusion after the observation",
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
-            "ObservationQuestionResource": {
-                "properties": {
-                    "id": {
-                        "description": "Question ID",
-                        "type": "integer"
-                    },
-                    "question_code": {
-                        "description": "Unique code for the question",
-                        "type": "string"
-                    },
-                    "age_category": {
-                        "description": "Applicable age category for the question",
-                        "type": "string"
-                    },
-                    "question_number": {
-                        "description": "Sequential number of the question within its category",
-                        "type": "integer"
-                    },
-                    "question_text": {
-                        "description": "The text of the question",
-                        "type": "string"
-                    },
-                    "score": {
-                        "description": "The score value of the question if answered positively",
-                        "type": "integer"
-                    }
-                },
-                "type": "object"
-            },
-            "ObservationScheduledDetailResource": {
-                "properties": {
-                    "id": {
-                        "description": "Observation ID",
-                        "type": "integer"
-                    },
-                    "child_name": {
-                        "description": "Nama lengkap anak",
-                        "type": "string"
-                    },
-                    "child_birth_date": {
-                        "description": "Tanggal lahir anak",
-                        "type": "string",
-                        "format": "date"
-                    },
-                    "child_age": {
-                        "description": "Usia anak saat ini",
-                        "type": "integer"
-                    },
-                    "child_gender": {
-                        "description": "Jenis kelamin anak",
-                        "type": "string"
-                    },
-                    "child_school": {
-                        "description": "Sekolah anak",
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "child_address": {
-                        "description": "Alamat rumah anak",
-                        "type": "string"
-                    },
-                    "scheduled_date": {
-                        "description": "Tanggal jadwal observasi",
-                        "type": "string",
-                        "format": "date"
-                    },
-                    "parent_name": {
-                        "description": "Nama wali",
-                        "type": "string"
-                    },
-                    "parent_type": {
-                        "description": "Tipe wali (cth: ayah, ibu)",
-                        "type": "string"
-                    },
-                    "parent_phone": {
-                        "description": "Nomor telepon wali",
-                        "type": "string"
-                    },
-                    "child_complaint": {
-                        "description": "Keluhan awal anak",
-                        "type": "string"
-                    },
-                    "child_service_choice": {
-                        "description": "Pilihan layanan untuk anak",
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
-            "ObservationsCompletedResource": {
-                "properties": {
-                    "id": {
-                        "description": "Observation ID",
-                        "type": "integer"
-                    },
-                    "age_category": {
-                        "description": "Kategori usia saat observasi",
-                        "type": "string"
-                    },
-                    "child_name": {
-                        "description": "Nama anak",
-                        "type": "string"
-                    },
-                    "observer": {
-                        "description": "Nama terapis yang mengobservasi",
-                        "type": "string"
-                    },
-                    "child_age": {
-                        "description": "Usia anak saat observasi",
-                        "type": "integer"
-                    },
-                    "child_school": {
-                        "description": "Sekolah anak",
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "scheduled_date": {
-                        "description": "Tanggal observasi dilakukan",
-                        "type": "string",
-                        "format": "date"
-                    },
-                    "status": {
-                        "type": "string",
-                        "example": "Completed"
-                    }
-                },
-                "type": "object"
-            },
-            "ObservationsPendingResource": {
-                "properties": {
-                    "id": {
-                        "description": "Observation ID",
-                        "type": "integer"
-                    },
-                    "child_name": {
-                        "description": "Nama anak",
-                        "type": "string"
-                    },
-                    "child_age": {
-                        "description": "Usia anak (tahun)",
-                        "type": "integer"
-                    },
-                    "child_gender": {
-                        "description": "Jenis kelamin anak",
-                        "type": "string"
-                    },
-                    "child_school": {
-                        "description": "Sekolah anak",
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "guardian_name": {
-                        "description": "Nama wali",
-                        "type": "string"
-                    },
-                    "guardian_phone": {
-                        "description": "Nomor telepon wali",
-                        "type": "string"
-                    },
-                    "scheduled_date": {
-                        "description": "Tanggal jadwal observasi",
-                        "type": "string",
-                        "format": "date"
-                    },
-                    "status": {
-                        "description": "Status observasi",
-                        "type": "string",
-                        "example": "Pending"
-                    }
-                },
-                "type": "object"
-            },
-            "ObservationsScheduledResource": {
-                "properties": {
-                    "id": {
-                        "description": "Observation ID",
-                        "type": "integer"
-                    },
-                    "age_category": {
-                        "description": "Kategori usia saat observasi",
-                        "type": "string"
-                    },
-                    "child_name": {
-                        "description": "Nama anak",
-                        "type": "string"
-                    },
-                    "child_gender": {
-                        "description": "Jenis kelamin anak",
-                        "type": "string"
-                    },
-                    "child_age": {
-                        "description": "Usia anak (tahun)",
-                        "type": "integer"
-                    },
-                    "child_school": {
-                        "description": "Sekolah anak",
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "scheduled_date": {
-                        "description": "Tanggal jadwal observasi",
-                        "type": "string",
-                        "format": "date"
-                    },
-                    "status": {
-                        "description": "Status observasi",
-                        "type": "string",
-                        "example": "Scheduled"
-                    }
-                },
-                "type": "object"
-            },
-            "TherapistDetailResource": {
-                "properties": {
-                    "id": {
-                        "description": "Therapist ID",
-                        "type": "string"
-                    },
-                    "user_id": {
-                        "description": "User ID",
-                        "type": "string"
-                    },
-                    "email": {
-                        "description": "Email address",
-                        "type": "string",
-                        "format": "email"
-                    },
-                    "username": {
-                        "description": "Username",
-                        "type": "string"
-                    },
-                    "therapist_name": {
-                        "description": "Therapist name",
-                        "type": "string"
-                    },
-                    "therapist_section": {
-                        "description": "Therapist section",
-                        "type": "string"
-                    },
-                    "therapist_phone": {
-                        "description": "Therapist phone number",
-                        "type": "string"
-                    },
-                    "createdAt": {
-                        "description": "Creation date",
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "updatedAt": {
-                        "description": "Update date",
-                        "type": "string",
-                        "format": "date-time"
-                    }
-                },
-                "type": "object"
-            },
-            "TherapistResource": {
-                "properties": {
-                    "id": {
-                        "description": "Therapist ID",
-                        "type": "string"
-                    },
-                    "user_id": {
-                        "description": "User ID terkait",
-                        "type": "string"
-                    },
-                    "email": {
-                        "description": "Email terapis",
-                        "type": "string",
-                        "format": "email"
-                    },
-                    "username": {
-                        "description": "Username terapis",
-                        "type": "string"
-                    },
-                    "therapist_name": {
-                        "description": "Nama lengkap terapis",
-                        "type": "string"
-                    },
-                    "therapist_section": {
-                        "description": "Bagian/spesialisasi terapis",
-                        "type": "string"
-                    },
-                    "therapist_phone": {
-                        "description": "Nomor telepon terapis",
-                        "type": "string"
-                    },
-                    "created_at": {
-                        "description": "Creation timestamp",
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "updated_at": {
-                        "description": "Update timestamp",
-                        "type": "string",
-                        "format": "date-time"
-                    }
-                },
-                "type": "object"
-            }
-        },
         "securitySchemes": {
             "bearerAuth": {
                 "type": "http",
-                "description": "Masukkan token Bearer Anda",
                 "bearerFormat": "JWT",
                 "scheme": "bearer"
             }
@@ -1874,32 +290,8 @@
     },
     "tags": [
         {
-            "name": "Authentication",
-            "description": "Endpoint untuk otentikasi, registrasi, dan manajemen password."
-        },
-        {
-            "name": "Email Verification",
-            "description": "Endpoint untuk verifikasi email pengguna."
-        },
-        {
-            "name": "Admins",
-            "description": "Endpoint untuk mengelola data admin (khusus Super Admin)."
-        },
-        {
-            "name": "Therapists",
-            "description": "Endpoint untuk mengelola data terapis (khusus Admin)."
-        },
-        {
-            "name": "Observations",
-            "description": "Endpoint untuk melihat dan mengelola data observasi."
-        },
-        {
-            "name": "Auth",
-            "description": "Auth"
-        },
-        {
-            "name": "Registration",
-            "description": "Registration"
+            "name": "Schedules",
+            "description": "API Endpoints untuk Pengelolaan Master Jadwal Terapi Anak"
         }
     ]
 }
