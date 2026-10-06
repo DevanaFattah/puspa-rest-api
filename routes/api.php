@@ -117,36 +117,36 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/users/{type}/unverified', [OwnerEmployeeManagement::class, 'indexUnverified'])
             ->whereIn('type', ['admin', 'therapist']);
         Route::get('/users/{user}/promote-to-assessor', [OwnerEmployeeManagement::class, 'promoteToAssessor'])
-            ->whereUlid('user', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('user');
         Route::get('/users/{user}/activate', [OwnerEmployeeManagement::class, 'activateAccount'])
-            ->whereUlid('user', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('user');
         Route::get('/users/{user}/deactive', [OwnerEmployeeManagement::class, 'deleteAccount'])
-            ->whereUlid('user', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('user');
     });
 
     // ================== ROLE OWNER & ADMIN ==================
     Route::middleware(['role:admin|owner', 'throttle:authenticated'])->group(function () {
         Route::get('/admins', [OwnerAdminUserManagement::class, 'indexAdmin']);
         Route::get('/admins/{admin}', [AdminUserManagement::class, 'showAdminDetail'])
-            ->whereUlid('admin', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('admin');
 
         Route::get('/therapists', [OwnerAdminUserManagement::class, 'indexTherapist']);
         Route::get('/therapists/{therapist}', [AdminUserManagement::class, 'showTherapistDetail'])
-            ->whereUlid('therapist', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('therapist');
 
         Route::get('/children', [OwnerAdminUserManagement::class, 'indexChild']);
         Route::get('/children/{child}', [AdminUserManagement::class, 'showChild'])
-            ->whereUlid('child', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('child');
 
         // ================== SCHEDULES (JADWAL TERAPI) ==================
         Route::get('/schedules', [ScheduleController::class, 'index']);
         Route::post('/schedules', [ScheduleController::class, 'store']);
         Route::get('/schedules/{schedule}', [ScheduleController::class, 'show'])
-            ->whereUlid('schedule', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('schedule');
         Route::put('/schedules/{schedule}', [ScheduleController::class, 'update'])
-            ->whereUlid('schedule', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('schedule');
         Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])
-            ->whereUlid('schedule', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('schedule');
 
         // ================== PRESENSI & RESCHEDULE ==================
         Route::get('/sessions/today', [AttendanceController::class, 'todaySessions']);
@@ -154,13 +154,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/sessions/export', [AttendanceController::class, 'exportAttendance']);
         Route::post('/sessions/qr-scan', [AttendanceController::class, 'scanQrCode']);
         Route::get('/sessions/{session}/qr', [AttendanceController::class, 'getQrCode'])
-            ->whereUlid('session', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('session');
         Route::post('/sessions/{session}/attendance', [AttendanceController::class, 'markAttendance'])
-            ->whereUlid('session', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('session');
         Route::put('/sessions/{session}/attendance', [AttendanceController::class, 'updateAttendance'])
-            ->whereUlid('session', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('session');
         Route::post('/sessions/{session}/reschedule', [RescheduleController::class, 'store'])
-            ->whereUlid('session', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('session');
     });
 
     // ================== ROLE ADMIN ==================
@@ -169,24 +169,24 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/admins/dashboard/today-schedule', [AdminDashboard::class, 'todayTherapySchedule']);
         Route::get('/admins/profile', [AdminProfileManagement::class, 'showProfile']);
         Route::post('/admins/{admin}/profile', [AdminProfileManagement::class, 'updateProfile'])
-            ->whereUlid('admin', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('admin');
         Route::post('/admins', [AdminUserManagement::class, 'storeAdmin']);
         Route::put('/admins/{admin}', [AdminUserManagement::class, 'updateAdmin'])
-            ->whereUlid('admin', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('admin');
         Route::delete('/admins/{admin}', [AdminUserManagement::class, 'destroyAdmin'])
-            ->whereUlid('admin', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('admin');
 
         Route::post('/therapists', [AdminUserManagement::class, 'storeTherapist']);
         Route::put('/therapists/{therapist}', [AdminUserManagement::class, 'updateTherapist'])
-            ->whereUlid('therapist', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('therapist');
         Route::delete('/therapists/{therapist}', [AdminUserManagement::class, 'destroyTherapist'])
-            ->whereUlid('therapist', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('therapist');
 
         Route::post('/children', [AdminUserManagement::class, 'storeChild']);
         Route::put('/children/{child}', [AdminUserManagement::class, 'updateChild'])
-            ->whereUlid('child', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('child');
         Route::delete('/children/{child}', [AdminUserManagement::class, 'destroyChild'])
-            ->whereUlid('child', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('child');
 
         Route::put('/observations/{observation}', [AdminObservationManagement::class, 'updateObservationDate'])
             ->whereNumber('observation');
@@ -213,7 +213,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/asse-thera/dashboard', [AssessorTherapistDashboard::class, 'index']);
         Route::get('/asse-thera/profile', [AssessorTherapistProfileManagement::class, 'showProfile']);
         Route::post('/asse-thera/{therapist}/profile', [AssessorTherapistProfileManagement::class, 'updateProfile'])
-            ->whereUlid('therapist', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('therapist');
         Route::get('/asse-thera/upcoming-schedules', [AssessorTherapistDashboard::class, 'upcomingSchedules']);
         Route::post('/observations/{observation}/submit', [AssessorTherapistObservationManagement::class, 'submit'])
             ->whereNumber('observation');
@@ -286,15 +286,15 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::get('/profile', [ParentProfileManagement::class, 'showProfile']);
         Route::post('/profile/{guardian}', [ParentProfileManagement::class, 'updateProfile'])
-            ->whereUlid('guardian', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('guardian');
 
         Route::get('/children', [ParentChildManagement::class, 'indexChildren']);
         Route::get('/children/{child}', [ParentChildManagement::class, 'showChild'])
-            ->whereUlid('child', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('child');
         Route::delete('/children/{child}', [ParentChildManagement::class, 'destroyChild'])
-            ->whereUlid('child', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('child');
         Route::put('/children/{child}', [ParentChildManagement::class, 'updateChild'])
-            ->whereUlid('child', '[0-9A-HJ-NP-TV-Z]{26}');
+            ->whereUlid('child');
         Route::post('/children', [ParentChildManagement::class, 'storeChild']);
 
         // Untuk menyimpan data lengkap ortu Ayah, Ibu, & Wali (Termasuk di Data Umum)
