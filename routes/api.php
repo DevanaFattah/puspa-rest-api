@@ -14,6 +14,7 @@ use App\Http\Controllers\Assessor\AssessmentController as AssessorAssessmentMana
 use App\Http\Controllers\Assessor_Therapist\ObservationController as AssessorTherapistObservationManagement;
 use App\Http\Controllers\Assessor_Therapist\ProfileController as AssessorTherapistProfileManagement;
 use App\Http\Controllers\Assessor_Therapist\DashboardController as AssessorTherapistDashboard;
+use App\Http\Controllers\Assessor_Therapist\TherapySessionController as AssessorTherapistTherapySession;
 use App\Http\Controllers\Owner\EmployeeController as OwnerEmployeeManagement;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboard;
 use App\Http\Controllers\Owner_Admin\UserController as OwnerAdminUserManagement;
@@ -217,6 +218,9 @@ Route::middleware(['role:admin|terapis|asesor', 'throttle:authenticated'])->grou
         Route::get('/asse-thera/upcoming-schedules', [AssessorTherapistDashboard::class, 'upcomingSchedules']);
         Route::post('/observations/{observation}/submit', [AssessorTherapistObservationManagement::class, 'submit'])
             ->whereNumber('observation');
+
+        // ================== THERAPY SESSIONS ==================
+        Route::get('/therapy_sessions', [AssessorTherapistTherapySession::class, 'index']);
     });
 
     // ================== ROLE ASSESSOR & ADMIN ==================
