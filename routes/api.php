@@ -221,6 +221,8 @@ Route::middleware(['role:admin|terapis|asesor', 'throttle:authenticated'])->grou
 
         // ================== THERAPY SESSIONS ==================
         Route::get('/therapy_sessions', [AssessorTherapistTherapySession::class, 'index']);
+        Route::get('/therapy_sessions/{session}', [AssessorTherapistTherapySession::class, 'show'])
+            ->whereUlid('session');
     });
 
     // ================== ROLE ASSESSOR & ADMIN ==================

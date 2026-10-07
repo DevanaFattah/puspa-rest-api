@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Assessor_Therapist;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\ResponseFormatter;
 use App\Http\Requests\IndexTherapySessionRequest;
+use App\Http\Resources\TherapySessionDetailResource;
 use App\Http\Resources\TherapySessionResource;
+use App\Models\TherapySession;
 use App\Services\TherapySessionService;
 use Illuminate\Http\JsonResponse;
 
@@ -15,7 +17,9 @@ class TherapySessionController extends Controller
 
     public function __construct(
         private TherapySessionService $therapySessionService,
-    ) {}
+    )
+    {
+    }
 
     /**
      * GET /therapy_sessions
@@ -41,6 +45,24 @@ class TherapySessionController extends Controller
             'Daftar Sesi Terapi',
             200,
             $sessions
+        );
+    }
+
+    /**
+     * GET /therapy_sessions/{session}
+     *
+     * Return the full detail of a single therapy session.
+     * Includes child age, gender, school, birth place/date,
+     * guardian phone & relationship, and reschedule date if present.
+     */
+    public function show(TherapySession $session): JsonResponse
+    {
+        $session = $this->therapySessionService->getTherapySessionDetail($session);
+
+        return $this->successResponse(
+            new TherapySessionDetailResource($session),
+            'Detail Sesi Terapi',
+            200
         );
     }
 }
