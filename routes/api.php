@@ -138,16 +138,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/children/{child}', [AdminUserManagement::class, 'showChild'])
             ->whereUlid('child');
 
-        // ================== SCHEDULES (JADWAL TERAPI) ==================
-        Route::get('/schedules', [ScheduleController::class, 'index']);
-        Route::post('/schedules', [ScheduleController::class, 'store']);
-        Route::get('/schedules/{schedule}', [ScheduleController::class, 'show'])
-            ->whereUlid('schedule');
-        Route::put('/schedules/{schedule}', [ScheduleController::class, 'update'])
-            ->whereUlid('schedule');
-        Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])
-            ->whereUlid('schedule');
-
         // ================== PRESENSI & RESCHEDULE ==================
         Route::get('/sessions/today', [AttendanceController::class, 'todaySessions']);
         Route::get('/sessions/rescheduled', [AttendanceController::class, 'rescheduledSessions']);
@@ -195,18 +185,28 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::get('/assessments/{status}/admin', [AdminAssessmentManagement::class, 'indexAssessments'])
             ->whereIn('status', ['scheduled', 'completed']); // using query filter: date, and search
-    });
 
-    // ================== ROLE ADMIN, THERAPIST, ASSESSOR ==================
-    Route::middleware(['role:admin|terapis|asesor', 'throttle:authenticated'])->group(function () {
-        // for status pending using query: search
-        // for status scheduled & completed using query: date, search
-        Route::get('/observations/{status}', [AdminAssessorTherapistObservationManagement::class, 'indexByStatus'])
-            ->whereIn('status', ['pending', 'scheduled', 'completed']);
-        Route::get('/observations/{observation}/detail', [AdminAssessorTherapistObservationManagement::class, 'showDetailByType'])
-            ->whereNumber('observation')
-            ->whereIn('type', ['scheduled', 'completed', 'question', 'answer']);
+        // ================== SCHEDULES (JADWAL TERAPI) ==================
+        Route::get('/schedules', [ScheduleController::class, 'index']);
+        Route::post('/schedules', [ScheduleController::class, 'store']);
+        Route::get('/schedules/{schedule}', [ScheduleController::class, 'show'])
+            ->whereUlid('schedule');
+        Route::put('/schedules/{schedule}', [ScheduleController::class, 'update'])
+            ->whereUlid('schedule');
+        Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])
+            ->whereUlid('schedule');
     });
+});
+
+// ================== ROLE ADMIN, THERAPIST, ASSESSOR ==================
+Route::middleware(['role:admin|terapis|asesor', 'throttle:authenticated'])->group(function () {
+    // for status pending using query: search
+    // for status scheduled & completed using query: date, search
+    Route::get('/observations/{status}', [AdminAssessorTherapistObservationManagement::class, 'indexByStatus'])
+        ->whereIn('status', ['pending', 'scheduled', 'completed']);
+    Route::get('/observations/{observation}/detail', [AdminAssessorTherapistObservationManagement::class, 'showDetailByType'])
+        ->whereNumber('observation')
+        ->whereIn('type', ['scheduled', 'completed', 'question', 'answer']);
 
     // ================== ROLE THERAPIST & ASSESSOR ==================
     Route::middleware(['role:terapis|asesor', 'throttle:authenticated'])->group(function () {

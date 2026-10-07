@@ -34,23 +34,12 @@ class AttendanceController extends Controller
 
         $sessions = $this->attendanceService->getTodaySessions($filters, $perPage);
 
-        return $this->successResponse([
-            'items' => SessionAttendanceResource::collection($sessions->items()),
-            'meta' => [
-                'current_page' => $sessions->currentPage(),
-                'last_page' => $sessions->lastPage(),
-                'per_page' => $sessions->perPage(),
-                'total' => $sessions->total(),
-                'from' => $sessions->firstItem(),
-                'to' => $sessions->lastItem(),
-            ],
-            'links' => [
-                'first' => $sessions->url(1),
-                'last' => $sessions->url($sessions->lastPage()),
-                'prev' => $sessions->previousPageUrl(),
-                'next' => $sessions->nextPageUrl(),
-            ],
-        ], 'Daftar Sesi Presensi Terapi', 200);
+        return $this->successResponse(
+            SessionAttendanceResource::collection($sessions->items()),
+            'Daftar Sesi Presensi Terapi',
+            200,
+            $sessions
+        );
     }
 
     public function rescheduledSessions(Request $request): JsonResponse
@@ -60,23 +49,12 @@ class AttendanceController extends Controller
 
         $reschedules = $this->attendanceService->getRescheduledSessions($filters, $perPage);
 
-        return $this->successResponse([
-            'items' => RescheduleResource::collection($reschedules->items()),
-            'meta' => [
-                'current_page' => $reschedules->currentPage(),
-                'last_page' => $reschedules->lastPage(),
-                'per_page' => $reschedules->perPage(),
-                'total' => $reschedules->total(),
-                'from' => $reschedules->firstItem(),
-                'to' => $reschedules->lastItem(),
-            ],
-            'links' => [
-                'first' => $reschedules->url(1),
-                'last' => $reschedules->url($reschedules->lastPage()),
-                'prev' => $reschedules->previousPageUrl(),
-                'next' => $reschedules->nextPageUrl(),
-            ],
-        ], 'Daftar Sesi Reschedule Terapi', 200);
+        return $this->successResponse(
+            RescheduleResource::collection($reschedules->items()),
+            'Daftar Sesi Reschedule Terapi',
+            200,
+            $reschedules
+        );
     }
 
     public function markAttendance(MarkAttendanceRequest $request, TherapySession $session): JsonResponse
@@ -118,7 +96,8 @@ class AttendanceController extends Controller
             'token' => 'required|string',
         ]);
 
-        try {
+        try
+        {
             $session = $this->attendanceService->processQrScan($request->token);
 
             return $this->successResponse(
@@ -126,7 +105,9 @@ class AttendanceController extends Controller
                 'Presensi QR Code berhasil dicatat',
                 200
             );
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e)
+        {
             return $this->errorResponse($e->getMessage(), [], 400);
         }
     }
@@ -138,7 +119,8 @@ class AttendanceController extends Controller
 
         $filename = 'rekap_kehadiran_' . date('Y-m-d_His');
 
-        if ($format === 'pdf') {
+        if ($format === 'pdf')
+        {
             $export = new AttendanceExport($filters);
             $sessions = $export->collection();
             $pdf = Pdf::loadView('exports.attendance_pdf', compact('sessions'))

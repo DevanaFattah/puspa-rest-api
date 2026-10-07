@@ -52,23 +52,12 @@ class ScheduleController extends Controller
 
         $schedules = $this->scheduleService->getPaginatedSchedules($filters, $perPage);
 
-        return $this->successResponse([
-            'items' => ScheduleResource::collection($schedules->items()),
-            'meta' => [
-                'current_page' => $schedules->currentPage(),
-                'last_page' => $schedules->lastPage(),
-                'per_page' => $schedules->perPage(),
-                'total' => $schedules->total(),
-                'from' => $schedules->firstItem(),
-                'to' => $schedules->lastItem(),
-            ],
-            'links' => [
-                'first' => $schedules->url(1),
-                'last' => $schedules->url($schedules->lastPage()),
-                'prev' => $schedules->previousPageUrl(),
-                'next' => $schedules->nextPageUrl(),
-            ],
-        ], 'Daftar Master Jadwal Terapi', 200);
+        return $this->successResponse(
+            ScheduleResource::collection($schedules->items()),
+            'Daftar Master Jadwal Terapi',
+            200,
+            $schedules
+        );
     }
 
     /**
