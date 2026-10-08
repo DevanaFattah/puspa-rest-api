@@ -19,8 +19,25 @@ class AttendanceService
             'rescheduleOriginal.newSession',
         ]);
 
-        $date = !empty($filters['date']) ? $filters['date'] : Carbon::today()->toDateString();
-        $query->whereDate('session_date', $date);
+        if (!empty($filters['date_from']) && !empty($filters['date_to'])) {
+            $query->whereBetween('session_date', [$filters['date_from'], $filters['date_to']]);
+        } elseif (!empty($filters['date_from'])) {
+            $query->whereDate('session_date', '>=', $filters['date_from']);
+        } elseif (!empty($filters['date_to'])) {
+            $query->whereDate('session_date', '<=', $filters['date_to']);
+        } else {
+            $date = !empty($filters['date']) ? $filters['date'] : null;
+            if ($date) {
+                $query->whereDate('session_date', $date);
+            }
+        }
+
+        if (!empty($filters['child_id'])) {
+            $childId = $filters['child_id'];
+            $query->whereHas('schedule', function ($q) use ($childId) {
+                $q->where('child_id', $childId);
+            });
+        }
 
         if (!empty($filters['therapist_id'])) {
             $therapistId = $filters['therapist_id'];

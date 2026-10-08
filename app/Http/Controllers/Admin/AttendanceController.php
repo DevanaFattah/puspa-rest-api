@@ -29,7 +29,7 @@ class AttendanceController extends Controller
 
     public function todaySessions(Request $request): JsonResponse
     {
-        $filters = $request->only(['date', 'therapist_id', 'therapy_type', 'status', 'search']);
+        $filters = $request->only(['date', 'date_from', 'date_to', 'child_id', 'therapist_id', 'therapy_type', 'status', 'search']);
         $perPage = (int) $request->input('per_page', 10);
 
         $sessions = $this->attendanceService->getTodaySessions($filters, $perPage);
