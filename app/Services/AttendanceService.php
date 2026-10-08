@@ -117,8 +117,12 @@ class AttendanceService
             $session->notes = $data['notes'];
         }
 
-        if ($data['status'] === 'present' && !$session->checked_in_at) {
-            $session->checked_in_at = Carbon::now();
+        if ($data['status'] === 'present') {
+            if (!$session->checked_in_at) {
+                $session->checked_in_at = Carbon::now();
+            }
+        } else {
+            $session->checked_in_at = null;
         }
 
         $session->save();
