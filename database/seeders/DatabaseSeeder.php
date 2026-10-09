@@ -37,6 +37,9 @@ class DatabaseSeeder extends Seeder
 
             // Schedule & Therapy Sessions Dummy Data
             ScheduleSeeder::class,
+
+            // Therapy SOAP Notes Dummy Data
+            TherapySoapSeeder::class,
         ]);
     }
 }
