@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\ProfileController as AdminProfileManagement;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\AttendanceController;
 use App\Http\Controllers\Admin\RescheduleController;
+use App\Http\Controllers\Admin\FinanceController;
 use App\Http\Controllers\Admin\ObservationController as AdminObservationManagement;
 use App\Http\Controllers\Admin\UserController as AdminUserManagement;
 use App\Http\Controllers\Admin\AssessmentController as AdminAssessmentManagement;
@@ -150,8 +151,17 @@ Route::middleware('auth:sanctum')->group(function () {
             ->whereUlid('session');
         Route::put('/sessions/{session}/attendance', [AttendanceController::class, 'updateAttendance'])
             ->whereUlid('session');
-        Route::post('/sessions/{session}/reschedule', [RescheduleController::class, 'store'])
-            ->whereUlid('session');
+        // ================== KEUANGAN / FINANCE ==================
+        Route::get('/finance/children-guardians', [FinanceController::class, 'childrenWithGuardians']);
+        Route::get('/finance/invoices', [FinanceController::class, 'indexInvoices']);
+        Route::post('/finance/invoices', [FinanceController::class, 'storeInvoice']);
+        Route::put('/finance/invoices/{id}', [FinanceController::class, 'updateInvoice'])->whereUlid('id');
+        Route::delete('/finance/invoices/{id}', [FinanceController::class, 'deleteInvoice'])->whereUlid('id');
+        Route::post('/finance/invoices/{id}/pay', [FinanceController::class, 'payInvoice'])->whereUlid('id');
+        Route::get('/finance/invoices/{id}/refund-attendance', [FinanceController::class, 'attendanceForRefund'])->whereUlid('id');
+        Route::post('/finance/invoices/{id}/refund', [FinanceController::class, 'refundInvoice'])->whereUlid('id');
+        Route::get('/finance/credits', [FinanceController::class, 'credits']);
+        Route::get('/finance/transactions', [FinanceController::class, 'transactions']);
     });
 
     // ================== ROLE ADMIN ==================
