@@ -45,6 +45,14 @@ class TherapySessionResource extends JsonResource
 
         $rawType = $schedule?->therapy_type;
 
+        // Reschedule info: this session was the original that got rescheduled
+        $reschedule     = $this->rescheduleOriginal;
+        $newSession     = $reschedule?->newSession;
+        $newSessionDate = $newSession?->session_date instanceof Carbon
+            ? $newSession->session_date
+            : ($newSession?->session_date ? Carbon::parse($newSession->session_date) : null);
+        $newTherapist   = $newSession?->substituteTherapist;
+
         return [
             'id'                     => $this->id,
             'session_number'         => $this->session_number,
@@ -78,6 +86,20 @@ class TherapySessionResource extends JsonResource
             'status'                 => $this->status,
             'notes'                  => $this->notes,
             'checked_in_at'          => $this->checked_in_at?->toIso8601String(),
+
+            // Whether a SOAP record has been written for this session
+            'has_soap'               => $this->soap !== null,
+
+            // Reschedule info (populated only if this session was rescheduled)
+            'is_rescheduled'         => $reschedule !== null,
+            'reschedule_info'        => $reschedule ? [
+                'reason'             => $reschedule->reason,
+                'requested_by'       => $reschedule->requested_by,
+                'new_session_id'     => $newSession?->id,
+                'new_session_date'   => $newSessionDate?->format('Y-m-d'),
+                'new_session_date_formatted' => $newSessionDate?->translatedFormat('d F Y'),
+                'new_therapist_name' => $newTherapist?->therapist_name ?? '-',
+            ] : null,
 
             'created_at'             => $this->created_at?->toIso8601String(),
             'updated_at'             => $this->updated_at?->toIso8601String(),

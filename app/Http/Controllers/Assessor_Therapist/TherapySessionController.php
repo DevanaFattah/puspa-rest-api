@@ -17,9 +17,7 @@ class TherapySessionController extends Controller
 
     public function __construct(
         private TherapySessionService $therapySessionService,
-    )
-    {
-    }
+    ) {}
 
     /**
      * GET /therapy_sessions

@@ -26,7 +26,7 @@ class IndexTherapySessionRequest extends FormRequest
     {
         return [
             'therapy_type' => ['nullable', 'string', 'in:okupasi,wicara,paedagog,fisio'],
-            'status'       => ['nullable', 'string', 'in:scheduled,completed,cancelled,pending'],
+            'status'       => ['nullable', 'string', 'in:scheduled,pending,rescheduled,completed'],
             'search'       => ['nullable', 'string', 'max:100'],
             'date_range'   => ['nullable', 'string', 'in:today,tomorrow,this_week,this_month'],
             'date'         => ['nullable', 'date', 'date_format:Y-m-d'],
