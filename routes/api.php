@@ -30,11 +30,13 @@ use App\Http\Controllers\VerificationController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/cors-test', function () {
+Route::get('/cors-test', function ()
+{
     return response()->json(['message' => 'CORS test successful!']);
 });
 
-Route::get('/test-paths', function () {
+Route::get('/test-paths', function ()
+{
     return response()->json([
         'public_path' => public_path(),
         'storage_link' => public_path('storage'),
@@ -47,7 +49,8 @@ Route::get('/test-paths', function () {
     ]);
 });
 
-Route::get('/clear-cache', function () {
+Route::get('/clear-cache', function ()
+{
     Artisan::call('config:clear');
     Artisan::call('cache:clear');
     Artisan::call('route:clear');
@@ -67,7 +70,8 @@ Route::get('/clear-cache', function () {
 Route::post('/registration', [RegistrationController::class, 'store'])
     ->middleware('throttle:api');
 
-Route::prefix('auth')->group(function () {
+Route::prefix('auth')->group(function ()
+{
     Route::post('/register', [AuthController::class, 'register'])
         ->middleware('throttle:register');;
     Route::post('/login', [AuthController::class, 'login'])
@@ -95,7 +99,8 @@ Route::prefix('auth')->group(function () {
 });
 
 // ================== ROUTE AUTHENTICATED ==================
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum')->group(function ()
+{
     // ================== GLOBAL ==================
     Route::post('/auth/logout', [AuthController::class, 'logout'])
         ->middleware('throttle:logout');
@@ -104,7 +109,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/profile/update-password', [AuthController::class, 'updatePassword']);
 
     // ================== NOTIFICATIONS ==================
-    Route::prefix('notifications')->group(function () {
+    Route::prefix('notifications')->group(function ()
+    {
         Route::get('/', [\App\Http\Controllers\NotificationController::class, 'index']);
         Route::get('/read-all', [\App\Http\Controllers\NotificationController::class, 'readAll']);
         Route::get('/{id}/read', [\App\Http\Controllers\NotificationController::class, 'read']);
@@ -114,7 +120,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     // ================== ROLE OWNER ==================
-    Route::middleware(['role:owner', 'throttle:authenticated'])->group(function () {
+    Route::middleware(['role:owner', 'throttle:authenticated'])->group(function ()
+    {
         Route::get('/owners/dashboard', [OwnerDashboard::class, 'index']);
         Route::get('/users/{type}/unverified', [OwnerEmployeeManagement::class, 'indexUnverified'])
             ->whereIn('type', ['admin', 'therapist']);
@@ -127,7 +134,8 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // ================== ROLE OWNER & ADMIN ==================
-    Route::middleware(['role:admin|owner', 'throttle:authenticated'])->group(function () {
+    Route::middleware(['role:admin|owner', 'throttle:authenticated'])->group(function ()
+    {
         Route::get('/admins', [OwnerAdminUserManagement::class, 'indexAdmin']);
         Route::get('/admins/{admin}', [AdminUserManagement::class, 'showAdminDetail'])
             ->whereUlid('admin');
@@ -156,7 +164,8 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // ================== ROLE ADMIN ==================
-    Route::middleware(['role:admin', 'throttle:authenticated'])->group(function () {
+    Route::middleware(['role:admin', 'throttle:authenticated'])->group(function ()
+    {
         Route::get('/admins/dashboard/stats', [AdminDashboard::class, 'index']);
         Route::get('/admins/dashboard/today-schedule', [AdminDashboard::class, 'todayTherapySchedule']);
         Route::get('/admins/profile', [AdminProfileManagement::class, 'showProfile']);
@@ -201,7 +210,8 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 // ================== ROLE ADMIN, THERAPIST, ASSESSOR ==================
-Route::middleware(['role:admin|terapis|asesor', 'throttle:authenticated'])->group(function () {
+Route::middleware(['role:admin|terapis|asesor', 'throttle:authenticated'])->group(function ()
+{
     // for status pending using query: search
     // for status scheduled & completed using query: date, search
     Route::get('/observations/{status}', [AdminAssessorTherapistObservationManagement::class, 'indexByStatus'])
@@ -211,7 +221,8 @@ Route::middleware(['role:admin|terapis|asesor', 'throttle:authenticated'])->grou
         ->whereIn('type', ['scheduled', 'completed', 'question', 'answer']);
 
     // ================== ROLE THERAPIST & ASSESSOR ==================
-    Route::middleware(['role:terapis|asesor', 'throttle:authenticated'])->group(function () {
+    Route::middleware(['role:terapis|asesor', 'throttle:authenticated'])->group(function ()
+    {
         Route::get('/asse-thera/dashboard', [AssessorTherapistDashboard::class, 'index']);
         Route::get('/asse-thera/profile', [AssessorTherapistProfileManagement::class, 'showProfile']);
         Route::post('/asse-thera/{therapist}/profile', [AssessorTherapistProfileManagement::class, 'updateProfile'])
@@ -227,11 +238,14 @@ Route::middleware(['role:admin|terapis|asesor', 'throttle:authenticated'])->grou
 
         // ================== THERAPY SOAPS ==================
         Route::get('/therapy_soaps', [AssessorTherapistTherapySoap::class, 'index']);
+        Route::post('/therapy_soaps', [AssessorTherapistTherapySoap::class, 'store']);
     });
 
     // ================== ROLE ASSESSOR & ADMIN ==================
-    Route::middleware(['role:admin|asesor', 'throttle:authenticated'])->group(function () {
-        Route::prefix('assessments')->group(function () {
+    Route::middleware(['role:admin|asesor', 'throttle:authenticated'])->group(function ()
+    {
+        Route::prefix('assessments')->group(function ()
+        {
             Route::patch('/{assessment}', [AdminAssessmentManagement::class, 'updateAssessmentDate'])
                 ->whereNumber('assessment');
             Route::get('/{assessment}/detail', [AdminAssessorAssessmentManagement::class, 'showDetailScheduled'])
@@ -255,8 +269,10 @@ Route::middleware(['role:admin|terapis|asesor', 'throttle:authenticated'])->grou
     });
 
     // ================== ROLE ASSESSOR ==================
-    Route::middleware(['role:asesor', 'throttle:authenticated'])->group(function () {
-        Route::prefix('assessments')->group(function () {
+    Route::middleware(['role:asesor', 'throttle:authenticated'])->group(function ()
+    {
+        Route::prefix('assessments')->group(function ()
+        {
             Route::get('/{status}', [AssessorAssessmentManagement::class, 'indexAssessmentsByType'])
                 ->whereIn('status', ['scheduled', 'completed']); // using query filter: date, and search
             Route::get('/{type}/question', [AssessorAssessmentManagement::class, 'indexAssessorQuestionsByType'])
@@ -286,8 +302,10 @@ Route::middleware(['role:admin|terapis|asesor', 'throttle:authenticated'])->grou
     });
 
     // ================== ROLE ORANG TUA / USER ==================
-    Route::middleware(['verified', 'role:user', 'throttle:authenticated'])->prefix('my')->group(function () {
-        Route::prefix('dashboard')->group(function () {
+    Route::middleware(['verified', 'role:user', 'throttle:authenticated'])->prefix('my')->group(function ()
+    {
+        Route::prefix('dashboard')->group(function ()
+        {
             Route::get('/stats', [ParentDashboard::class, 'index']);
             Route::get('/chart', [ParentDashboard::class, 'chartData']);
             Route::get('/upcoming-schedules', [ParentDashboard::class, 'upcomingSchedules']);
@@ -313,7 +331,8 @@ Route::middleware(['role:admin|terapis|asesor', 'throttle:authenticated'])->grou
         // Untuk menampilkan asasmen terjadwal milik anak
         Route::get('/assessments', [ParentAssessmentManagement::class, 'indexChildrenAssessment']);
 
-        Route::prefix('assessments')->group(function () {
+        Route::prefix('assessments')->group(function ()
+        {
             Route::get('/{type}/question', [ParentAssessmentManagement::class, 'indexParentQuestionsByType'])
                 ->whereIn('type', [
                     'parent_general',
