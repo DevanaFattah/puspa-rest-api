@@ -30,6 +30,7 @@ class TherapySessionController extends Controller
      *   - search       : partial match on child or parent name
      *   - date_range   : 'today' | 'tomorrow' | 'this_week' | 'this_month'
      *   - date         : specific date in Y-m-d format (overrides date_range)
+     *   - my_sessions  : boolean (filter only current authenticated therapist's sessions)
      *   - per_page     : items per page (default 15, max 100)
      *   - page         : page number (default 1)
      */

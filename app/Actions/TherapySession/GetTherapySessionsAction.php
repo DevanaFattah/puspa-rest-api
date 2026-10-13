@@ -15,6 +15,7 @@ class GetTherapySessionsAction
      *   - therapy_type : 'okupasi' | 'wicara' | 'paedagog' | 'fisio'
      *   - status       : 'scheduled' | 'pending' | 'rescheduled' | 'completed'
      *   - search       : partial match on child_name or guardian_name
+     *   - my_sessions  : boolean (filter only sessions belonging to current authenticated therapist)
      *   - date_range   : 'today' | 'tomorrow' | 'this_week' | 'this_month'
      *   - date         : specific date string in 'Y-m-d' format (overrides date_range)
      *   - per_page     : items per page (default: 15)
@@ -47,6 +48,21 @@ class GetTherapySessionsAction
                 'rescheduleOriginal.newSession:id,session_date,therapist_id',
                 'rescheduleOriginal.newSession.substituteTherapist:id,therapist_name',
             ])
+            // Filter by my_sessions (current authenticated therapist) or specific therapist_id
+            ->when(filter_var($filters['my_sessions'] ?? false, FILTER_VALIDATE_BOOLEAN) || !empty($filters['therapist_id']), function ($q) use ($filters) {
+                $therapistId = $filters['therapist_id'] ?? auth()->user()?->therapist?->id;
+                if ($therapistId) {
+                    $q->where(function ($sub) use ($therapistId) {
+                        $sub->where('therapy_sessions.therapist_id', $therapistId)
+                            ->orWhere(function ($nested) use ($therapistId) {
+                                $nested->whereNull('therapy_sessions.therapist_id')
+                                    ->whereHas('schedule', fn($s) => $s->where('therapist_id', $therapistId));
+                            });
+                    });
+                } else {
+                    $q->whereRaw('1 = 0');
+                }
+            })
             // Filter by therapy_type (via related schedule)
             ->when($filters['therapy_type'] ?? null, function ($q, $type) {
                 $q->whereHas('schedule', fn($s) => $s->where('therapy_type', $type));
@@ -59,8 +75,8 @@ class GetTherapySessionsAction
             ->when($status === 'pending', function ($q) {
                 // Overdue sessions: past date, pending/present DB status, no SOAP
                 $q->whereDate('session_date', '<', Carbon::today())
-                  ->whereIn('status', ['pending', 'present'])
-                  ->whereDoesntHave('soap');
+                    ->whereIn('status', ['pending', 'present'])
+                    ->whereDoesntHave('soap');
             })
             ->when($status === 'rescheduled', function ($q) {
                 // Sessions that appear as the original in a reschedule record
@@ -69,7 +85,7 @@ class GetTherapySessionsAction
             ->when($status === 'completed', function ($q) {
                 // Sessions where child was present AND soap has been written
                 $q->where('status', 'present')
-                  ->whereHas('soap');
+                    ->whereHas('soap');
             })
             // Search by child name or guardian name
             ->when($filters['search'] ?? null, function ($q, $search) {

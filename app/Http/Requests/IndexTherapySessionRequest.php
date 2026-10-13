@@ -30,6 +30,7 @@ class IndexTherapySessionRequest extends FormRequest
             'search'       => ['nullable', 'string', 'max:100'],
             'date_range'   => ['nullable', 'string', 'in:today,tomorrow,this_week,this_month'],
             'date'         => ['nullable', 'date', 'date_format:Y-m-d'],
+            'my_sessions'  => ['nullable', 'boolean'],
             'per_page'     => ['nullable', 'integer', 'min:1', 'max:100'],
             'page'         => ['nullable', 'integer', 'min:1'],
         ];
@@ -38,13 +39,14 @@ class IndexTherapySessionRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'therapy_type.in'   => 'Jenis terapi tidak valid. Pilihan: okupasi, wicara, paedagog, fisio.',
-            'status.in'         => 'Status tidak valid. Pilihan: scheduled, completed, cancelled, pending.',
-            'date_range.in'     => 'Rentang tanggal tidak valid. Pilihan: today, tomorrow, this_week, this_month.',
-            'date.date_format'  => 'Format tanggal harus Y-m-d (contoh: 2025-01-01).',
-            'per_page.integer'  => 'Per halaman harus berupa angka.',
-            'per_page.min'      => 'Per halaman minimal 1.',
-            'per_page.max'      => 'Per halaman maksimal 100.',
+            'therapy_type.in'     => 'Jenis terapi tidak valid. Pilihan: okupasi, wicara, paedagog, fisio.',
+            'status.in'           => 'Status tidak valid. Pilihan: scheduled, completed, cancelled, pending.',
+            'date_range.in'       => 'Rentang tanggal tidak valid. Pilihan: today, tomorrow, this_week, this_month.',
+            'date.date_format'    => 'Format tanggal harus Y-m-d (contoh: 2025-01-01).',
+            'my_sessions.boolean' => 'Format my_sessions harus berupa boolean (true/false atau 1/0).',
+            'per_page.integer'    => 'Per halaman harus berupa angka.',
+            'per_page.min'        => 'Per halaman minimal 1.',
+            'per_page.max'        => 'Per halaman maksimal 100.',
         ];
     }
 }
