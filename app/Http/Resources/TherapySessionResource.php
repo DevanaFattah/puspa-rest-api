@@ -91,7 +91,7 @@ class TherapySessionResource extends JsonResource
             'has_soap'               => $this->soap !== null,
 
             // Reschedule info (populated only if this session was rescheduled)
-            'is_rescheduled'         => $reschedule !== null,
+            'is_reschedule'          => $this->rescheduleReplacement !== null,
             'reschedule_info'        => $reschedule ? [
                 'reason'             => $reschedule->reason,
                 'requested_by'       => $reschedule->requested_by,

@@ -116,7 +116,7 @@ class TherapySessionDetailResource extends JsonResource
             'relationship_with_child'   => $guardian?->relationship_with_child ?? '-',
 
             // ── Reschedule (null when not rescheduled) ────────────────────
-            'is_rescheduled'            => $rescheduleInfo !== null,
+            'is_reschedule'             => $this->rescheduleReplacement !== null,
             'reschedule_info'           => $rescheduleInfo,
 
             'created_at'                => $this->created_at?->toIso8601String(),

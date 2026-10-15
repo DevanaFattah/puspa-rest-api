@@ -69,8 +69,9 @@ class GetTherapySessionsAction
             })
             // Virtual status filters
             ->when($status === 'scheduled', function ($q) {
-                // All sessions that do NOT yet have a SOAP record
-                $q->whereDoesntHave('soap');
+                // Pending sessions that do NOT yet have a SOAP record
+                $q->whereDoesntHave('soap')
+                    ->whereIn('status', ['pending', 'present']);
             })
             ->when($status === 'pending', function ($q) {
                 // Overdue sessions: past date, pending/present DB status, no SOAP

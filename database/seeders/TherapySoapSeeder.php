@@ -63,7 +63,8 @@ class TherapySoapSeeder extends Seeder
 
         $sessions = TherapySession::with('schedule')->get();
 
-        foreach ($sessions as $session) {
+        for ($i = 0; $i < 100; $i++) {
+            $session = $sessions[$i];
             if (TherapySoap::where('therapy_session_id', $session->id)->exists()) {
                 continue;
             }
@@ -88,6 +89,6 @@ class TherapySoapSeeder extends Seeder
                 'advanced_assessment' => $data['advanced_assessment'],
                 'advanced_plan' => $data['advanced_plan'],
             ]);
-        }
+        };
     }
 }
