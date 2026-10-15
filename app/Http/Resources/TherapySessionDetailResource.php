@@ -97,6 +97,7 @@ class TherapySessionDetailResource extends JsonResource
             'child_name'                => $child?->child_name               ?? '-',
             'medical_record_number'     => $child?->medical_record_number    ?? '-',
             'child_gender'              => $child?->child_gender              ?? '-',
+            'child_address'             => $child?->child_address              ?? '-',
             'child_age'                 => $age,
             'child_birth_date'          => $birthDate
                 ? Carbon::parse($birthDate)->format('Y-m-d')
