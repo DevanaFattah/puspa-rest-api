@@ -2,6 +2,7 @@
 
 namespace App\Actions\TherapySession;
 
+use App\Models\Schedule;
 use App\Models\TherapySession;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -105,7 +106,11 @@ class GetTherapySessionsAction
                 }
             )
             ->orderBy('session_date', 'asc')
-            ->orderBy('created_at', 'asc')
+            ->orderBy(
+                Schedule::select('start_time')
+                    ->whereColumn('schedules.id', 'therapy_sessions.schedule_id'),
+                'asc'
+            )
             ->paginate($perPage);
     }
 
