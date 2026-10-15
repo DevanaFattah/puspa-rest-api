@@ -4,30 +4,36 @@ namespace App\Services;
 
 use App\Actions\TherapySoap\CreateTherapySoapAction;
 use App\Actions\TherapySoap\ExportTherapySoapsAction;
+use App\Actions\TherapySoap\GetTherapySoapBySessionAction;
 use App\Actions\TherapySoap\GetTherapySoapExportFilterOptionsAction;
-use App\Actions\TherapySoap\GetTherapySoapsAction;
+use App\Models\TherapySession;
 use App\Models\TherapySoap;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class TherapySoapService
 {
     public function __construct(
-        private GetTherapySoapsAction                    $getTherapySoapsAction,
+        private GetTherapySoapBySessionAction            $getTherapySoapBySessionAction,
         private CreateTherapySoapAction                 $createTherapySoapAction,
         private GetTherapySoapExportFilterOptionsAction $getFilterOptionsAction,
         private ExportTherapySoapsAction                 $exportTherapySoapsAction,
-    ) {}
+    )
+    {
+    }
+
+    /**
+     * Retrieve the therapy SOAP note for a specific therapy session.
+     */
+    public function getTherapySoapBySession(TherapySession $session): ?TherapySoap
+    {
+        return $this->getTherapySoapBySessionAction->execute($session);
+    }
 
     /**
      * Retrieve paginated therapy SOAP notes with the given filters.
      *
      * @param  array<string, mixed>  $filters
      */
-    public function getTherapySoaps(array $filters = []): LengthAwarePaginator
-    {
-        return $this->getTherapySoapsAction->execute($filters);
-    }
 
     public function createTherapySoap(array $data): TherapySoap
     {

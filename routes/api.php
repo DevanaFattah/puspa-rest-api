@@ -237,10 +237,11 @@ Route::middleware(['role:admin|terapis|asesor', 'throttle:authenticated'])->grou
             ->whereUlid('session');
 
         // ================== THERAPY SOAPS ==================
+        Route::get('/therapy_soaps/{session}', [AssessorTherapistTherapySoap::class, 'show'])
+            ->whereUlid('session');
+        Route::post('/therapy_soaps', [AssessorTherapistTherapySoap::class, 'store']);
         Route::get('/therapy_soaps/export/filter-options', [AssessorTherapistTherapySoap::class, 'exportFilterOptions']);
         Route::get('/therapy_soaps/export', [AssessorTherapistTherapySoap::class, 'export']);
-        Route::get('/therapy_soaps', [AssessorTherapistTherapySoap::class, 'index']);
-        Route::post('/therapy_soaps', [AssessorTherapistTherapySoap::class, 'store']);
     });
 
     // ================== ROLE ASSESSOR & ADMIN ==================

@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Assessor_Therapist;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\ResponseFormatter;
-use App\Http\Requests\IndexTherapySoapRequest;
 use App\Http\Requests\StoreTherapySoapRequest;
 use App\Http\Resources\TherapySoapResource;
+use App\Models\TherapySession;
 use App\Services\TherapySoapService;
 use Illuminate\Http\JsonResponse;
 
@@ -16,31 +16,27 @@ class TherapySoapController extends Controller
 
     public function __construct(
         private TherapySoapService $therapySoapService,
-    ) {}
+    )
+    {
+    }
 
     /**
-     * GET /therapy_soaps
+     * GET /therapy_soaps/{session}
      *
-     * Return a paginated list of therapy SOAP notes for asesor & terapis roles.
-     *
-     * Query Parameters:
-     *   - therapy_type : 'okupasi' | 'wicara' | 'paedagog' | 'fisio'
-     *   - search       : partial match on child or parent name
-     *   - date_range   : 'today' | 'tomorrow' | 'this_week' | 'this_month'
-     *   - date         : specific date in Y-m-d format (overrides date_range, filters on performed_at)
-     *   - per_page     : items per page (default 15, max 100)
-     *   - page         : page number (default 1)
+     * Return the therapy SOAP note for a specific therapy session.
      */
-    public function index(IndexTherapySoapRequest $request): JsonResponse
+    public function show(TherapySession $session): JsonResponse
     {
-        $filters = $request->validated();
-        $soaps   = $this->therapySoapService->getTherapySoaps($filters);
+        $soap = $this->therapySoapService->getTherapySoapBySession($session);
+
+        if (!$soap) {
+            return $this->errorResponse('Catatan SOAP tidak ditemukan untuk sesi ini', [], 404);
+        }
 
         return $this->successResponse(
-            TherapySoapResource::collection($soaps),
-            'Daftar Catatan SOAP Terapi',
-            200,
-            $soaps
+            new TherapySoapResource($soap),
+            'Detail Catatan SOAP Terapi',
+            200
         );
     }
 
@@ -64,7 +60,8 @@ class TherapySoapController extends Controller
     public function exportFilterOptions(\Illuminate\Http\Request $request): JsonResponse
     {
         $therapist = $request->user()->therapist;
-        if (!$therapist) {
+        if (!$therapist)
+        {
             return $this->errorResponse('Therapist profile tidak ditemukan', [], 404);
         }
 
@@ -96,7 +93,8 @@ class TherapySoapController extends Controller
     public function export(\App\Http\Requests\ExportTherapySoapRequest $request): JsonResponse
     {
         $therapist = $request->user()->therapist;
-        if (!$therapist) {
+        if (!$therapist)
+        {
             return $this->errorResponse('Therapist profile tidak ditemukan', [], 404);
         }
 
