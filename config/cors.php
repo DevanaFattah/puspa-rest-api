@@ -18,11 +18,15 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [
-        'https://klinik-puspa.alfirdausina.com',
-        'https://dev-puspa.alfirdausina.com',
-        'http://localhost:3000'
-    ],
+    'allowed_origins' => array_values(array_unique(array_filter(array_merge(
+        explode(',', env('FRONTEND_URL', 'http://localhost:3000,http://127.0.0.1:3000')),
+        [
+            'http://localhost:3000',
+            'http://127.0.0.1:3000',
+            'https://klinik-puspa.alfirdausina.com',
+            'https://dev-puspa.alfirdausina.com',
+        ]
+    )))),
 
     'allowed_origins_patterns' => [],
 
