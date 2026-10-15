@@ -59,6 +59,11 @@ class TherapySession extends Model
         return $this->hasOne(Reschedule::class, 'new_session_id', 'id');
     }
 
+    public function soap(): HasOne
+    {
+        return $this->hasOne(TherapySoap::class, 'therapy_session_id', 'id');
+    }
+
     protected static function boot()
     {
         parent::boot();

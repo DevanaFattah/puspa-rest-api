@@ -21,4 +21,35 @@ class StoreRescheduleRequest extends FormRequest
             'requested_by' => ['required', Rule::in(['children', 'therapist', 'guardian'])],
         ];
     }
+
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            /** @var \App\Models\TherapySession|null $session */
+            $session = $this->route('session');
+
+            if ($session) {
+                if (in_array($session->status, ['present', 'pending'])) {
+                    $validator->errors()->add(
+                        'session',
+                        "Sesi dengan status '{$session->status}' tidak dapat di-reschedule. Hanya sesi berstatus di luar 'present' dan 'pending' yang dapat di-reschedule."
+                    );
+                }
+
+                if ($session->soap()->exists()) {
+                    $validator->errors()->add(
+                        'session',
+                        'Sesi yang sudah memiliki catatan SOAP tidak dapat di-reschedule.'
+                    );
+                }
+
+                if ($session->rescheduleOriginal()->exists()) {
+                    $validator->errors()->add(
+                        'session',
+                        'Sesi ini sudah pernah di-reschedule sebelumnya.'
+                    );
+                }
+            }
+        });
+    }
 }

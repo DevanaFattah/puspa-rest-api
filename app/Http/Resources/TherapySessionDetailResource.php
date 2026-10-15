@@ -97,6 +97,7 @@ class TherapySessionDetailResource extends JsonResource
             'child_name'                => $child?->child_name               ?? '-',
             'medical_record_number'     => $child?->medical_record_number    ?? '-',
             'child_gender'              => $child?->child_gender              ?? '-',
+            'child_address'             => $child?->child_address              ?? '-',
             'child_age'                 => $age,
             'child_birth_date'          => $birthDate
                 ? Carbon::parse($birthDate)->format('Y-m-d')
@@ -115,7 +116,7 @@ class TherapySessionDetailResource extends JsonResource
             'relationship_with_child'   => $guardian?->relationship_with_child ?? '-',
 
             // ── Reschedule (null when not rescheduled) ────────────────────
-            'is_rescheduled'            => $rescheduleInfo !== null,
+            'is_reschedule'             => $this->rescheduleReplacement !== null,
             'reschedule_info'           => $rescheduleInfo,
 
             'created_at'                => $this->created_at?->toIso8601String(),
