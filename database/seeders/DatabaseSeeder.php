@@ -38,6 +38,9 @@ class DatabaseSeeder extends Seeder
             // Schedule & Therapy Sessions Dummy Data
             ScheduleSeeder::class,
 
+            // Guardian User Accounts (links existing guardians to login-capable User accounts)
+            GuardianSeeder::class,
+
             // Reschedule Dummy Data
             RescheduleSeeder::class,
 
