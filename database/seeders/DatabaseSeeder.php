@@ -46,6 +46,12 @@ class DatabaseSeeder extends Seeder
 
             // Therapy SOAP Notes Dummy Data
             TherapySoapSeeder::class,
+
+            // Observation & Clinical Assessments Data
+            ObservationAssessmentSeeder::class,
+
+            // Finance Module Dummy Data (Invoices, Items, Payments, Session Credits)
+            FinanceSeeder::class,
         ]);
     }
 }

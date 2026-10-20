@@ -138,15 +138,14 @@ class ObservationAssessmentSeeder extends Seeder
                 }
 
                 AssessmentDetail::create([
-                    'assessment_id'  => $assessment->id,
-                    'type'           => 'umum',
-                    'admin_id'       => $admins->random()->id,
-                    'therapist_id'   => $therapists->random()->id,
-                    'status'         => $statusUmum,
-                    'scheduled_date' => $assessmentScheduled,
-                    'completed_at'   => $completedAtUmum,
-                    'created_at'     => $scheduledDate,
-                    'updated_at'     => $scheduledDate,
+                    'assessment_id'       => $assessment->id,
+                    'type'                => 'umum',
+                    'admin_id'            => $admins->random()->id,
+                    'therapist_id'        => $therapists->random()->id,
+                    'completed_at'        => $completedAtUmum,
+                    'parent_completed_at' => $completedAtUmum,
+                    'created_at'          => $scheduledDate,
+                    'updated_at'          => $scheduledDate,
                 ]);
 
                 $otherTypes = ['fisio', 'okupasi', 'wicara', 'paedagog'];
@@ -155,26 +154,23 @@ class ObservationAssessmentSeeder extends Seeder
                 foreach ($selectedTypes as $type) {
                     $typeScheduled = $scheduledDate->copy()->addDays(rand(10, 45));
                     $completedAtType = null;
-                    $statusType = 'scheduled';
 
                     if ($typeScheduled->lte($now) && $faker->boolean(60)) {
                         $completedAtType = $faker->dateTimeBetween(
                             $typeScheduled->copy()->addHours(2),
                             $typeScheduled->copy()->addDays(14)->lt($now) ? $typeScheduled->copy()->addDays(14) : $now
                         );
-                        $statusType = 'completed';
                     }
 
                     AssessmentDetail::create([
-                        'assessment_id'  => $assessment->id,
-                        'type'           => $type,
-                        'admin_id'       => $admins->random()->id,
-                        'therapist_id'   => $therapists->random()->id,
-                        'status'         => $statusType,
-                        'scheduled_date' => $typeScheduled,
-                        'completed_at'   => $completedAtType,
-                        'created_at'     => $scheduledDate,
-                        'updated_at'     => $scheduledDate,
+                        'assessment_id'       => $assessment->id,
+                        'type'                => $type,
+                        'admin_id'            => $admins->random()->id,
+                        'therapist_id'        => $therapists->random()->id,
+                        'completed_at'        => $completedAtType,
+                        'parent_completed_at' => $completedAtType,
+                        'created_at'          => $scheduledDate,
+                        'updated_at'          => $scheduledDate,
                     ]);
                 }
             }
