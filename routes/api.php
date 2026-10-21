@@ -152,6 +152,8 @@ Route::middleware('auth:sanctum')->group(function () {
             ->whereUlid('session');
         Route::put('/sessions/{session}/attendance', [AttendanceController::class, 'updateAttendance'])
             ->whereUlid('session');
+        Route::post('/sessions/{session}/reschedule', [RescheduleController::class, 'store'])
+            ->whereUlid('session');
         // ================== KEUANGAN / FINANCE ==================
         Route::get('/finance/children-guardians', [FinanceController::class, 'childrenWithGuardians']);
         Route::get('/finance/invoices', [FinanceController::class, 'indexInvoices']);

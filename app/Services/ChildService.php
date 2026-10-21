@@ -16,7 +16,9 @@ class ChildService
 
     public function getAllChild(): Collection
     {
-        return Child::with('family.guardians.user')->get();
+        return Child::with('family.guardians.user')
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 
     public function store(array $data): Child

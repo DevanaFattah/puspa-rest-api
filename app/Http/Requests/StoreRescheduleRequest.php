@@ -16,6 +16,8 @@ class StoreRescheduleRequest extends FormRequest
     {
         return [
             'new_date' => ['required', 'date', 'after_or_equal:today'],
+            'start_time' => ['nullable', 'date_format:H:i'],
+            'end_time' => ['nullable', 'date_format:H:i', 'after:start_time'],
             'new_therapist_id' => ['nullable', 'string', 'exists:therapists,id'],
             'reason' => ['required', 'string', 'max:500'],
             'requested_by' => ['required', Rule::in(['children', 'therapist', 'guardian'])],
@@ -29,13 +31,6 @@ class StoreRescheduleRequest extends FormRequest
             $session = $this->route('session');
 
             if ($session) {
-                if (in_array($session->status, ['present', 'pending'])) {
-                    $validator->errors()->add(
-                        'session',
-                        "Sesi dengan status '{$session->status}' tidak dapat di-reschedule. Hanya sesi berstatus di luar 'present' dan 'pending' yang dapat di-reschedule."
-                    );
-                }
-
                 if ($session->soap()->exists()) {
                     $validator->errors()->add(
                         'session',
