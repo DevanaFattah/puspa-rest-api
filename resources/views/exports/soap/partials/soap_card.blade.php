@@ -65,7 +65,7 @@ default => 'bg-okupasi'
             <tr>
                 <td class="soap-cell-left">
                     <div>
-                        <span class="soap-badge-icon badge-{{ $bgClass }}">S</span>
+                        <span class="soap-badge-icon {{ $bgClass }}">S</span>
                         <div class="soap-badge-title">Subjektif</div>
                     </div>
                     <div class="soap-body-text">
@@ -74,7 +74,7 @@ default => 'bg-okupasi'
                 </td>
                 <td class="soap-cell-right">
                     <div>
-                        <span class="soap-badge-icon badge-{{ $bgClass }}">O</span>
+                        <span class="soap-badge-icon {{ $bgClass }}">O</span>
                         <span class="soap-badge-title">Objektif</span>
                     </div>
                     <div class="soap-body-text">
@@ -87,7 +87,7 @@ default => 'bg-okupasi'
             <tr>
                 <td class="soap-cell-left" style="padding-top: 8px;">
                     <div>
-                        <span class="soap-badge-icon badge-{{ $bgClass }}">A</span>
+                        <span class="soap-badge-icon {{ $bgClass }}">A</span>
                         <span class="soap-badge-title">Assessment</span>
                     </div>
                     <div class="soap-body-text">
@@ -96,7 +96,7 @@ default => 'bg-okupasi'
                 </td>
                 <td class="soap-cell-right" style="padding-top: 8px;">
                     <div>
-                        <span class="soap-badge-icon badge-{{ $bgClass }}">P</span>
+                        <span class="soap-badge-icon {{ $bgClass }}">P</span>
                         <span class="soap-badge-title">Plan</span>
                     </div>
                     <div class="soap-body-text">
@@ -109,7 +109,7 @@ default => 'bg-okupasi'
             <tr>
                 <td class="soap-cell-left" style="padding-top: 8px;">
                     <div>
-                        <span class="soap-badge-icon badge-{{ $bgClass }}">I</span>
+                        <span class="soap-badge-icon {{ $bgClass }}">I</span>
                         <span class="soap-badge-title">Implementasi</span>
                     </div>
                     <div class="soap-body-text">
@@ -118,7 +118,7 @@ default => 'bg-okupasi'
                 </td>
                 <td class="soap-cell-right" style="padding-top: 8px;">
                     <div>
-                        <span class="soap-badge-icon badge-{{ $bgClass }}">A</span>
+                        <span class="soap-badge-icon {{ $bgClass }}">A</span>
                         <span class="soap-badge-title">Assessment Lanjutan</span>
                     </div>
                     <div class="soap-body-text">
@@ -129,9 +129,9 @@ default => 'bg-okupasi'
 
             {{-- Row 4: Plan Lanjutan (Full width) --}}
             <tr>
-                <td colspan="2" style="padding-top: 8px; padding-left: 5px;">
+                <td colspan="2" style="padding-top: 8px; padding-left: 5px; width: 100%;">
                     <div>
-                        <span class="soap-badge-icon badge-{{ $bgClass }}">P</span>
+                        <span class="soap-badge-icon {{ $bgClass }}">P</span>
                         <span class="soap-badge-title">Plan Lanjutan</span>
                     </div>
                     <div class="soap-body-text">

@@ -2,7 +2,7 @@
 <div class="report-footer">
     <table class="footer-table">
         <tr>
-            <td style="text-align: left; padding-bottom: 30px; padding-left: 50px;">
+            <td>
                 Dicetak {{ $print_date ?? now()->format('d/m/Y') }} &middot; Puspa Holistic Integrative Care
             </td>
             <td style="text-align: right;">

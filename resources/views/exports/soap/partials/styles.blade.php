@@ -90,6 +90,16 @@
         color: var(--black);
     }
 
+    table {
+        table-layout: fixed;
+    }
+
+    table td {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+
     /* Fixed Header on every page */
     .report-header {
         position: fixed;
@@ -108,7 +118,7 @@
     }
 
     .header-logo-cell {
-        width: 42px;
+        width: 6%;
         vertical-align: middle;
     }
 
@@ -117,6 +127,7 @@
     }
 
     .header-brand-cell {
+        width: 47%;
         vertical-align: middle;
         padding-left: 10px;
     }
@@ -138,6 +149,7 @@
     }
 
     .header-title-cell {
+        width: 47%;
         vertical-align: middle;
         text-align: right;
     }
@@ -163,13 +175,15 @@
 
     .report-footer {
         position: fixed;
-        bottom: -50px;
+        bottom: 0px;
         left: -50px;
+        right: -50px;
         font-size: 7.2pt;
         color: var(--gray);
     }
 
     .footer-table {
+        position: inherit;
         width: 100%;
         border-collapse: collapse;
     }
@@ -217,8 +231,6 @@
     }
 
     .meta-value {
-        font-size: 8.5pt;
-        color: var(--black);
         font-weight: 600;
         margin-top: -10px;
     }
@@ -229,9 +241,13 @@
         border-collapse: collapse;
     }
 
+    .legend-table td {
+        width: 20%;
+    }
+
     .legend-title-cell {
         width: 120px;
-        font-size: 7pt;
+        font-size: 7.5pt;
         font-weight: 800;
         color: var(--gray);
         text-transform: uppercase;
@@ -246,8 +262,8 @@
         font-size: 7.5pt;
         font-weight: 700;
         text-align: center;
-        width: 140px;
-        margin-right: 2px;
+        width: 136px;
+        margin-right: 5.5px;
         margin-top: -2px;
     }
 
@@ -293,7 +309,6 @@
         width: 100%;
         border-collapse: collapse;
         margin-bottom: 14px;
-        font-size: 7.8pt;
     }
 
     .data-table th {
@@ -323,7 +338,7 @@
     .data-table tr.total-row td {
         background-color: var(--light-green);
         font-weight: 800;
-        padding: 0px 8px 6px 8px;
+        padding: 2px 8px 6px 8px;
     }
 
     /* Child Group Banner (View 3: All Children) */
@@ -334,7 +349,6 @@
         border-top-right-radius: 3px;
         padding: 0px 12px 7px 12px;
         page-break-after: avoid;
-        /* border-bottom: 5px solid var(--orange); */
     }
 
     .child-banner-accent-bar {
@@ -343,6 +357,7 @@
         background-color: var(--yellow);
         border-bottom-left-radius: 3px;
         border-bottom-right-radius: 3px;
+        page-break-after: avoid;
     }
 
     .child-banner-table {
@@ -358,12 +373,12 @@
 
     .child-banner-info {
         font-size: 7.5pt;
-        color: var(--light-green-border);
+        color: #ffffff;
         text-align: center;
     }
 
     .child-banner-count {
-        font-size: 8pt;
+        font-size: 10pt;
         font-weight: 700;
         color: #ffffff;
         text-align: right;
@@ -384,13 +399,16 @@
         border-top-right-radius: 3px;
     }
 
+    .session-header-table td {
+        width: 50%;
+    }
+
     .session-header-table {
         width: 100%;
         border-collapse: collapse;
     }
 
     .session-badge-title {
-        font-size: 8.5pt;
         font-weight: 800;
         color: #ffffff;
         padding-bottom: 5px;
@@ -442,15 +460,13 @@
     }
 
     .diag-label {
-        font-size: 6.5pt;
+        font-size: 7.5pt;
         color: var(--gray);
         font-weight: 800;
         text-transform: uppercase;
     }
 
     .diag-value {
-        font-size: 7.8pt;
-        color: #1e293b;
         font-weight: 600;
         line-height: 1;
         margin-top: -4px;
@@ -472,6 +488,7 @@
     .soap-content-table td {
         vertical-align: top;
         padding: 5px 0;
+        width: 50%;
     }
 
     td.soap-cell-left {
@@ -507,26 +524,9 @@
     }
 
     .soap-body-text {
-        font-size: 7.6pt;
-        color: var(--black);
         line-height: 1;
         margin-left: 2px;
-    }
-
-    .badge-bg-paedagog {
-        background-color: var(--paedagog);
-    }
-
-    .badge-bg-okupasi {
-        background-color: var(--okupasi);
-    }
-
-    .badge-bg-wicara {
-        background-color: var(--wicara);
-    }
-
-    .badge-bg-fisioterapi {
-        background-color: var(--fisio);
+        margin-top: -6px;
     }
 
     /* Signature Box (Single Therapy View) */
@@ -541,21 +541,17 @@
     }
 
     .sig-date {
-        font-size: 8pt;
         color: var(--gray);
         margin-bottom: 40px;
     }
 
     .sig-name {
-        font-size: 8.5pt;
         font-weight: 600;
-        color: var(--black);
         border-bottom: 2px solid var(--gray);
     }
 
     .sig-role {
-        font-size: 7.5pt;
-        color: #64748b;
+        color: var(--gray);
         margin-top: 2px;
     }
 
