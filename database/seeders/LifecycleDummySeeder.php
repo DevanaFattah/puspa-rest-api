@@ -163,7 +163,7 @@ class LifecycleDummySeeder extends Seeder
             'status'             => 'completed',
             'parent_status'      => 'completed',
             'scheduled_date'     => $asmDate,
-            'report_file'        => 'reports/asesmen_arjuna.pdf',
+            'report_file'        => 'asesmen_arjuna.pdf',
             'report_uploaded_at' => $asmDate->copy()->addDays(2),
             'created_at'         => $asmDate,
             'updated_at'         => $asmDate->copy()->addDays(2),
@@ -593,7 +593,7 @@ class LifecycleDummySeeder extends Seeder
             'status'             => 'completed',
             'parent_status'      => 'completed',
             'scheduled_date'     => $asmDate,
-            'report_file'        => 'reports/asesmen_rayhan.pdf',
+            'report_file'        => 'asesmen_rayhan.pdf',
             'report_uploaded_at' => $asmDate->copy()->addDay(),
             'created_at'         => $asmDate,
             'updated_at'         => $asmDate->copy()->addDay(),
@@ -832,7 +832,7 @@ class LifecycleDummySeeder extends Seeder
             'status'             => 'completed',
             'parent_status'      => 'completed',
             'scheduled_date'     => $asmDate,
-            'report_file'        => 'reports/asesmen_kezia.pdf',
+            'report_file'        => 'asesmen_kezia.pdf',
             'report_uploaded_at' => $asmDate->copy()->addDay(),
         ]);
 

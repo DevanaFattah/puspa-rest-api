@@ -55,6 +55,7 @@ class ScheduleDetailResource extends JsonResource
                     'therapist_name' => $session->substituteTherapist?->therapist_name ?? $this->therapist?->therapist_name ?? '-',
                     'status' => $session->status,
                     'notes' => $session->notes,
+                    'attendance_token' => $session->attendance_token,
                 ];
             }),
             'created_at' => $this->created_at?->toIso8601String(),
