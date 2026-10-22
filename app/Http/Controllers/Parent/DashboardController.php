@@ -121,4 +121,29 @@ class DashboardController extends Controller
             200
         );
     }
+
+    /**
+     * Get therapy sessions history with SOAP notes for parent
+     */
+    public function therapyHistory(Request $request): JsonResponse
+    {
+        $guardian = auth()->user()->guardian;
+
+        if (!$guardian) {
+            return $this->errorResponse(
+                'Guardian not found',
+                ['message' => ['Guardian profile tidak ditemukan']],
+                404
+            );
+        }
+
+        $filters = $request->only(['child_id', 'start_date', 'end_date']);
+        $history = $this->dashboardService->getTherapyHistory($guardian->family_id, $filters);
+
+        return $this->successResponse(
+            $history,
+            'Therapy history for parent',
+            200
+        );
+    }
 }

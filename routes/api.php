@@ -312,7 +312,9 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/chart', [ParentDashboard::class, 'chartData']);
             Route::get('/upcoming-schedules', [ParentDashboard::class, 'upcomingSchedules']);
             Route::get('/today-therapy-sessions', [ParentDashboard::class, 'todayTherapySessions']);
+            Route::get('/therapy-history', [ParentDashboard::class, 'therapyHistory']);
         });
+        Route::get('/therapy-history', [ParentDashboard::class, 'therapyHistory']);
 
         Route::get('/profile', [ParentProfileManagement::class, 'showProfile']);
         Route::post('/profile/{guardian}', [ParentProfileManagement::class, 'updateProfile'])

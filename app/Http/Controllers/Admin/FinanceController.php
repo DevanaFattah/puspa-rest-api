@@ -33,6 +33,20 @@ class FinanceController extends Controller
     }
 
     /**
+     * Get list of session credits (potongan periode berikutnya).
+     */
+    public function indexSessionCredits(Request $request)
+    {
+        try {
+            $filters = $request->only(['search']);
+            $data = $this->financeService->getSessionCredits($filters);
+            return $this->successResponse($data, 'Berhasil mengambil daftar potongan deposit');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), [], 500);
+        }
+    }
+
+    /**
      * Get list of invoices.
      */
     public function indexInvoices(Request $request)
