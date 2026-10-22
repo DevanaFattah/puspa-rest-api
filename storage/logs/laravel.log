@@ -4876,3 +4876,70 @@ Stack trace:
 #60 D:\\Kodingan\\PuspaHolistic\\puspa-rest-api\\artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
 #61 {main}
 "} 
+[2026-10-21 13:54:41] local.ERROR: Start date must be anterior to end date. {"exception":"[object] (InvalidArgumentException(code: 0): Start date must be anterior to end date. at D:/Magang Puspa/puspa-rest-api/vendor/fakerphp/faker/src/Faker/Provider/DateTime.php:152)
+[stacktrace]
+#0 [internal function]: Faker/Provider/DateTime::dateTimeBetween(Object(Carbon/Carbon), Object(Carbon/Carbon))
+#1 D:/Magang Puspa/puspa-rest-api/vendor/fakerphp/faker/src/Faker/Generator.php(708): call_user_func_array(Array, Array)
+#2 D:/Magang Puspa/puspa-rest-api/vendor/fakerphp/faker/src/Faker/Generator.php(973): Faker/Generator->format('dateTimeBetween', Array)
+#3 D:/Magang Puspa/puspa-rest-api/database/seeders/ObservationAssessmentSeeder.php(159): Faker/Generator->__call('dateTimeBetween', Array)
+#4 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Database/Seeders/ObservationAssessmentSeeder->run()
+#5 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#6 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#7 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Array, Object(Closure))
+#8 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Array, Array, NULL)
+#9 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Database/Seeder.php(184): Illuminate/Container/Container->call(Array, Array)
+#10 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Database/Seeder.php(193): Illuminate/Database/Seeder->Illuminate/Database/{closure}()
+#11 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Database/Seeder.php(61): Illuminate/Database/Seeder->__invoke(Array)
+#12 D:/Magang Puspa/puspa-rest-api/database/seeders/DatabaseSeeder.php(16): Illuminate/Database/Seeder->call('Database//Seeder...')
+#13 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Database/Seeders/DatabaseSeeder->run()
+#14 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#15 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#16 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Array, Object(Closure))
+#17 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Array, Array, NULL)
+#18 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Database/Seeder.php(184): Illuminate/Container/Container->call(Array, Array)
+#19 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Database/Seeder.php(193): Illuminate/Database/Seeder->Illuminate/Database/{closure}()
+#20 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Database/Console/Seeds/SeedCommand.php(70): Illuminate/Database/Seeder->__invoke()
+#21 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Concerns/GuardsAttributes.php(155): Illuminate/Database/Console/Seeds/SeedCommand->Illuminate/Database/Console/Seeds/{closure}()
+#22 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Database/Console/Seeds/SeedCommand.php(69): Illuminate/Database/Eloquent/Model::unguarded(Object(Closure))
+#23 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate/Database/Console/Seeds/SeedCommand->handle()
+#24 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#25 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#26 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Array, Object(Closure))
+#27 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Array, Array, NULL)
+#28 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Console/Command.php(211): Illuminate/Container/Container->call(Array)
+#29 D:/Magang Puspa/puspa-rest-api/vendor/symfony/console/Command/Command.php(326): Illuminate/Console/Command->execute(Object(Symfony/Component/Console/Input/ArrayInput), Object(Illuminate/Console/OutputStyle))
+#30 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Console/Command.php(180): Symfony/Component/Console/Command/Command->run(Object(Symfony/Component/Console/Input/ArrayInput), Object(Illuminate/Console/OutputStyle))
+#31 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Console/Concerns/CallsCommands.php(67): Illuminate/Console/Command->run(Object(Symfony/Component/Console/Input/ArrayInput), Object(Illuminate/Console/OutputStyle))
+#32 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Console/Concerns/CallsCommands.php(28): Illuminate/Console/Command->runCommand('db:seed', Array, Object(Illuminate/Console/OutputStyle))
+#33 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/FreshCommand.php(93): Illuminate/Console/Command->call('db:seed', Array)
+#34 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/FreshCommand.php(69): Illuminate/Database/Console/Migrations/FreshCommand->runSeeder(NULL)
+#35 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate/Database/Console/Migrations/FreshCommand->handle()
+#36 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#37 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#38 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Array, Object(Closure))
+#39 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Array, Array, NULL)
+#40 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Console/Command.php(211): Illuminate/Container/Container->call(Array)
+#41 D:/Magang Puspa/puspa-rest-api/vendor/symfony/console/Command/Command.php(326): Illuminate/Console/Command->execute(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#42 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Console/Command.php(180): Symfony/Component/Console/Command/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#43 D:/Magang Puspa/puspa-rest-api/vendor/symfony/console/Application.php(1129): Illuminate/Console/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#44 D:/Magang Puspa/puspa-rest-api/vendor/symfony/console/Application.php(325): Symfony/Component/Console/Application->doRunCommand(Object(Illuminate/Database/Console/Migrations/FreshCommand), Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#45 D:/Magang Puspa/puspa-rest-api/vendor/symfony/console/Application.php(176): Symfony/Component/Console/Application->doRun(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#46 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(201): Symfony/Component/Console/Application->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#47 D:/Magang Puspa/puspa-rest-api/artisan(35): Illuminate/Foundation/Console/Kernel->handle(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#48 {main}
+"} 
+[2026-10-21 14:15:56] local.ERROR: There are no commands defined in the "cacha" namespace.
+
+Did you mean this?
+    cache {"exception":"[object] (Symfony\\Component\\Console\\Exception\\NamespaceNotFoundException(code: 0): There are no commands defined in the \"cacha\" namespace.
+
+Did you mean this?
+    cache at D:/Magang Puspa/puspa-rest-api/vendor/symfony/console/Application.php:679)
+[stacktrace]
+#0 D:/Magang Puspa/puspa-rest-api/vendor/symfony/console/Application.php(730): Symfony/Component/Console/Application->findNamespace('cacha')
+#1 D:/Magang Puspa/puspa-rest-api/vendor/symfony/console/Application.php(267): Symfony/Component/Console/Application->find('cacha:clear')
+#2 D:/Magang Puspa/puspa-rest-api/vendor/symfony/console/Application.php(176): Symfony/Component/Console/Application->doRun(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#3 D:/Magang Puspa/puspa-rest-api/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(201): Symfony/Component/Console/Application->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#4 D:/Magang Puspa/puspa-rest-api/artisan(35): Illuminate/Foundation/Console/Kernel->handle(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#5 {main}
+"} 
