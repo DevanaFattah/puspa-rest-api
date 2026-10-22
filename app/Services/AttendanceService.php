@@ -32,30 +32,50 @@ class AttendanceService
             }
         }
 
-        if (!empty($filters['child_id'])) {
-            $childId = $filters['child_id'];
-            $query->whereHas('schedule', function ($q) use ($childId) {
-                $q->where('child_id', $childId);
+        // Filter Child (single or multiple)
+        $childIds = [];
+        if (!empty($filters['child_ids']) && is_array($filters['child_ids'])) {
+            $childIds = array_filter($filters['child_ids']);
+        } elseif (!empty($filters['child_id'])) {
+            $childIds = is_array($filters['child_id']) ? $filters['child_id'] : [$filters['child_id']];
+        }
+        if (!empty($childIds)) {
+            $query->whereHas('schedule', function ($q) use ($childIds) {
+                $q->whereIn('child_id', $childIds);
             });
         }
 
-        if (!empty($filters['therapist_id'])) {
-            $therapistId = $filters['therapist_id'];
-            $query->where(function ($q) use ($therapistId) {
-                $q->where('therapist_id', $therapistId)
-                  ->orWhere(function ($sq) use ($therapistId) {
+        // Filter Therapist (single or multiple)
+        $therapistIds = [];
+        if (!empty($filters['therapist_ids']) && is_array($filters['therapist_ids'])) {
+            $therapistIds = array_filter($filters['therapist_ids']);
+        } elseif (!empty($filters['therapist_id'])) {
+            $therapistIds = is_array($filters['therapist_id']) ? $filters['therapist_id'] : [$filters['therapist_id']];
+        }
+        if (!empty($therapistIds)) {
+            $query->where(function ($q) use ($therapistIds) {
+                $q->whereIn('therapist_id', $therapistIds)
+                  ->orWhere(function ($sq) use ($therapistIds) {
                       $sq->whereNull('therapist_id')
-                         ->whereHas('schedule', function ($scq) use ($therapistId) {
-                             $scq->where('therapist_id', $therapistId);
+                         ->whereHas('schedule', function ($scq) use ($therapistIds) {
+                             $scq->whereIn('therapist_id', $therapistIds);
                          });
                   });
             });
         }
 
-        if (!empty($filters['therapy_type'])) {
-            $type = $filters['therapy_type'];
-            $query->whereHas('schedule', function ($q) use ($type) {
-                $q->where('therapy_type', $type);
+        // Filter Therapy Type (single or multiple)
+        $therapyTypes = [];
+        if (!empty($filters['therapy_types']) && is_array($filters['therapy_types'])) {
+            $therapyTypes = array_filter($filters['therapy_types']);
+        } elseif (!empty($filters['therapy_type_ids']) && is_array($filters['therapy_type_ids'])) {
+            $therapyTypes = array_filter($filters['therapy_type_ids']);
+        } elseif (!empty($filters['therapy_type'])) {
+            $therapyTypes = is_array($filters['therapy_type']) ? $filters['therapy_type'] : [$filters['therapy_type']];
+        }
+        if (!empty($therapyTypes)) {
+            $query->whereHas('schedule', function ($q) use ($therapyTypes) {
+                $q->whereIn('therapy_type', $therapyTypes);
             });
         }
 
@@ -75,7 +95,11 @@ class AttendanceService
             });
         }
 
-        return $query->orderBy('created_at', 'asc')->paginate($perPage);
+        return $query->select('therapy_sessions.*')
+            ->leftJoin('schedules', 'therapy_sessions.schedule_id', '=', 'schedules.id')
+            ->orderByRaw('COALESCE(therapy_sessions.start_time, schedules.start_time) ASC')
+            ->orderBy('therapy_sessions.session_date', 'asc')
+            ->paginate($perPage);
     }
 
     public function getRescheduledSessions(array $filters, int $perPage = 10): LengthAwarePaginator
@@ -153,6 +177,92 @@ class AttendanceService
 
     public function processQrScan(string $token): TherapySession
     {
+        // 1. Cek apakah token cocok dengan anak (Permanent Child QR: medical_record_number, child_id, atau permanent hash)
+        $child = \App\Models\Child::query()
+            ->where('medical_record_number', $token)
+            ->orWhere('id', $token)
+            ->first();
+
+        if (!$child && Str::startsWith($token, 'CHILD_')) {
+            $rawChildId = Str::after($token, 'CHILD_');
+            $child = \App\Models\Child::find($rawChildId);
+        }
+
+        if ($child) {
+            $childName = $child->child_name;
+            $today = Carbon::today()->toDateString();
+            $nowTime = Carbon::now()->format('H:i');
+
+            // Cari sesi hari ini milik anak tersebut
+            $sessionsToday = TherapySession::with([
+                'schedule.child.family.guardians',
+                'schedule.therapist',
+                'substituteTherapist',
+            ])
+            ->whereHas('schedule', function ($q) use ($child) {
+                $q->where('child_id', $child->id);
+            })
+            ->whereDate('session_date', $today)
+            ->where('status', '!=', 'cancelled')
+            ->get();
+
+            if ($sessionsToday->isEmpty()) {
+                throw new \Exception("Pasien {$childName} tidak memiliki jadwal sesi terapi aktif hari ini.");
+            }
+
+            // Cari sesi yang pending dan cocok dengan rentang jam scan sekarang
+            $targetSession = null;
+
+            // Prioritas 1: Sesi pending yang saat ini sedang berada di dalam rentang jamnya
+            foreach ($sessionsToday as $s) {
+                if ($s->status === 'pending') {
+                    $st = $s->start_time ?: $s->schedule?->start_time;
+                    $et = $s->end_time ?: $s->schedule?->end_time;
+                    if ($st && $et) {
+                        $stShort = substr($st, 0, 5);
+                        $etShort = substr($et, 0, 5);
+                        if ($nowTime >= $stShort && $nowTime <= $etShort) {
+                            $targetSession = $s;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Prioritas 2: Jika belum tepat di jamnya atau tidak ada start_time, ambil sesi pending pertama hari ini
+            if (!$targetSession) {
+                $targetSession = $sessionsToday->firstWhere('status', 'pending');
+            }
+
+            // Jika semua sesi sudah hadir / bukan pending
+            if (!$targetSession) {
+                $alreadyPresent = $sessionsToday->firstWhere('status', 'present');
+                if ($alreadyPresent && $alreadyPresent->checked_in_at) {
+                    $timeStr = $alreadyPresent->checked_in_at->format('H:i');
+                    throw new \Exception("Pasien {$childName} sudah melakukan presensi hari ini pada jam {$timeStr} WIB.");
+                }
+                throw new \Exception("Tidak ada sesi terapi anak {$childName} yang dapat dipresensi hari ini.");
+            }
+
+            // Validasi jam sesi jika ada batasan waktu
+            $sStartTime = $targetSession->start_time ?: $targetSession->schedule?->start_time;
+            $sEndTime = $targetSession->end_time ?: $targetSession->schedule?->end_time;
+            if ($sStartTime && $sEndTime) {
+                $stShort = substr($sStartTime, 0, 5);
+                $etShort = substr($sEndTime, 0, 5);
+                if ($nowTime < $stShort || $nowTime > $etShort) {
+                    throw new \Exception("Presensi hadir untuk {$childName} hanya valid dicatat di rentang jam sesi berlangsung ({$stShort} - {$etShort}). Jam saat ini: {$nowTime} WIB.");
+                }
+            }
+
+            $targetSession->status = 'present';
+            $targetSession->checked_in_at = Carbon::now();
+            $targetSession->save();
+
+            return $targetSession;
+        }
+
+        // 2. Fallback: Cocokkan sebagai session attendance_token individual
         $session = TherapySession::with([
             'schedule.child.family.guardians',
             'schedule.therapist',
@@ -160,7 +270,7 @@ class AttendanceService
         ])->where('attendance_token', $token)->first();
 
         if (!$session) {
-            throw new \Exception('QR Code tidak valid atau tidak ditemukan.');
+            throw new \Exception('QR Code kartu atau sesi tidak valid / tidak ditemukan.');
         }
 
         $childName = $session->schedule?->child?->child_name ?? 'Pasien';
@@ -176,6 +286,18 @@ class AttendanceService
         if ($sessionDateStr !== $todayStr) {
             $formattedDate = $session->session_date ? $session->session_date->format('d/m/Y') : '-';
             throw new \Exception("QR Code ini untuk sesi tanggal {$formattedDate}, bukan hari ini.");
+        }
+
+        // Validasi rentang jam sesi hadir
+        $sStartTime = $session->start_time ?: $session->schedule?->start_time;
+        $sEndTime = $session->end_time ?: $session->schedule?->end_time;
+        if ($sStartTime && $sEndTime) {
+            $nowTime = Carbon::now()->format('H:i');
+            $stShort = substr($sStartTime, 0, 5);
+            $etShort = substr($sEndTime, 0, 5);
+            if ($nowTime < $stShort || $nowTime > $etShort) {
+                throw new \Exception("Presensi hadir untuk {$childName} hanya valid dicatat di rentang jam sesi berlangsung ({$stShort} - {$etShort}). Jam saat ini: {$nowTime} WIB.");
+            }
         }
 
         $session->status = 'present';

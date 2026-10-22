@@ -29,7 +29,13 @@ class AttendanceController extends Controller
 
     public function todaySessions(Request $request): JsonResponse
     {
-        $filters = $request->only(['date', 'date_from', 'date_to', 'child_id', 'therapist_id', 'therapy_type', 'status', 'search']);
+        $filters = $request->only([
+            'date', 'date_from', 'date_to', 
+            'child_id', 'child_ids', 
+            'therapist_id', 'therapist_ids', 
+            'therapy_type', 'therapy_types', 'therapy_type_ids',
+            'status', 'search'
+        ]);
         $perPage = (int) $request->input('per_page', 10);
 
         $sessions = $this->attendanceService->getTodaySessions($filters, $perPage);
@@ -114,7 +120,13 @@ class AttendanceController extends Controller
 
     public function exportAttendance(Request $request)
     {
-        $filters = $request->only(['date_from', 'date_to', 'therapy_type', 'therapist_id', 'child_id', 'status']);
+        $filters = $request->only([
+            'date_from', 'date_to', 
+            'therapy_type', 'therapy_types', 'therapy_type_ids',
+            'therapist_id', 'therapist_ids', 
+            'child_id', 'child_ids', 
+            'status'
+        ]);
         $format = strtolower($request->input('format', 'excel'));
 
         $filename = 'rekap_kehadiran_' . date('Y-m-d_His');
