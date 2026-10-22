@@ -55,34 +55,6 @@
         font-style: normal;
     }
 
-    @font-face {
-        font-family: 'Playpen Sans';
-        src: url("{{ storage_path('fonts/PlaypenSans-Regular.ttf') }}") format('truetype');
-        font-weight: normal;
-        font-style: normal;
-    }
-
-    @font-face {
-        font-family: 'Playpen Sans';
-        src: url("{{ storage_path('fonts/PlaypenSans-SemiBold.ttf') }}") format('truetype');
-        font-weight: 600;
-        font-style: normal;
-    }
-
-    @font-face {
-        font-family: 'Playpen Sans';
-        src: url("{{ storage_path('fonts/PlaypenSans-Bold.ttf') }}") format('truetype');
-        font-weight: 700;
-        font-style: normal;
-    }
-
-    @font-face {
-        font-family: 'Playpen Sans';
-        src: url("{{ storage_path('fonts/PlaypenSans-ExtraBold.ttf') }}") format('truetype');
-        font-weight: 800;
-        font-style: normal;
-    }
-
     body {
         font-family: 'Poppins', sans-serif;
         font-size: 8.5pt;
