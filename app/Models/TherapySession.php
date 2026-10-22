@@ -26,6 +26,8 @@ class TherapySession extends Model
         'schedule_id',
         'session_number',
         'session_date',
+        'start_time',
+        'end_time',
         'therapist_id',
         'status',
         'notes',

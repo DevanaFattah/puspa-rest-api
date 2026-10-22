@@ -16,13 +16,23 @@ class RescheduleService
             $originalSession->save();
 
             // 2. Create new therapy session for rescheduled date
+            $startTime = !empty($data['start_time']) ? substr($data['start_time'], 0, 5) : null;
+            $endTime = !empty($data['end_time']) ? substr($data['end_time'], 0, 5) : null;
+
+            $notes = 'Reschedule dari sesi tanggal ' . $originalSession->session_date->format('Y-m-d');
+            if ($startTime && $endTime) {
+                $notes .= ' pukul ' . $startTime . ' - ' . $endTime;
+            }
+
             $newSession = TherapySession::create([
                 'schedule_id' => $originalSession->schedule_id,
                 'session_number' => $originalSession->session_number,
                 'session_date' => $data['new_date'],
+                'start_time' => $startTime,
+                'end_time' => $endTime,
                 'therapist_id' => $data['new_therapist_id'] ?? $originalSession->therapist_id,
                 'status' => 'pending',
-                'notes' => 'Reschedule dari sesi tanggal ' . $originalSession->session_date->format('Y-m-d'),
+                'notes' => $notes,
             ]);
 
             // 3. Create Reschedule record
