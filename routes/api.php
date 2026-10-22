@@ -167,6 +167,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/finance/transactions', [FinanceController::class, 'transactions']);
     });
 
+    // ================== SCHEDULES (JADWAL TERAPI) - READ ACCESS ==================
+    Route::middleware(['role:admin|owner|terapis|asesor|user', 'throttle:authenticated'])->group(function () {
+        Route::get('/schedules', [ScheduleController::class, 'index']);
+        Route::get('/schedules/{schedule}', [ScheduleController::class, 'show'])
+            ->whereUlid('schedule');
+    });
+
     // ================== ROLE ADMIN ==================
     Route::middleware(['role:admin', 'throttle:authenticated'])->group(function () {
         Route::get('/admins/dashboard/stats', [AdminDashboard::class, 'index']);
@@ -200,11 +207,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/assessments/{status}/admin', [AdminAssessmentManagement::class, 'indexAssessments'])
             ->whereIn('status', ['scheduled', 'completed']); // using query filter: date, and search
 
-        // ================== SCHEDULES (JADWAL TERAPI) ==================
-        Route::get('/schedules', [ScheduleController::class, 'index']);
+        // ================== SCHEDULES (JADWAL TERAPI) - WRITE ACCESS ==================
         Route::post('/schedules', [ScheduleController::class, 'store']);
-        Route::get('/schedules/{schedule}', [ScheduleController::class, 'show'])
-            ->whereUlid('schedule');
         Route::put('/schedules/{schedule}', [ScheduleController::class, 'update'])
             ->whereUlid('schedule');
         Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])
