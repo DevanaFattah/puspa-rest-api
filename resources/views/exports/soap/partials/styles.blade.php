@@ -232,17 +232,23 @@
 
     .meta-value {
         font-weight: 600;
-        margin-top: -10px;
+        line-height: 1;
     }
 
     /* Therapy Legend Pills */
     .legend-table {
         width: 100%;
         border-collapse: collapse;
+        text-align: right;
     }
 
     .legend-table td {
         width: 20%;
+        padding-right: 0px;
+    }
+
+    .legend-table td:first-child {
+        text-align: left;
     }
 
     .legend-title-cell {
@@ -262,8 +268,7 @@
         font-size: 7.5pt;
         font-weight: 700;
         text-align: center;
-        width: 136px;
-        margin-right: 5.5px;
+        width: 135px;
         margin-top: -2px;
     }
 
