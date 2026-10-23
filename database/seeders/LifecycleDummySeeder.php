@@ -11,6 +11,7 @@ use App\Models\Guardian;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\Observation;
+use App\Models\ObservationAnswer;
 use App\Models\Payment;
 use App\Models\Reschedule;
 use App\Models\Schedule;
@@ -51,6 +52,9 @@ class LifecycleDummySeeder extends Seeder
             $this->command->error('Therapist belum ada. Jalankan TherapistSeeder terlebih dahulu.');
             return;
         }
+
+        // Bersihkan data persona lama agar idempoten dan tidak menduplikasi anak/data terkait
+        $this->cleanOldLifecycleData();
 
         // =========================================================================
         // SKENARIO 1: Persona 1 - "Budi Santoso & Arjuna" (Happy Path - Full Lifecycle)
@@ -933,4 +937,72 @@ class LifecycleDummySeeder extends Seeder
             'notes'            => 'Pelunasan sisa tagihan via Mandiri Transfer.',
         ]);
     }
+
+    /**
+     * Membersihkan data persona dummy sebelumnya agar seeder idempoten (tepat 5 pasien).
+     */
+    private function cleanOldLifecycleData(): void
+    {
+        $usernames = [
+            'ortuArjuna',
+            'ortuSalsabila',
+            'ortuZainab',
+            'orangtuaRayhan',
+            'ortuKezia',
+        ];
+
+        $childNames = [
+            'Arjuna Pratama',
+            'Salsabila Putri',
+            'Zainab Khairunnisa',
+            'Rayhan Dhafa Pratama',
+            'Kezia Aurelia',
+        ];
+
+        // 1. Ambil semua child yang namanya sesuai persona lifecycle
+        $children = Child::whereIn('child_name', $childNames)->get();
+
+        foreach ($children as $child) {
+            $childId = $child->id;
+
+            // Hapus observasi & jawaban
+            ObservationAnswer::whereHas('observation', fn($q) => $q->where('child_id', $childId))->delete();
+            Observation::where('child_id', $childId)->delete();
+
+            // Hapus asesmen & detail
+            AssessmentDetail::whereHas('assessment', fn($q) => $q->where('child_id', $childId))->delete();
+            Assessment::where('child_id', $childId)->delete();
+
+            // Hapus jadwal & sesi terapi beserta SOAP & Reschedule
+            $schedules = Schedule::where('child_id', $childId)->get();
+            foreach ($schedules as $schedule) {
+                TherapySoap::whereHas('therapySession', fn($q) => $q->where('schedule_id', $schedule->id))->delete();
+                Reschedule::whereHas('originalSession', fn($q) => $q->where('schedule_id', $schedule->id))->delete();
+                Reschedule::whereHas('newSession', fn($q) => $q->where('schedule_id', $schedule->id))->delete();
+                TherapySession::where('schedule_id', $schedule->id)->delete();
+                $schedule->delete();
+            }
+
+            // Hapus sesi lepas jika ada
+            TherapySession::where('attendance_token', 'LIKE', '%')->whereHas('schedule', fn($q) => $q->where('child_id', $childId))->delete();
+
+            // Hapus keuangan
+            Payment::where('child_id', $childId)->delete();
+            SessionCredit::where('child_id', $childId)->delete();
+            InvoiceItem::whereHas('invoice', fn($q) => $q->where('child_id', $childId))->delete();
+            Invoice::where('child_id', $childId)->delete();
+
+            $familyId = $child->family_id;
+            $child->delete();
+
+            if ($familyId) {
+                Guardian::where('family_id', $familyId)->delete();
+                Family::where('id', $familyId)->delete();
+            }
+        }
+
+        // Hapus user persona
+        User::whereIn('username', $usernames)->delete();
+    }
 }
+
