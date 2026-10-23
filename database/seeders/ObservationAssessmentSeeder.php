@@ -130,10 +130,15 @@ class ObservationAssessmentSeeder extends Seeder
                 $statusUmum = 'scheduled';
 
                 if ($assessmentScheduled->lte($now) && $faker->boolean(75)) {
-                    $completedAtUmum = $faker->dateTimeBetween(
-                        $assessmentScheduled->copy()->addHours(1),
-                        $assessmentScheduled->copy()->addDays(7)->lt($now) ? $assessmentScheduled->copy()->addDays(7) : $now
-                    );
+                    $startGen = $assessmentScheduled->copy()->addHours(1);
+                    $endGen = $assessmentScheduled->copy()->addDays(7);
+                    if ($endGen->gt($now)) {
+                        $endGen = $now->copy();
+                    }
+                    if ($startGen->gt($endGen)) {
+                        $startGen = $endGen->copy();
+                    }
+                    $completedAtUmum = $faker->dateTimeBetween($startGen, $endGen);
                     $statusUmum = 'completed';
                 }
 
@@ -156,10 +161,15 @@ class ObservationAssessmentSeeder extends Seeder
                     $completedAtType = null;
 
                     if ($typeScheduled->lte($now) && $faker->boolean(60)) {
-                        $completedAtType = $faker->dateTimeBetween(
-                            $typeScheduled->copy()->addHours(2),
-                            $typeScheduled->copy()->addDays(14)->lt($now) ? $typeScheduled->copy()->addDays(14) : $now
-                        );
+                        $startTypeGen = $typeScheduled->copy()->addHours(2);
+                        $endTypeGen = $typeScheduled->copy()->addDays(14);
+                        if ($endTypeGen->gt($now)) {
+                            $endTypeGen = $now->copy();
+                        }
+                        if ($startTypeGen->gt($endTypeGen)) {
+                            $startTypeGen = $endTypeGen->copy();
+                        }
+                        $completedAtType = $faker->dateTimeBetween($startTypeGen, $endTypeGen);
                     }
 
                     AssessmentDetail::create([

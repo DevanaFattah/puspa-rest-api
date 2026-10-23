@@ -34,30 +34,50 @@ class AttendanceExport implements FromCollection, WithHeadings, WithMapping, Wit
             $query->whereDate('session_date', '<=', $this->filters['date_to']);
         }
 
-        if (!empty($this->filters['therapy_type'])) {
-            $type = $this->filters['therapy_type'];
-            $query->whereHas('schedule', function ($q) use ($type) {
-                $q->where('therapy_type', $type);
+        // Filter Therapy Type (single or multiple)
+        $therapyTypes = [];
+        if (!empty($this->filters['therapy_types']) && is_array($this->filters['therapy_types'])) {
+            $therapyTypes = array_filter($this->filters['therapy_types']);
+        } elseif (!empty($this->filters['therapy_type_ids']) && is_array($this->filters['therapy_type_ids'])) {
+            $therapyTypes = array_filter($this->filters['therapy_type_ids']);
+        } elseif (!empty($this->filters['therapy_type'])) {
+            $therapyTypes = is_array($this->filters['therapy_type']) ? $this->filters['therapy_type'] : [$this->filters['therapy_type']];
+        }
+        if (!empty($therapyTypes)) {
+            $query->whereHas('schedule', function ($q) use ($therapyTypes) {
+                $q->whereIn('therapy_type', $therapyTypes);
             });
         }
 
-        if (!empty($this->filters['therapist_id'])) {
-            $therapistId = $this->filters['therapist_id'];
-            $query->where(function ($q) use ($therapistId) {
-                $q->where('therapist_id', $therapistId)
-                  ->orWhere(function ($sq) use ($therapistId) {
+        // Filter Therapist (single or multiple)
+        $therapistIds = [];
+        if (!empty($this->filters['therapist_ids']) && is_array($this->filters['therapist_ids'])) {
+            $therapistIds = array_filter($this->filters['therapist_ids']);
+        } elseif (!empty($this->filters['therapist_id'])) {
+            $therapistIds = is_array($this->filters['therapist_id']) ? $this->filters['therapist_id'] : [$this->filters['therapist_id']];
+        }
+        if (!empty($therapistIds)) {
+            $query->where(function ($q) use ($therapistIds) {
+                $q->whereIn('therapist_id', $therapistIds)
+                  ->orWhere(function ($sq) use ($therapistIds) {
                       $sq->whereNull('therapist_id')
-                         ->whereHas('schedule', function ($scq) use ($therapistId) {
-                             $scq->where('therapist_id', $therapistId);
+                         ->whereHas('schedule', function ($scq) use ($therapistIds) {
+                             $scq->whereIn('therapist_id', $therapistIds);
                          });
                   });
             });
         }
 
-        if (!empty($this->filters['child_id'])) {
-            $childId = $this->filters['child_id'];
-            $query->whereHas('schedule', function ($q) use ($childId) {
-                $q->where('child_id', $childId);
+        // Filter Child (single or multiple)
+        $childIds = [];
+        if (!empty($this->filters['child_ids']) && is_array($this->filters['child_ids'])) {
+            $childIds = array_filter($this->filters['child_ids']);
+        } elseif (!empty($this->filters['child_id'])) {
+            $childIds = is_array($this->filters['child_id']) ? $this->filters['child_id'] : [$this->filters['child_id']];
+        }
+        if (!empty($childIds)) {
+            $query->whereHas('schedule', function ($q) use ($childIds) {
+                $q->whereIn('child_id', $childIds);
             });
         }
 
@@ -65,7 +85,11 @@ class AttendanceExport implements FromCollection, WithHeadings, WithMapping, Wit
             $query->where('status', $this->filters['status']);
         }
 
-        return $query->orderBy('session_date', 'desc')->get();
+        return $query->select('therapy_sessions.*')
+            ->leftJoin('schedules', 'therapy_sessions.schedule_id', '=', 'schedules.id')
+            ->orderBy('session_date', 'desc')
+            ->orderByRaw('COALESCE(therapy_sessions.start_time, schedules.start_time) ASC')
+            ->get();
     }
 
     public function headings(): array

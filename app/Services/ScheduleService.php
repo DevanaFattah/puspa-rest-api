@@ -14,6 +14,19 @@ class ScheduleService
     {
         $query = Schedule::with(['child.family.guardians', 'therapist']);
 
+        $user = auth()->user();
+        if ($user) {
+            if ($user->hasRole('user') && $user->guardian) {
+                $familyId = $user->guardian->family_id;
+                $query->whereHas('child', function ($cq) use ($familyId) {
+                    $cq->where('family_id', $familyId);
+                });
+            } elseif (($user->hasRole('terapis') || $user->hasRole('asesor')) && $user->therapist) {
+                $therapistId = $user->therapist->id;
+                $query->where('therapist_id', $therapistId);
+            }
+        }
+
         if (!empty($filters['day_of_week'])) {
             $query->where('day_of_week', $filters['day_of_week']);
         }
@@ -75,8 +88,23 @@ class ScheduleService
 
     public function getScheduleDetail(string $id): Schedule
     {
-        return Schedule::with(['child.family.guardians', 'therapist', 'sessions.substituteTherapist'])
+        $schedule = Schedule::with(['child.family.guardians', 'therapist', 'sessions.substituteTherapist'])
             ->findOrFail($id);
+
+        $user = auth()->user();
+        if ($user) {
+            if ($user->hasRole('user') && $user->guardian) {
+                if ($schedule->child?->family_id !== $user->guardian->family_id) {
+                    abort(403, 'Anda tidak memiliki akses ke jadwal ini.');
+                }
+            } elseif (($user->hasRole('terapis') || $user->hasRole('asesor')) && $user->therapist) {
+                if ($schedule->therapist_id !== $user->therapist->id) {
+                    abort(403, 'Anda tidak memiliki akses ke jadwal ini.');
+                }
+            }
+        }
+
+        return $schedule;
     }
 
     public function updateSchedule(array $data, Schedule $schedule): Schedule

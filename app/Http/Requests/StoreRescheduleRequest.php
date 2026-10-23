@@ -44,6 +44,46 @@ class StoreRescheduleRequest extends FormRequest
                         'Sesi ini sudah pernah di-reschedule sebelumnya.'
                     );
                 }
+
+                // Check conflict jadwal terapis
+                $newDate = $this->input('new_date');
+                $targetTherapistId = $this->input('new_therapist_id') ?: ($session->therapist_id ?: $session->schedule?->therapist_id);
+                $startTime = $this->input('start_time') ?: ($session->start_time ?: $session->schedule?->start_time);
+                $endTime = $this->input('end_time') ?: ($session->end_time ?: $session->schedule?->end_time);
+
+                if ($newDate && $targetTherapistId && $startTime && $endTime) {
+                    $conflictQuery = \App\Models\TherapySession::query()
+                        ->where('session_date', $newDate)
+                        ->where('status', '!=', 'cancelled')
+                        ->where(function ($q) use ($targetTherapistId) {
+                            $q->where('therapist_id', $targetTherapistId)
+                              ->orWhere(function ($sq) use ($targetTherapistId) {
+                                  $sq->whereNull('therapist_id')
+                                     ->whereHas('schedule', function ($scq) use ($targetTherapistId) {
+                                         $scq->where('therapist_id', $targetTherapistId);
+                                     });
+                              });
+                        })
+                        ->where(function ($tq) use ($startTime, $endTime) {
+                            $tq->where(function ($overlap) use ($startTime, $endTime) {
+                                $overlap->where('start_time', '<', $endTime)
+                                        ->where('end_time', '>', $startTime);
+                            })->orWhere(function ($sqOverlap) use ($startTime, $endTime) {
+                                $sqOverlap->whereNull('start_time')
+                                          ->whereHas('schedule', function ($sched) use ($startTime, $endTime) {
+                                              $sched->where('start_time', '<', $endTime)
+                                                    ->where('end_time', '>', $startTime);
+                                          });
+                            });
+                        });
+
+                    if ($conflictQuery->exists()) {
+                        $validator->errors()->add(
+                            'new_therapist_id',
+                            'Terapis yang dipilih sudah memiliki jadwal sesi lain pada tanggal dan jam tersebut.'
+                        );
+                    }
+                }
             }
         });
     }

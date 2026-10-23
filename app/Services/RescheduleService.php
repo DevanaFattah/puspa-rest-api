@@ -11,13 +11,26 @@ class RescheduleService
     public function createReschedule(TherapySession $originalSession, array $data): Reschedule
     {
         return DB::transaction(function () use ($originalSession, $data) {
-            // 1. Update original session status to cancelled
-            $originalSession->status = 'cancelled';
-            $originalSession->save();
+            // 1. Update original session status (preserve excused/izin if already marked excused, else set cancelled)
+            if ($originalSession->status !== 'excused' && $originalSession->status !== 'sick') {
+                $originalSession->status = 'cancelled';
+                $originalSession->save();
+            }
 
             // 2. Create new therapy session for rescheduled date
-            $startTime = !empty($data['start_time']) ? substr($data['start_time'], 0, 5) : null;
-            $endTime = !empty($data['end_time']) ? substr($data['end_time'], 0, 5) : null;
+            $startTime = !empty($data['start_time']) 
+                ? substr($data['start_time'], 0, 5) 
+                : ($originalSession->start_time ?: $originalSession->schedule?->start_time);
+            $endTime = !empty($data['end_time']) 
+                ? substr($data['end_time'], 0, 5) 
+                : ($originalSession->end_time ?: $originalSession->schedule?->end_time);
+
+            if ($startTime) {
+                $startTime = substr($startTime, 0, 5);
+            }
+            if ($endTime) {
+                $endTime = substr($endTime, 0, 5);
+            }
 
             $notes = 'Reschedule dari sesi tanggal ' . $originalSession->session_date->format('Y-m-d');
             if ($startTime && $endTime) {

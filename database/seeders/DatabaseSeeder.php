@@ -52,6 +52,9 @@ class DatabaseSeeder extends Seeder
 
             // Finance Module Dummy Data (Invoices, Items, Payments, Session Credits)
             FinanceSeeder::class,
+
+            // Full Lifecycle Flow Dummy Scenarios (5 Personas conforming to therapy_sessions_lifecycle_standard.md)
+            LifecycleDummySeeder::class,
         ]);
     }
 }

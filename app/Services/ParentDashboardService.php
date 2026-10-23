@@ -263,6 +263,87 @@ class ParentDashboardService
     }
 
     /**
+     * Get therapy history for parent's children (sessions with attendance & SOAP).
+     */
+    public function getTherapyHistory(string $familyId, array $filters = []): array
+    {
+        $children = Child::where('family_id', $familyId)->pluck('id');
+
+        if ($children->isEmpty()) {
+            return [];
+        }
+
+        $query = \App\Models\TherapySession::with([
+            'schedule.child',
+            'schedule.therapist',
+            'substituteTherapist',
+            'therapySoap',
+        ])
+        ->whereHas('schedule', function ($q) use ($children) {
+            $q->whereIn('child_id', $children);
+        })
+        ->whereIn('status', ['present', 'completed', 'cancelled', 'sick', 'excused']);
+
+        if (!empty($filters['child_id'])) {
+            $query->whereHas('schedule', fn($q) => $q->where('child_id', $filters['child_id']));
+        }
+
+        if (!empty($filters['start_date'])) {
+            $query->whereDate('session_date', '>=', $filters['start_date']);
+        }
+
+        if (!empty($filters['end_date'])) {
+            $query->whereDate('session_date', '<=', $filters['end_date']);
+        }
+
+        $sessions = $query->orderBy('session_date', 'desc')->get();
+
+        $therapyTypeLabels = [
+            'okupasi'  => 'Terapi Okupasi',
+            'wicara'   => 'Terapi Wicara',
+            'paedagog' => 'PLB (Paedagog)',
+            'fisio'    => 'Fisioterapi',
+        ];
+
+        return $sessions->map(function ($session) use ($therapyTypeLabels) {
+            $therapist = $session->substituteTherapist ?? $session->schedule?->therapist;
+            $rawType = strtolower($session->schedule?->therapy_type ?? 'wicara');
+            $soap = $session->therapySoap;
+
+            $duration = '60 menit';
+            if ($session->schedule?->start_time && $session->schedule?->end_time) {
+                $start = Carbon::parse($session->schedule->start_time);
+                $end = Carbon::parse($session->schedule->end_time);
+                $duration = $start->diffInMinutes($end) . ' menit';
+            }
+
+            return [
+                'id' => $session->id,
+                'namaAnak' => $session->schedule?->child?->child_name ?? '-',
+                'jenisTerapi' => $therapyTypeLabels[$rawType] ?? ucfirst($rawType),
+                'tanggal' => $session->session_date ? Carbon::parse($session->session_date)->format('d/m/Y') : '-',
+                'tanggalRaw' => $session->session_date ? Carbon::parse($session->session_date)->format('Y-m-d') : '-',
+                'jamMulai' => $session->schedule?->start_time ? substr(str_replace(':', '.', $session->schedule->start_time), 0, 5) : '09.00',
+                'durasi' => $duration,
+                'terapis' => $therapist?->therapist_name ?? '-',
+                'diagnosisTerapi' => $soap?->therapy_diagnosis ?? 'Pemeriksaan & intervensi terapi rutin',
+                'judulSesi' => "Sesi #{$session->session_number} " . ($therapyTypeLabels[$rawType] ?? ucfirst($rawType)),
+                'deskripsiSingkat' => ($session->schedule?->child?->child_name ?? 'Anak') . ' • Sesi ' . ($session->status === 'present' ? 'Hadir' : ucfirst($session->status)),
+                'status' => $session->status,
+                'soap' => [
+                    'subjektif' => $soap?->subjective ?? 'Tidak ada keluhan khusus dari orang tua.',
+                    'objektif' => $soap?->objective ?? 'Anak kooperatif mengikuti seluruh rangkaian intervensi.',
+                    'assessment' => $soap?->assessment ?? 'Progres intervensi berjalan positif.',
+                    'plan' => $soap?->plan ?? 'Lanjutkan program stimulasi berkala.',
+                    'implementasi' => $soap?->implementation ?? ($soap?->interventions ?? 'Intervensi terstruktur sesuai kurikulum terapi.'),
+                    'assessmentLanjutan' => $soap?->advanced_assessment ?? 'Evaluasi respons berkelanjutan pada sesi berikutnya.',
+                    'planLanjutan' => $soap?->advanced_plan ?? 'Home program disarankan dipraktikkan bersama orang tua.',
+                ],
+            ];
+        })->toArray();
+    }
+
+    /**
      * Get empty stats structure
      */
     private function getEmptyStats(): array

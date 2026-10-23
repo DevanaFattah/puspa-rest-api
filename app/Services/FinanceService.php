@@ -461,6 +461,38 @@ class FinanceService
     }
 
     /**
+     * Get active session credits (potongan periode berikutnya).
+     */
+    public function getSessionCredits(array $filters = [])
+    {
+        $query = SessionCredit::with(['child', 'guardian', 'sourceInvoice', 'usedInInvoice'])
+            ->where('status', 'active');
+
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('child', fn($cq) => $cq->where('child_name', 'like', "%{$search}%"))
+                  ->orWhereHas('guardian', fn($gq) => $gq->where('guardian_name', 'like', "%{$search}%"));
+            });
+        }
+
+        return $query->orderBy('created_at', 'desc')->get()->map(function ($credit) {
+            return [
+                'id' => $credit->id,
+                'anak' => $credit->child?->child_name ?? '-',
+                'wali' => $credit->guardian?->guardian_name ?? '-',
+                'child_id' => $credit->child_id,
+                'guardian_id' => $credit->guardian_id,
+                'jumlah' => (float) $credit->amount,
+                'source_invoice_id' => $credit->source_invoice_id,
+                'status' => $credit->status,
+                'notes' => $credit->notes,
+                'created_at' => $credit->created_at?->format('Y-m-d'),
+            ];
+        });
+    }
+
+    /**
      * Generate sequential invoice number.
      */
     private function generateInvoiceNumber(string $type): string
