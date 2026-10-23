@@ -14,7 +14,7 @@ class ExportTherapySoapRequest extends FormRequest
         $user = $this->user();
         if (!$user) return false;
 
-        return $user->hasRole(['asesor', 'terapis']);
+        return $user->hasRole(['admin', 'asesor', 'terapis']);
     }
 
     /**
@@ -26,11 +26,13 @@ class ExportTherapySoapRequest extends FormRequest
     {
         return [
             'child_id'     => ['nullable'],
+            'therapist_id' => ['nullable'],
+            'therapy_type' => ['nullable', 'string', 'in:okupasi,wicara,paedagog,fisio'],
             'period_type'  => ['nullable', 'string', 'in:daily,weekly,monthly,custom'],
             'date'         => ['nullable', 'date', 'date_format:Y-m-d'],
             'week'         => ['nullable', 'integer', 'min:1', 'max:53'],
             'month'        => ['nullable', 'integer', 'min:1', 'max:12'],
-            'year'         => ['nullable', 'integer', 'min:2020', 'max:2099'],
+            'year'         => ['nullable', 'integer'],
             'date_from'    => ['nullable', 'date', 'date_format:Y-m-d'],
             'date_to'      => ['nullable', 'date', 'date_format:Y-m-d', 'after_or_equal:date_from'],
         ];
