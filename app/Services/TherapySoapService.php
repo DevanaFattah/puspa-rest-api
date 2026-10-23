@@ -8,6 +8,7 @@ use App\Actions\TherapySoap\GetTherapySoapBySessionAction;
 use App\Actions\TherapySoap\GetTherapySoapExportFilterOptionsAction;
 use App\Models\TherapySession;
 use App\Models\TherapySoap;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 
 class TherapySoapService
@@ -17,9 +18,7 @@ class TherapySoapService
         private CreateTherapySoapAction                 $createTherapySoapAction,
         private GetTherapySoapExportFilterOptionsAction $getFilterOptionsAction,
         private ExportTherapySoapsAction                 $exportTherapySoapsAction,
-    )
-    {
-    }
+    ) {}
 
     /**
      * Retrieve the therapy SOAP note for a specific therapy session.
@@ -41,24 +40,26 @@ class TherapySoapService
     }
 
     /**
-     * Get filter options for SOAP export for a specific therapist.
+     * Get filter options for SOAP export for a therapist or admin.
      *
-     * @param string $therapistId
+     * @param User $user
+     * @param array<string, mixed> $filters
      * @return array<string, mixed>
      */
-    public function getExportFilterOptions(string $therapistId): array
+    public function getExportFilterOptions(User $user, array $filters = []): array
     {
-        return $this->getFilterOptionsAction->execute($therapistId);
+        return $this->getFilterOptionsAction->execute($user, $filters);
     }
 
     /**
-     * Retrieve all matching SOAP notes for export (unpaginated).
+     * Generate DomPDF instance for SOAP export.
      *
      * @param array<string, mixed> $filters
-     * @return Collection<int, TherapySoap>
+     * @param \App\Models\User|null $user
+     * @return array{pdf: \Barryvdh\DomPDF\PDF, view_type: string}
      */
-    public function exportTherapySoaps(array $filters = []): Collection
+    public function export(User $user, array $filters = []): array
     {
-        return $this->exportTherapySoapsAction->execute($filters);
+        return $this->exportTherapySoapsAction->execute($user, $filters);
     }
 }
