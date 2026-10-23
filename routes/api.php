@@ -190,10 +190,7 @@ Route::middleware('auth:sanctum')->group(function () {
             ->whereIn('status', ['scheduled', 'completed']); // using query filter: date, and search
 
         // ================== SCHEDULES (JADWAL TERAPI) ==================
-        Route::get('/schedules', [ScheduleController::class, 'index']);
         Route::post('/schedules', [ScheduleController::class, 'store']);
-        Route::get('/schedules/{schedule}', [ScheduleController::class, 'show'])
-            ->whereUlid('schedule');
         Route::put('/schedules/{schedule}', [ScheduleController::class, 'update'])
             ->whereUlid('schedule');
         Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])
@@ -351,5 +348,12 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/{assessment}', [ParentAssessmentManagement::class, 'show'])
                 ->whereNumber('assessment');
         });
+    });
+    // ================== ROLE ADMIN & ORANG TUA / USER ==================
+    Route::middleware(['verified', 'role:admin|user', 'throttle:authenticated'])->group(function () {
+        // ================== SCHEDULES (JADWAL TERAPI) ==================
+        Route::get('/schedules', [ScheduleController::class, 'index']);
+        Route::get('/schedules/{schedule}', [ScheduleController::class, 'show'])
+            ->whereUlid('schedule');
     });
 });
