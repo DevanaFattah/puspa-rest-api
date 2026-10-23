@@ -55,34 +55,6 @@
         font-style: normal;
     }
 
-    @font-face {
-        font-family: 'Playpen Sans';
-        src: url("{{ storage_path('fonts/PlaypenSans-Regular.ttf') }}") format('truetype');
-        font-weight: normal;
-        font-style: normal;
-    }
-
-    @font-face {
-        font-family: 'Playpen Sans';
-        src: url("{{ storage_path('fonts/PlaypenSans-SemiBold.ttf') }}") format('truetype');
-        font-weight: 600;
-        font-style: normal;
-    }
-
-    @font-face {
-        font-family: 'Playpen Sans';
-        src: url("{{ storage_path('fonts/PlaypenSans-Bold.ttf') }}") format('truetype');
-        font-weight: 700;
-        font-style: normal;
-    }
-
-    @font-face {
-        font-family: 'Playpen Sans';
-        src: url("{{ storage_path('fonts/PlaypenSans-ExtraBold.ttf') }}") format('truetype');
-        font-weight: 800;
-        font-style: normal;
-    }
-
     body {
         font-family: 'Poppins', sans-serif;
         font-size: 8.5pt;
@@ -232,17 +204,23 @@
 
     .meta-value {
         font-weight: 600;
-        margin-top: -10px;
+        line-height: 1;
     }
 
     /* Therapy Legend Pills */
     .legend-table {
         width: 100%;
         border-collapse: collapse;
+        text-align: right;
     }
 
     .legend-table td {
         width: 20%;
+        padding-right: 0px;
+    }
+
+    .legend-table td:first-child {
+        text-align: left;
     }
 
     .legend-title-cell {
@@ -262,8 +240,7 @@
         font-size: 7.5pt;
         font-weight: 700;
         text-align: center;
-        width: 136px;
-        margin-right: 5.5px;
+        width: 135px;
         margin-top: -2px;
     }
 

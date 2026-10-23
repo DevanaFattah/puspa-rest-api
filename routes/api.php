@@ -17,6 +17,7 @@ use App\Http\Controllers\Assessor_Therapist\ProfileController as AssessorTherapi
 use App\Http\Controllers\Assessor_Therapist\DashboardController as AssessorTherapistDashboard;
 use App\Http\Controllers\Assessor_Therapist\TherapySessionController as AssessorTherapistTherapySession;
 use App\Http\Controllers\Assessor_Therapist\TherapySoapController as AssessorTherapistTherapySoap;
+use App\Http\Controllers\Admin_Assessor_Therapist\TherapySoapController as AdminAssessorTherapistTherapySoap;
 use App\Http\Controllers\Owner\EmployeeController as OwnerEmployeeManagement;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboard;
 use App\Http\Controllers\Owner_Admin\UserController as OwnerAdminUserManagement;
@@ -224,6 +225,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/observations/{observation}/detail', [AdminAssessorTherapistObservationManagement::class, 'showDetailByType'])
             ->whereNumber('observation')
             ->whereIn('type', ['scheduled', 'completed', 'question', 'answer']);
+        Route::get('/therapy_soaps/export/filter-options', [AdminAssessorTherapistTherapySoap::class, 'exportFilterOptions']);
+        Route::get('/therapy_soaps/export', [AdminAssessorTherapistTherapySoap::class, 'export']);
 
         // ================== ROLE THERAPIST & ASSESSOR ==================
         Route::middleware(['role:terapis|asesor', 'throttle:authenticated'])->group(function () {
@@ -244,8 +247,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/therapy_soaps/{session}', [AssessorTherapistTherapySoap::class, 'show'])
                 ->whereUlid('session');
             Route::post('/therapy_soaps', [AssessorTherapistTherapySoap::class, 'store']);
-            Route::get('/therapy_soaps/export/filter-options', [AssessorTherapistTherapySoap::class, 'exportFilterOptions']);
-            Route::get('/therapy_soaps/export', [AssessorTherapistTherapySoap::class, 'export']);
         });
 
         // ================== ROLE ASSESSOR & ADMIN ==================
@@ -368,5 +369,12 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/{assessment}', [ParentAssessmentManagement::class, 'show'])
                 ->whereNumber('assessment');
         });
+    });
+    // ================== ROLE ADMIN & ORANG TUA / USER ==================
+    Route::middleware(['verified', 'role:admin|user', 'throttle:authenticated'])->group(function () {
+        // ================== SCHEDULES (JADWAL TERAPI) ==================
+        Route::get('/schedules', [ScheduleController::class, 'index']);
+        Route::get('/schedules/{schedule}', [ScheduleController::class, 'show'])
+            ->whereUlid('schedule');
     });
 });
