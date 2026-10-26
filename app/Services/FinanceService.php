@@ -168,16 +168,48 @@ class FinanceService
                 ]);
             }
 
-            // Mark unused credit as used if discount was applied
+            // Mark unused credit as used if discount was applied (FIFO & partial deduction)
             if ($discount > 0) {
-                $credit = SessionCredit::where('child_id', $childId)
+                $credits = SessionCredit::where('child_id', $childId)
                     ->where('is_used', false)
-                    ->first();
-                if ($credit) {
-                    $credit->update([
-                        'is_used' => true,
-                        'used_in_invoice_id' => $invoice->id,
-                    ]);
+                    ->orderBy('created_at', 'asc')
+                    ->get();
+
+                $remainingDiscount = $discount;
+                foreach ($credits as $credit) {
+                    if ($remainingDiscount <= 0) {
+                        break;
+                    }
+
+                    $creditAmount = (float) $credit->credit_amount;
+                    if ($creditAmount <= $remainingDiscount) {
+                        $remainingDiscount -= $creditAmount;
+                        $credit->update([
+                            'is_used' => true,
+                            'used_in_invoice_id' => $invoice->id,
+                        ]);
+                    } else {
+                        // Partial deduction: gunakan sebagian, sisanya tetap aktif
+                        $usedPortion = $remainingDiscount;
+                        $remainingCredit = $creditAmount - $usedPortion;
+
+                        $credit->update([
+                            'credit_amount' => $usedPortion,
+                            'is_used' => true,
+                            'used_in_invoice_id' => $invoice->id,
+                        ]);
+
+                        SessionCredit::create([
+                            'child_id' => $credit->child_id,
+                            'guardian_id' => $credit->guardian_id,
+                            'source_invoice_id' => $credit->source_invoice_id,
+                            'unused_session_count' => max(0, $credit->unused_session_count - 1),
+                            'credit_amount' => $remainingCredit,
+                            'is_used' => false,
+                        ]);
+
+                        $remainingDiscount = 0;
+                    }
                 }
             }
 
@@ -199,7 +231,7 @@ class FinanceService
             $periodLabel = $data['period_label'] ?? $invoice->period_label;
             $startDate = $data['start_date'] ?? $invoice->start_date;
             $endDate = $data['end_date'] ?? $invoice->end_date;
-            $discount = isset($data['discount']) ? (float) $data['discount'] : $invoice->discount_amount;
+            $discount = isset($data['discount']) ? (float) $data['discount'] : (float) $invoice->discount_amount;
             $notes = $data['notes'] ?? $invoice->notes;
 
             $itemsData = $data['items'] ?? [];
@@ -225,6 +257,59 @@ class FinanceService
                 $invoice->subtotal_amount = $subtotal;
             }
 
+            // Sync session credits if discount changed
+            if (isset($data['discount'])) {
+                // Revert previously used credits for this invoice
+                SessionCredit::where('used_in_invoice_id', $invoice->id)
+                    ->update([
+                        'is_used' => false,
+                        'used_in_invoice_id' => null,
+                    ]);
+
+                if ($discount > 0) {
+                    $credits = SessionCredit::where('child_id', $childId)
+                        ->where('is_used', false)
+                        ->orderBy('created_at', 'asc')
+                        ->get();
+
+                    $remainingDiscount = $discount;
+                    foreach ($credits as $credit) {
+                        if ($remainingDiscount <= 0) {
+                            break;
+                        }
+
+                        $creditAmount = (float) $credit->credit_amount;
+                        if ($creditAmount <= $remainingDiscount) {
+                            $remainingDiscount -= $creditAmount;
+                            $credit->update([
+                                'is_used' => true,
+                                'used_in_invoice_id' => $invoice->id,
+                            ]);
+                        } else {
+                            $usedPortion = $remainingDiscount;
+                            $remainingCredit = $creditAmount - $usedPortion;
+
+                            $credit->update([
+                                'credit_amount' => $usedPortion,
+                                'is_used' => true,
+                                'used_in_invoice_id' => $invoice->id,
+                            ]);
+
+                            SessionCredit::create([
+                                'child_id' => $credit->child_id,
+                                'guardian_id' => $credit->guardian_id,
+                                'source_invoice_id' => $credit->source_invoice_id,
+                                'unused_session_count' => max(0, $credit->unused_session_count - 1),
+                                'credit_amount' => $remainingCredit,
+                                'is_used' => false,
+                            ]);
+
+                            $remainingDiscount = 0;
+                        }
+                    }
+                }
+            }
+
             $invoice->type = $type;
             $invoice->child_id = $childId;
             $invoice->guardian_id = $guardianId;
@@ -245,8 +330,18 @@ class FinanceService
      */
     public function deleteInvoice(string $id)
     {
-        $invoice = Invoice::findOrFail($id);
-        return $invoice->delete();
+        return DB::transaction(function () use ($id) {
+            $invoice = Invoice::findOrFail($id);
+
+            // Revert session credits yang dipakai di invoice ini
+            SessionCredit::where('used_in_invoice_id', $invoice->id)
+                ->update([
+                    'is_used' => false,
+                    'used_in_invoice_id' => null,
+                ]);
+
+            return $invoice->delete();
+        });
     }
 
     /**
@@ -398,6 +493,27 @@ class FinanceService
                     'source_invoice_no' => $c->sourceInvoice->no_invoice ?? '—',
                 ];
             }),
+        ];
+    }
+
+    /**
+     * Get active session credits for a specific child.
+     */
+    public function getCreditByChild(string $childId)
+    {
+        $credits = SessionCredit::where('child_id', $childId)
+            ->where('is_used', false)
+            ->get();
+
+        return [
+            'child_id' => $childId,
+            'total_credit' => (float) $credits->sum('credit_amount'),
+            'unused_sessions' => (int) $credits->sum('unused_session_count'),
+            'items' => $credits->map(fn($c) => [
+                'id' => $c->id,
+                'amount' => (float) $c->credit_amount,
+                'source_invoice_id' => $c->source_invoice_id,
+            ]),
         ];
     }
 

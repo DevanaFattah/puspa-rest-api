@@ -143,7 +143,9 @@ class AttendanceService
 
         if ($data['status'] === 'present') {
             if (!$session->checked_in_at) {
-                $session->checked_in_at = Carbon::now();
+                $sessionDate = $session->session_date ? Carbon::parse($session->session_date) : Carbon::today();
+                $now = Carbon::now();
+                $session->checked_in_at = $sessionDate->copy()->setTime($now->hour, $now->minute, $now->second);
             }
         } else {
             $session->checked_in_at = null;
