@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin_Assessor_Therapist;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\ResponseFormatter;
 use App\Http\Requests\ExportTherapySoapRequest;
+use App\Http\Resources\TherapySoapExportFilterOptionsResource;
+use App\Http\Resources\TherapySoapResource;
+use App\Models\TherapySession;
 use App\Services\TherapySoapService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,6 +19,26 @@ class TherapySoapController extends Controller
     public function __construct(
         private TherapySoapService $therapySoapService,
     ) {}
+
+    /**
+     * GET /therapy_soaps/{session}
+     *
+     * Return the therapy SOAP note for a specific therapy session.
+     */
+    public function show(TherapySession $session): JsonResponse
+    {
+        $soap = $this->therapySoapService->getTherapySoapBySession($session);
+
+        if (!$soap) {
+            return $this->errorResponse('Catatan SOAP tidak ditemukan untuk sesi ini', [], 404);
+        }
+
+        return $this->successResponse(
+            new TherapySoapResource($soap),
+            'Detail Catatan SOAP Terapi',
+            200
+        );
+    }
 
     /**
      * GET /therapy_soaps/export/filter-options
@@ -32,7 +55,7 @@ class TherapySoapController extends Controller
         $options = $this->therapySoapService->getExportFilterOptions($user, $filters);
 
         return $this->successResponse(
-            $options,
+            new TherapySoapExportFilterOptionsResource($options),
             'Opsi Filter Export SOAP',
             200
         );

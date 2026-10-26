@@ -225,6 +225,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/observations/{observation}/detail', [AdminAssessorTherapistObservationManagement::class, 'showDetailByType'])
             ->whereNumber('observation')
             ->whereIn('type', ['scheduled', 'completed', 'question', 'answer']);
+        Route::get('/therapy_soaps/{session}', [AdminAssessorTherapistTherapySoap::class, 'show'])
+            ->whereUlid('session');
         Route::get('/therapy_soaps/export/filter-options', [AdminAssessorTherapistTherapySoap::class, 'exportFilterOptions']);
         Route::get('/therapy_soaps/export', [AdminAssessorTherapistTherapySoap::class, 'export']);
 
@@ -244,8 +246,6 @@ Route::middleware('auth:sanctum')->group(function () {
                 ->whereUlid('session');
 
             // ================== THERAPY SOAPS ==================
-            Route::get('/therapy_soaps/{session}', [AssessorTherapistTherapySoap::class, 'show'])
-                ->whereUlid('session');
             Route::post('/therapy_soaps', [AssessorTherapistTherapySoap::class, 'store']);
         });
 

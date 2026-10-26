@@ -8,6 +8,13 @@ use App\Models\User;
 
 class GetTherapySoapExportFilterOptionsAction
 {
+    public const THERAPY_TYPES_LIST = [
+        ['value' => 'okupasi',  'label' => 'Terapi Okupasi'],
+        ['value' => 'wicara',   'label' => 'Terapi Wicara'],
+        ['value' => 'paedagog', 'label' => 'Terapi Paedagogik'],
+        ['value' => 'fisio',    'label' => 'Terapi Fisio'],
+    ];
+
     /**
      * Retrieve filter options for SOAP export.
      *
@@ -20,57 +27,28 @@ class GetTherapySoapExportFilterOptionsAction
      */
     public function execute(User $user, array $filters = []): array
     {
-        $therapyTypeLabels = [
-            'okupasi'  => 'Terapi Okupasi',
-            'wicara'   => 'Terapi Wicara',
-            'paedagog' => 'Terapi Paedagogik',
-            'fisio'    => 'Terapi Fisio',
-        ];
-
-        $therapyTypesList = [
-            ['value' => 'okupasi',  'label' => 'Terapi Okupasi'],
-            ['value' => 'wicara',   'label' => 'Terapi Wicara'],
-            ['value' => 'paedagog', 'label' => 'Terapi Paedagogik'],
-            ['value' => 'fisio',    'label' => 'Terapi Fisio'],
-        ];
-
         $isAdmin = $user->hasRole('admin');
 
         // Admin behavior: all children & therapists open, with optional pairing by therapy_type / therapist_id
         if ($isAdmin) {
-            $therapistQuery = Therapist::select('id', 'therapist_name', 'therapist_section')
-                ->orderBy('therapist_name');
+            $therapists = Therapist::query()
+                ->select('id', 'therapist_name', 'therapist_section')
+                ->when(!empty($filters['therapy_type']), fn($q) => $q->where('therapist_section', $filters['therapy_type']))
+                ->orderBy('therapist_name')
+                ->get();
 
-            if (!empty($filters['therapy_type'])) {
-                $therapistQuery->where('therapist_section', $filters['therapy_type']);
-            }
-
-            if (!empty($filters['therapist_id'])) {
-                $therapistQuery->where('id', $filters['therapist_id']);
-            }
-
-            $allTherapists = $therapistQuery->get()
-                ->map(fn($t) => [
-                    'id'                 => $t->id,
-                    'therapist_name'     => $t->therapist_name,
-                    'therapy_type'       => $t->therapist_section,
-                    'therapy_type_label' => $therapyTypeLabels[$t->therapist_section] ?? ucfirst((string) $t->therapist_section),
-                ])->values()->all();
-
-            $allChildren = Child::select('id', 'child_name', 'medical_record_number')
+            $children = Child::query()
+                ->select('id', 'child_name', 'medical_record_number')
+                ->when(!empty($filters['therapist_id']), fn($q) => $q->whereRelation('schedules', 'therapist_id', $filters['therapist_id']))
+                ->when(!empty($filters['therapy_type']) && empty($filters['therapist_id']), fn($q) => $q->whereRelation('schedules', 'therapy_type', $filters['therapy_type']))
                 ->orderBy('child_name')
-                ->get()
-                ->map(fn($c) => [
-                    'id'                    => $c->id,
-                    'child_name'            => $c->child_name,
-                    'medical_record_number' => $c->medical_record_number,
-                ])->values()->all();
+                ->get();
 
             return [
                 'scope'         => 'all',
-                'therapy_types' => $therapyTypesList,
-                'therapists'    => $allTherapists,
-                'children'      => $allChildren,
+                'therapy_types' => self::THERAPY_TYPES_LIST,
+                'therapists'    => $therapists,
+                'children'      => $children,
             ];
         }
 
@@ -82,41 +60,22 @@ class GetTherapySoapExportFilterOptionsAction
         // Children assigned to this therapist via primary schedule or substitute session
         $children = Child::query()
             ->where(function ($query) use ($therapistId) {
-                $query->whereHas('schedules', function ($q) use ($therapistId) {
-                    $q->where('therapist_id', $therapistId);
-                })->orWhereHas('schedules.sessions', function ($q) use ($therapistId) {
-                    $q->where('therapist_id', $therapistId);
-                });
+                $query->whereRelation('schedules', 'therapist_id', $therapistId)
+                    ->orWhereRelation('schedules.sessions', 'therapist_id', $therapistId);
             })
             ->select('id', 'child_name', 'medical_record_number')
-            ->orderBy('child_name', 'asc')
+            ->orderBy('child_name')
             ->get();
 
-        $therapistData = [
-            'id'                 => $therapist->id,
-            'therapist_name'     => $therapist->therapist_name,
-            'therapy_type'       => $rawSection,
-            'therapy_type_label' => $therapyTypeLabels[$rawSection] ?? ucfirst((string) $rawSection),
-        ];
-
         return [
-            'scope'              => 'therapist',
-            'therapist_id'       => $therapist->id,
-            'therapist_name'     => $therapist->therapist_name,
-            'therapy_type'       => $rawSection,
-            'therapy_type_label' => $therapyTypeLabels[$rawSection] ?? ucfirst((string) $rawSection),
-            'therapists'         => [$therapistData],
-            'therapy_types'      => [
-                [
-                    'value' => $rawSection,
-                    'label' => $therapyTypeLabels[$rawSection] ?? ucfirst((string) $rawSection),
-                ],
-            ],
-            'children'           => $children->map(fn($c) => [
-                'id'                    => $c->id,
-                'child_name'            => $c->child_name,
-                'medical_record_number' => $c->medical_record_number,
-            ])->values()->all(),
+            'scope'         => 'therapist',
+            'therapist'     => $therapist,
+            'therapists'    => collect([$therapist]),
+            'children'      => $children,
+            'therapy_types' => collect(self::THERAPY_TYPES_LIST)
+                ->where('value', $rawSection)
+                ->values()
+                ->all(),
         ];
     }
 }
