@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\FinanceController;
 use App\Http\Controllers\Admin\ObservationController as AdminObservationManagement;
 use App\Http\Controllers\Admin\UserController as AdminUserManagement;
 use App\Http\Controllers\Admin\AssessmentController as AdminAssessmentManagement;
+use App\Http\Controllers\Admin\RolePermissionController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin_Assessor\AssessmentController as AdminAssessorAssessmentManagement;
 use App\Http\Controllers\Admin_Assessor_Therapist\ObservationController as AdminAssessorTherapistObservationManagement;
@@ -165,18 +166,21 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/finance/invoices/{id}/refund-attendance', [FinanceController::class, 'attendanceForRefund'])->whereUlid('id');
         Route::post('/finance/invoices/{id}/refund', [FinanceController::class, 'refundInvoice'])->whereUlid('id');
         Route::get('/finance/credits', [FinanceController::class, 'credits']);
+        Route::get('/finance/credits/child/{childId}', [FinanceController::class, 'childCredit'])->whereUlid('childId');
         Route::get('/finance/transactions', [FinanceController::class, 'transactions']);
     });
 
-    // ================== SCHEDULES (JADWAL TERAPI) - READ ACCESS ==================
+    // ================== SCHEDULES & PERMISSIONS - READ ACCESS ==================
     Route::middleware(['role:admin|owner|terapis|asesor|user', 'throttle:authenticated'])->group(function () {
         Route::get('/schedules', [ScheduleController::class, 'index']);
         Route::get('/schedules/{schedule}', [ScheduleController::class, 'show'])
             ->whereUlid('schedule');
+        Route::get('/auth/me/permissions', [RolePermissionController::class, 'myPermissions']);
     });
 
     // ================== ROLE ADMIN ==================
     Route::middleware(['role:admin', 'throttle:authenticated'])->group(function () {
+        Route::get('/roles/matrix', [RolePermissionController::class, 'matrix']);
         Route::get('/admins/dashboard/stats', [AdminDashboard::class, 'index']);
         Route::get('/admins/dashboard/today-schedule', [AdminDashboard::class, 'todayTherapySchedule']);
         Route::get('/admins/profile', [AdminProfileManagement::class, 'showProfile']);
@@ -188,12 +192,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/admins/{admin}', [AdminUserManagement::class, 'destroyAdmin'])
             ->whereUlid('admin');
 
+        Route::get('/therapists', [OwnerAdminUserManagement::class, 'indexTherapist']);
         Route::post('/therapists', [AdminUserManagement::class, 'storeTherapist']);
         Route::put('/therapists/{therapist}', [AdminUserManagement::class, 'updateTherapist'])
             ->whereUlid('therapist');
         Route::delete('/therapists/{therapist}', [AdminUserManagement::class, 'destroyTherapist'])
             ->whereUlid('therapist');
 
+        Route::get('/children', [OwnerAdminUserManagement::class, 'indexChild']);
         Route::post('/children', [AdminUserManagement::class, 'storeChild']);
         Route::put('/children/{child}', [AdminUserManagement::class, 'updateChild'])
             ->whereUlid('child');

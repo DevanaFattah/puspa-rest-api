@@ -49,19 +49,41 @@ class GetTherapySessionsAction
                 'rescheduleOriginal.newSession:id,session_date,therapist_id',
                 'rescheduleOriginal.newSession.substituteTherapist:id,therapist_name',
             ])
-            // Filter by my_sessions (current authenticated therapist) or specific therapist_id
-            ->when(filter_var($filters['my_sessions'] ?? false, FILTER_VALIDATE_BOOLEAN) || !empty($filters['therapist_id']), function ($q) use ($filters) {
-                $therapistId = $filters['therapist_id'] ?? auth()->user()?->therapist?->id;
-                if ($therapistId) {
-                    $q->where(function ($sub) use ($therapistId) {
-                        $sub->where('therapy_sessions.therapist_id', $therapistId)
-                            ->orWhere(function ($nested) use ($therapistId) {
-                                $nested->whereNull('therapy_sessions.therapist_id')
-                                    ->whereHas('schedule', fn($s) => $s->where('therapist_id', $therapistId));
-                            });
-                    });
-                } else {
-                    $q->whereRaw('1 = 0');
+            // Filter by my_sessions / Role Scoping
+            // Terapis biasa WAJIB hanya melihat sesinya sendiri. Hak lintas terapis hanya untuk asesor/kepala_terapis/admin/owner.
+            ->when(true, function ($q) use ($filters) {
+                $user = auth()->user();
+                $isSupervisory = $user && (
+                    $user->hasRole('admin') ||
+                    $user->hasRole('owner') ||
+                    $user->hasRole('asesor') ||
+                    $user->hasRole('kepala_terapis')
+                );
+
+                if (!$isSupervisory && $user && $user->hasRole('terapis')) {
+                    $myTherapistId = $user->therapist?->id;
+                    if ($myTherapistId) {
+                        $q->where(function ($sub) use ($myTherapistId) {
+                            $sub->where('therapy_sessions.therapist_id', $myTherapistId)
+                                ->orWhere(function ($nested) use ($myTherapistId) {
+                                    $nested->whereNull('therapy_sessions.therapist_id')
+                                        ->whereHas('schedule', fn($s) => $s->where('therapist_id', $myTherapistId));
+                                });
+                        });
+                    } else {
+                        $q->whereRaw('1 = 0');
+                    }
+                } elseif (filter_var($filters['my_sessions'] ?? false, FILTER_VALIDATE_BOOLEAN) || !empty($filters['therapist_id'])) {
+                    $therapistId = $filters['therapist_id'] ?? $user?->therapist?->id;
+                    if ($therapistId) {
+                        $q->where(function ($sub) use ($therapistId) {
+                            $sub->where('therapy_sessions.therapist_id', $therapistId)
+                                ->orWhere(function ($nested) use ($therapistId) {
+                                    $nested->whereNull('therapy_sessions.therapist_id')
+                                        ->whereHas('schedule', fn($s) => $s->where('therapist_id', $therapistId));
+                                });
+                        });
+                    }
                 }
             })
             // Filter by therapy_type (via related schedule)

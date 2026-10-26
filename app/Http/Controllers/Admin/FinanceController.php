@@ -187,6 +187,19 @@ class FinanceController extends Controller
     }
 
     /**
+     * Active credits for a specific child.
+     */
+    public function childCredit(string $childId)
+    {
+        try {
+            $data = $this->financeService->getCreditByChild($childId);
+            return $this->successResponse($data, 'Berhasil mengambil saldo potongan anak');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), [], 500);
+        }
+    }
+
+    /**
      * Cash flow transactions log.
      */
     public function transactions(Request $request)
