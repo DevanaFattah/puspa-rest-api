@@ -127,6 +127,9 @@ Route::middleware('auth:sanctum')->group(function () {
             ->whereUlid('user');
         Route::get('/users/{user}/deactive', [OwnerEmployeeManagement::class, 'deleteAccount'])
             ->whereUlid('user');
+
+        // RBAC Management - Khusus Role Owner saja yang bisa mengedit hak akses
+        Route::put('/roles/permissions', [RolePermissionController::class, 'updatePermission']);
     });
 
     // ================== ROLE OWNER & ADMIN ==================
@@ -176,11 +179,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/schedules/{schedule}', [ScheduleController::class, 'show'])
             ->whereUlid('schedule');
         Route::get('/auth/me/permissions', [RolePermissionController::class, 'myPermissions']);
+        Route::get('/roles/matrix', [RolePermissionController::class, 'matrix']);
     });
 
     // ================== ROLE ADMIN ==================
     Route::middleware(['role:admin', 'throttle:authenticated'])->group(function () {
-        Route::get('/roles/matrix', [RolePermissionController::class, 'matrix']);
         Route::get('/admins/dashboard/stats', [AdminDashboard::class, 'index']);
         Route::get('/admins/dashboard/today-schedule', [AdminDashboard::class, 'todayTherapySchedule']);
         Route::get('/admins/profile', [AdminProfileManagement::class, 'showProfile']);
