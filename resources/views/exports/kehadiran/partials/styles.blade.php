@@ -7,6 +7,13 @@
         --sakit: #2F7CA3;
         --alpa: #C0392B;
         --reschedule: #7A5BB5;
+        --pending: #6B7C77;
+        --light-hadir: #E3F3ED;
+        --light-izin: #FDF1DC;
+        --light-sakit: #E4F0F7;
+        --light-alpa: #FBE7E4;
+        --light-reschedule: #EEE9F7;
+        --light-pending: #EDEFEF;
     }
 
     @page {
@@ -153,35 +160,40 @@
     .status-badge {
         display: inline-block;
         border-radius: 3px;
-        padding: 2px 8px;
+        padding: 2px 8px 4px;
         font-size: 6.8pt;
         font-weight: 700;
         text-align: center;
     }
 
-    .status-badge.badge-hadir {
-        background-color: #d7ede5;
+    .badge-hadir {
+        background-color: var(--light-hadir);
         color: var(--hadir);
     }
 
-    .status-badge.badge-izin {
-        background-color: #fcebd2;
+    .badge-izin {
+        background-color: var(--light-izin);
         color: var(--izin);
     }
 
-    .status-badge.badge-sakit {
-        background-color: #d6e8f4;
+    .badge-sakit {
+        background-color: var(--light-sakit);
         color: var(--sakit);
     }
 
-    .status-badge.badge-alpa {
-        background-color: #fcdbd9;
+    .badge-alpa {
+        background-color: var(--light-alpa);
         color: var(--alpa);
     }
 
-    .status-badge.badge-reschedule {
-        background-color: #e8dff4;
+    .badge-reschedule {
+        background-color: var(--light-reschedule);
         color: var(--reschedule);
+    }
+
+    .badge-pending {
+        background-color: var(--light-pending);
+        color: var(--pending);
     }
 
     /* Legend Row below Table */

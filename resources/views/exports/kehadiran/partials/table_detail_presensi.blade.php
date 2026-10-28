@@ -30,22 +30,25 @@
         @foreach($sessions ?? [] as $index => $session)
         @php
         // Resolve status badge class
-        $statusRaw = strtolower($session['status_raw'] ?? $session['status'] ?? '');
-        if (in_array($statusRaw, ['hadir', 'present'])) {
+        $statusRaw = strtolower($session['status'] ?? '');
+        if ($statusRaw === 'present') {
         $statusClass = 'badge-hadir';
         $statusText = 'Hadir';
-        } elseif (in_array($statusRaw, ['izin', 'excused'])) {
+        } elseif ($statusRaw === 'excused') {
         $statusClass = 'badge-izin';
         $statusText = 'Izin';
-        } elseif (in_array($statusRaw, ['sakit', 'sick'])) {
+        } elseif ($statusRaw === 'sick') {
         $statusClass = 'badge-sakit';
         $statusText = 'Sakit';
-        } elseif (in_array($statusRaw, ['alpa', 'alpha', 'absent'])) {
+        } elseif ($statusRaw === 'cancelled') {
         $statusClass = 'badge-alpa';
         $statusText = 'Alpa';
-        } elseif (in_array($statusRaw, ['reschedule', 'rescheduled'])) {
+        } elseif ($statusRaw === 'reschedule') {
         $statusClass = 'badge-reschedule';
         $statusText = 'Reschedule';
+        } elseif ($statusRaw === 'pending') {
+        $statusClass = 'badge-pending';
+        $statusText = 'Pending';
         } else {
         $statusClass = 'badge-hadir';
         $statusText = $session['status_label'] ?? $session['status'] ?? '-';

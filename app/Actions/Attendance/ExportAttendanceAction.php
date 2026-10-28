@@ -137,14 +137,7 @@ class ExportAttendanceAction
             return 'reschedule';
         }
 
-        return match ($session->status) {
-            'present'                       => 'hadir',
-            'excused', 'therapist_excused'  => 'izin',
-            'sick'                          => 'sakit',
-            'absent', 'therapist_absent'    => 'alpa',
-            'cancelled'                     => 'reschedule',
-            default                         => $session->status ?? 'pending',
-        };
+        return $session->status;
     }
 
     /**
@@ -240,7 +233,6 @@ class ExportAttendanceAction
                 'therapy_type_raw'   => $schedule?->therapy_type ?? '',
                 'therapy_type_label' => $typeLabels[$schedule?->therapy_type] ?? 'Terapi',
                 'status'             => $status,
-                'status_raw'         => $status,
                 'method'             => $session->checked_in_at ? 'Scan QR' : 'Manual',
                 'notes'              => !empty($session->notes) ? $session->notes : '–',
             ];
