@@ -2,39 +2,41 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Exports\AttendanceExport;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\ResponseFormatter;
+use App\Http\Requests\ExportAttendanceRequest;
 use App\Http\Requests\MarkAttendanceRequest;
 use App\Http\Requests\UpdateAttendanceRequest;
 use App\Http\Resources\RescheduleResource;
 use App\Http\Resources\SessionAttendanceResource;
 use App\Models\TherapySession;
 use App\Services\AttendanceService;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
 
 class AttendanceController extends Controller
 {
     use ResponseFormatter;
 
-    protected AttendanceService $attendanceService;
-
-    public function __construct(AttendanceService $attendanceService)
-    {
-        $this->attendanceService = $attendanceService;
-    }
+    public function __construct(
+        private AttendanceService $attendanceService,
+    ) {}
 
     public function todaySessions(Request $request): JsonResponse
     {
         $filters = $request->only([
-            'date', 'date_from', 'date_to', 
-            'child_id', 'child_ids', 
-            'therapist_id', 'therapist_ids', 
-            'therapy_type', 'therapy_types', 'therapy_type_ids',
-            'status', 'search'
+            'date',
+            'date_from',
+            'date_to',
+            'child_id',
+            'child_ids',
+            'therapist_id',
+            'therapist_ids',
+            'therapy_type',
+            'therapy_types',
+            'therapy_type_ids',
+            'status',
+            'search'
         ]);
         $perPage = (int) $request->input('per_page', 10);
 
@@ -102,8 +104,7 @@ class AttendanceController extends Controller
             'token' => 'required|string',
         ]);
 
-        try
-        {
+        try {
             $session = $this->attendanceService->processQrScan($request->token);
 
             return $this->successResponse(
@@ -111,36 +112,18 @@ class AttendanceController extends Controller
                 'Presensi QR Code berhasil dicatat',
                 200
             );
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), [], 400);
         }
     }
 
-    public function exportAttendance(Request $request)
+    public function export(ExportAttendanceRequest $request)
     {
-        $filters = $request->only([
-            'date_from', 'date_to', 
-            'therapy_type', 'therapy_types', 'therapy_type_ids',
-            'therapist_id', 'therapist_ids', 
-            'child_id', 'child_ids', 
-            'status'
-        ]);
-        $format = strtolower($request->input('format', 'excel'));
+        $user = $request->user();
+        $filters = $request->validated();
 
-        $filename = 'rekap_kehadiran_' . date('Y-m-d_His');
+        ['pdf' => $pdf, 'file_name' => $fileName] = $this->attendanceService->export($user, $filters);
 
-        if ($format === 'pdf')
-        {
-            $export = new AttendanceExport($filters);
-            $sessions = $export->collection();
-            $pdf = Pdf::loadView('exports.attendance_pdf', compact('sessions'))
-                ->setPaper('a4', 'landscape');
-
-            return $pdf->download($filename . '.pdf');
-        }
-
-        return Excel::download(new AttendanceExport($filters), $filename . '.xlsx');
+        return $pdf->stream($fileName);
     }
 }

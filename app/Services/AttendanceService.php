@@ -2,14 +2,20 @@
 
 namespace App\Services;
 
+use App\Actions\Attendance\ExportAttendanceAction;
 use App\Models\Reschedule;
 use App\Models\TherapySession;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 
 class AttendanceService
 {
+    public function __construct(
+        private ExportAttendanceAction $exportAttendanceAction,
+    ) {}
+
     public function getTodaySessions(array $filters, int $perPage = 10): LengthAwarePaginator
     {
         $query = TherapySession::with([
@@ -55,12 +61,12 @@ class AttendanceService
         if (!empty($therapistIds)) {
             $query->where(function ($q) use ($therapistIds) {
                 $q->whereIn('therapist_id', $therapistIds)
-                  ->orWhere(function ($sq) use ($therapistIds) {
-                      $sq->whereNull('therapist_id')
-                         ->whereHas('schedule', function ($scq) use ($therapistIds) {
-                             $scq->whereIn('therapist_id', $therapistIds);
-                         });
-                  });
+                    ->orWhere(function ($sq) use ($therapistIds) {
+                        $sq->whereNull('therapist_id')
+                            ->whereHas('schedule', function ($scq) use ($therapistIds) {
+                                $scq->whereIn('therapist_id', $therapistIds);
+                            });
+                    });
             });
         }
 
@@ -88,7 +94,7 @@ class AttendanceService
             $query->whereHas('schedule', function ($q) use ($search) {
                 $q->whereHas('child', function ($cq) use ($search) {
                     $cq->where('child_name', 'like', "%{$search}%")
-                       ->orWhere('medical_record_number', 'like', "%{$search}%");
+                        ->orWhere('medical_record_number', 'like', "%{$search}%");
                 })->orWhereHas('child.family.guardians', function ($gq) use ($search) {
                     $gq->where('guardian_name', 'like', "%{$search}%");
                 });
@@ -127,7 +133,7 @@ class AttendanceService
             $search = $filters['search'];
             $query->whereHas('originalSession.schedule.child', function ($cq) use ($search) {
                 $cq->where('child_name', 'like', "%{$search}%")
-                   ->orWhere('medical_record_number', 'like', "%{$search}%");
+                    ->orWhere('medical_record_number', 'like', "%{$search}%");
             });
         }
 
@@ -201,12 +207,12 @@ class AttendanceService
                 'schedule.therapist',
                 'substituteTherapist',
             ])
-            ->whereHas('schedule', function ($q) use ($child) {
-                $q->where('child_id', $child->id);
-            })
-            ->whereDate('session_date', $today)
-            ->where('status', '!=', 'cancelled')
-            ->get();
+                ->whereHas('schedule', function ($q) use ($child) {
+                    $q->where('child_id', $child->id);
+                })
+                ->whereDate('session_date', $today)
+                ->where('status', '!=', 'cancelled')
+                ->get();
 
             if ($sessionsToday->isEmpty()) {
                 throw new \Exception("Pasien {$childName} tidak memiliki jadwal sesi terapi aktif hari ini.");
@@ -307,5 +313,17 @@ class AttendanceService
         $session->save();
 
         return $session;
+    }
+
+    /**
+     * Generate DomPDF instance for Attendance export.
+     *
+     * @param User $user
+     * @param array<string, mixed> $filters
+     * @return array{pdf: \Barryvdh\DomPDF\PDF, file_name: string}
+     */
+    public function export(User $user, array $filters = []): array
+    {
+        return $this->exportAttendanceAction->execute($user, $filters);
     }
 }
