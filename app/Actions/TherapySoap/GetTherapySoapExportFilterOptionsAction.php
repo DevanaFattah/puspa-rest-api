@@ -63,6 +63,7 @@ class GetTherapySoapExportFilterOptionsAction
                 $query->whereRelation('schedules', 'therapist_id', $therapistId)
                     ->orWhereRelation('schedules.sessions', 'therapist_id', $therapistId);
             })
+            ->whereHas('schedules.sessions.soap')
             ->select('id', 'child_name', 'medical_record_number')
             ->orderBy('child_name')
             ->get();
