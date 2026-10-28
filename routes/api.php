@@ -149,7 +149,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // ================== PRESENSI & RESCHEDULE ==================
         Route::get('/sessions/today', [AttendanceController::class, 'todaySessions']);
         Route::get('/sessions/rescheduled', [AttendanceController::class, 'rescheduledSessions']);
-        Route::match(['get', 'post'], '/sessions/export', [AttendanceController::class, 'export']);
+        Route::get('/sessions/export', [AttendanceController::class, 'export']);
         Route::post('/sessions/qr-scan', [AttendanceController::class, 'scanQrCode']);
         Route::get('/sessions/{session}/qr', [AttendanceController::class, 'getQrCode'])
             ->whereUlid('session');
