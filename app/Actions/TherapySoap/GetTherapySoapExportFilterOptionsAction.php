@@ -39,6 +39,7 @@ class GetTherapySoapExportFilterOptionsAction
 
             $children = Child::query()
                 ->select('id', 'child_name', 'medical_record_number')
+                ->whereHas('schedules.sessions.soap')
                 ->when(!empty($filters['therapist_id']), fn($q) => $q->whereRelation('schedules', 'therapist_id', $filters['therapist_id']))
                 ->when(!empty($filters['therapy_type']) && empty($filters['therapist_id']), fn($q) => $q->whereRelation('schedules', 'therapy_type', $filters['therapy_type']))
                 ->orderBy('child_name')
@@ -59,11 +60,11 @@ class GetTherapySoapExportFilterOptionsAction
 
         // Children assigned to this therapist via primary schedule or substitute session
         $children = Child::query()
+            ->whereHas('schedules.sessions.soap')
             ->where(function ($query) use ($therapistId) {
                 $query->whereRelation('schedules', 'therapist_id', $therapistId)
                     ->orWhereRelation('schedules.sessions', 'therapist_id', $therapistId);
             })
-            ->whereHas('schedules.sessions.soap')
             ->select('id', 'child_name', 'medical_record_number')
             ->orderBy('child_name')
             ->get();
