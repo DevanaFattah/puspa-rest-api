@@ -2,7 +2,7 @@
     <table class="signature-table">
         <tr>
             <td style="width: 65%;"></td>
-            <td style="width: 35%; text-align: center;">
+            <td class="text-center" style="width: 35%;">
                 <div class="sig-date">{{ $signature['city'] ?? 'Surakarta' }}, {{ $signature['date'] ?? now()->format('d/m/Y') }}</div>
                 <div style="height: 45px;"></div>
                 <div class="sig-name">{{ $signature['therapist_name'] ?? ($filter['therapist_name'] ?? 'Terapis') }}</div>

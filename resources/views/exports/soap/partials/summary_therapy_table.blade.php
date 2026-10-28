@@ -2,9 +2,9 @@
 <table class="data-table">
     <thead>
         <tr>
-            <th style="width: 25%;">JENIS TERAPI</th>
-            <th style="width: 38%;">TERAPIS</th>
-            <th style="width: 17%;">JUMLAH SESI</th>
+            <th class="text-left" style="width: 25%;">JENIS TERAPI</th>
+            <th class="text-left" style="width: 38%;">TERAPIS</th>
+            <th class="text-left" style="width: 17%;">JUMLAH SESI</th>
             <th style="width: 20%;">SESI TERAKHIR</th>
         </tr>
     </thead>
@@ -29,17 +29,17 @@
         }
         @endphp
         <tr>
-            <td>
-                <span style="display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px;" class="{{ $colorClass }}"></span>
-                <div class="summary-data">{{ $summary['therapy_type'] }}</div>
+            <td class="font-bold">
+                <span class="almost-bullet {{ $colorClass }}"></span>
+                {{ $summary['therapy_type'] }}
             </td>
             <td>{!! nl2br(e($summary['therapists'])) !!}</td>
             <td>{{ $summary['session_count'] }} sesi</td>
-            <td>{{ $summary['last_session'] ?? '-' }}</td>
+            <td class="text-center">{{ $summary['last_session'] ?? '-' }}</td>
         </tr>
         @empty
         <tr>
-            <td colspan="4" style="text-align: center; color: #6B7C77;">Tidak ada data ringkasan terapi</td>
+            <td colspan="4" class="text-center" style="color: #6B7C77;">Tidak ada data ringkasan terapi</td>
         </tr>
         @endforelse
         <tr class="total-row">

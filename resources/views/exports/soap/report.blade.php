@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <title>Laporan Catatan SOAP Terapi - Puspa Holistic Care</title>
+    @include('exports.styles')
     @include('exports.soap.partials.styles')
 </head>
 

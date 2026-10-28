@@ -17,7 +17,7 @@
     if (isset($pdf)) {
         // Resolve the document's font (Poppins) with fallback to default sans-serif
         $font = $fontMetrics->get_font('Poppins', 'normal') ?? $fontMetrics->get_font('sans-serif', 'normal');
-        $size = 7.5;
+        $size = 7.2;
         $color = [107/255, 124/255, 119/255]; // matches --gray (#6B7C77)
 
         // $pdf is already the canvas (Dompdf\Adapter\CPDF), so call page_text directly

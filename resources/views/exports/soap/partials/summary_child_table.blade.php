@@ -2,10 +2,10 @@
 <table class="data-table">
     <thead>
         <tr>
-            <th style="width: 25%;">ANAK</th>
-            <th style="width: 20%;">NO. REKAM MEDIS</th>
-            <th style="width: 40%;">JENIS TERAPI (JUMLAH SESI)</th>
-            <th style="width: 15%;">TOTAL</th>
+            <th class="text-left" style="width: 25%;">ANAK</th>
+            <th class="text-left" style="width: 20%;">NO. REKAM MEDIS</th>
+            <th class="text-left" style="width: 40%;">JENIS TERAPI (JUMLAH SESI)</th>
+            <th class="text-left" style="width: 15%;">TOTAL</th>
         </tr>
     </thead>
     <tbody>
@@ -17,9 +17,7 @@
         $grandTotalSessions += (int)($item['total_sessions'] ?? 0);
         @endphp
         <tr>
-            <td>
-                <div class="summary-data">{{ $item['child_name'] }}</div>
-            </td>
+            <td class="font-bold">{{ $item['child_name'] }}</td>
             <td>{{ $item['medical_record_number'] ?? $item['no_rm'] ?? '-' }}</td>
             <td>
                 @if(is_array($item['therapies'] ?? null))
@@ -34,7 +32,7 @@
         </tr>
         @empty
         <tr>
-            <td colspan="4" style="text-align: center; color: #6B7C77;">Tidak ada data anak</td>
+            <td colspan="4" class="text-center" style="color: #6B7C77;">Tidak ada data anak</td>
         </tr>
         @endforelse
         <tr class="total-row">
