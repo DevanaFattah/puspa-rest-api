@@ -201,7 +201,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/therapists/{therapist}', [AdminUserManagement::class, 'destroyTherapist'])
             ->whereUlid('therapist');
 
-        Route::get('/children', [OwnerAdminUserManagement::class, 'indexChild']);
         Route::post('/children', [AdminUserManagement::class, 'storeChild']);
         Route::put('/children/{child}', [AdminUserManagement::class, 'updateChild'])
             ->whereUlid('child');
