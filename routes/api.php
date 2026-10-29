@@ -195,7 +195,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/admins/{admin}', [AdminUserManagement::class, 'destroyAdmin'])
             ->whereUlid('admin');
 
-        Route::get('/therapists', [OwnerAdminUserManagement::class, 'indexTherapist']);
         Route::post('/therapists', [AdminUserManagement::class, 'storeTherapist']);
         Route::put('/therapists/{therapist}', [AdminUserManagement::class, 'updateTherapist'])
             ->whereUlid('therapist');
