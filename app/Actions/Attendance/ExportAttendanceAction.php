@@ -233,7 +233,6 @@ class ExportAttendanceAction
                 'therapy_type_raw'   => $schedule?->therapy_type ?? '',
                 'therapy_type_label' => $typeLabels[$schedule?->therapy_type] ?? 'Terapi',
                 'status'             => $status,
-                'method'             => $session->checked_in_at ? 'Scan QR' : 'Manual',
                 'notes'              => !empty($session->notes) ? $session->notes : '–',
             ];
         })->values()->toArray();

@@ -19,11 +19,7 @@
 
             <th class="text-center" style="width: 10%;">STATUS</th>
 
-            @if($view_type === 'multi_children_multi_therapy')
-            <th style="width: 9%;">METODE</th>
-            @endif
-
-            <th class="text-left" style="width: {{ $view_type === 'single_therapy_multi_children' ? '55%' : ($view_type === 'single_child_multi_therapy' ? '41%' : '32%') }};">KETERANGAN</th>
+            <th class="text-left" style="width: {{ $view_type === 'single_therapy_multi_children' ? '55%' : '41%' }};">KETERANGAN</th>
         </tr>
     </thead>
     <tbody>
@@ -50,8 +46,8 @@
         $statusClass = 'badge-pending';
         $statusText = 'Pending';
         } else {
-        $statusClass = 'badge-hadir';
-        $statusText = $session['status_label'] ?? $session['status'] ?? '-';
+        $statusClass = 'badge-pending';
+        $statusText = ucfirst($session['status']) ?? '-';
         }
 
         // Resolve therapy type dot if present
@@ -84,10 +80,6 @@
             <td class="text-center">
                 <span class="status-badge {{ $statusClass }}">{{ $statusText }}</span>
             </td>
-
-            @if($view_type === 'multi_children_multi_therapy')
-            <td class="text-center">{{ $session['method'] ?? $session['attendance_method'] ?? 'Scan QR' }}</td>
-            @endif
 
             <td style="color: {{ !empty($session['notes']) && $session['notes'] !== '–' && $session['notes'] !== '-' ? 'var(--black)' : 'var(--gray)' }};">
                 {{ !empty($session['notes']) ? $session['notes'] : '–' }}
