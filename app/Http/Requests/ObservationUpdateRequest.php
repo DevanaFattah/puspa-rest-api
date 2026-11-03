@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
+use App\Rules\ActiveTherapistRule;
 
 class ObservationUpdateRequest extends FormRequest
 {
@@ -12,7 +12,7 @@ class ObservationUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()?->hasRole('admin');
+        return true;
     }
 
     /**
@@ -23,7 +23,8 @@ class ObservationUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'scheduled_date' => ['required', 'date'],
+            'therapist_id'   => ['required', 'string', new ActiveTherapistRule],
+            'scheduled_date' => ['required', 'date', 'after_or_equal:today'],
             'scheduled_time' => ['required', 'date_format:H:i']
         ];
     }
@@ -31,8 +32,10 @@ class ObservationUpdateRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'scheduled_date.required' => 'Tanggal terjadwal tidak boleh kosong',
-            'scheduled_time.required' => 'Waktu terjadwal tidak boleh kosong'
+            'therapist_id.required'         => 'Terapis yang ditugaskan tidak boleh kosong',
+            'scheduled_date.required'       => 'Tanggal terjadwal tidak boleh kosong',
+            'scheduled_time.required'       => 'Waktu terjadwal tidak boleh kosong',
+            'scheduled_date.after_or_equal' => 'Jadwal observasi tidak bisa di bawah dari waktu sekarang.'
         ];
     }
 }

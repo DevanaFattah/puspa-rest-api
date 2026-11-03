@@ -17,36 +17,19 @@ class RescheduleObservationAction
             ]);
         }
 
-        if (empty($data['scheduled_date']) || empty($data['scheduled_time'])) {
-            return;
-        }
-
         $newDateTime = $data['scheduled_date'] . ' ' . $data['scheduled_time'];
         $newDate = Carbon::createFromFormat('Y-m-d H:i', $newDateTime);
 
-        if (!$newDate) {
-            throw ValidationException::withMessages([
-                'scheduled_date' => ['Format tanggal dan waktu tidak valid.']
-            ]);
-        }
-
-        if ($newDate->isPast()) {
-            throw ValidationException::withMessages([
-                'scheduled_date' => ['Jadwal observasi tidak bisa di bawah dari waktu sekarang.']
-            ]);
-        }
-
         $this->validateScheduleGap($observation, $newDate);
 
-        if (!$newDate->equalTo($observation->scheduled_date)) {
-            $observation->update([
-                'scheduled_date' => $newDate,
-                'status' => 'scheduled',
-                'admin_id' => auth()->id() ? auth()->user()->admin->id : null,
-            ]);
+        $observation->update([
+            'therapist_id' => $data['therapist_id'],
+            'scheduled_date' => $newDate,
+            'status' => 'scheduled',
+            'admin_id' => auth()->id() ? auth()->user()->admin->id : null,
+        ]);
 
-            event(new ObservationUpdated($observation));
-        }
+        event(new ObservationUpdated($observation));
     }
 
     private function validateScheduleGap(Observation $observation, Carbon $newDate): void

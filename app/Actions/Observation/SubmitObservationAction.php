@@ -28,9 +28,7 @@ class SubmitObservationAction
             }
         }
 
-        $therapist = auth()->user()->therapist;
-
-        return DB::transaction(function () use ($observation, $data, $questions, $therapist) {
+        return DB::transaction(function () use ($observation, $data, $questions) {
             $totalScore = 0;
             $answersToInsert = [];
 
@@ -57,7 +55,6 @@ class SubmitObservationAction
             }
 
             $observation->update([
-                'therapist_id' => $therapist->id,
                 'completed_at' => now(),
                 'total_score' => $totalScore,
                 'conclusion' => $data['conclusion'],
@@ -97,4 +94,3 @@ class SubmitObservationAction
         AssessmentDetail::insert($details);
     }
 }
-

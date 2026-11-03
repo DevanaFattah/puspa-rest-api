@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Models\Assessment;
+use App\Models\Observation;
 use App\Policies\AssessmentPolicy;
+use App\Policies\ObservationPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -15,6 +17,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Assessment::class => AssessmentPolicy::class,
+        Observation::class => ObservationPolicy::class,
     ];
 
     /**

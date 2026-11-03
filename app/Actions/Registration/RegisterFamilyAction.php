@@ -39,7 +39,6 @@ class RegisterFamilyAction
             Observation::create([
                 'child_id' => $child->id,
                 'age_category' => Child::calculateAgeAndCategory($data['child_birth_date'])['category'],
-                'scheduled_date' => now()->addDay()->nextWeekday(),
                 'status' => 'pending',
             ]);
 

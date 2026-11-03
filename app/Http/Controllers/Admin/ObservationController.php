@@ -14,12 +14,9 @@ class ObservationController extends Controller
 {
     use ResponseFormatter;
 
-    protected $observationService;
-
-    public function __construct(ObservationService $observationService)
-    {
-        $this->observationService = $observationService;
-    }
+    public function __construct(
+        private ObservationService $observationService
+    ) {}
 
     public function updateObservationDate(ObservationUpdateRequest $request, Observation $observation): JsonResponse
     {

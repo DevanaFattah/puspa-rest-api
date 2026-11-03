@@ -11,7 +11,7 @@ class ObservationSubmitRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()?->can('submit_observation') ?? false;
+        return true;
     }
 
     /**
