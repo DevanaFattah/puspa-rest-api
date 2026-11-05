@@ -54,6 +54,15 @@ class RolePermissionSeeder extends Seeder
             'submit_parent_assessment',
             'upload_report_assessment_file',
             'download_child_report_assessment_file',
+
+            // School Management
+            'show_schools',
+            'show_detail_school',
+            'add_school',
+            'edit_school',
+            'delete_school',
+            'show_school_students',
+            'show_detail_school_student',
         ];
 
         $createdPermissions = [];
@@ -73,6 +82,8 @@ class RolePermissionSeeder extends Seeder
             $createdPermissions['show_detail_therapist'],
             $createdPermissions['show_children'],
             $createdPermissions['show_detail_child'],
+            $createdPermissions['show_schools'],
+            $createdPermissions['show_detail_school'],
         ]);
 
         $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'api']);
@@ -87,6 +98,11 @@ class RolePermissionSeeder extends Seeder
             $createdPermissions['add_therapist'],
             $createdPermissions['edit_therapist'],
             $createdPermissions['delete_therapist'],
+            $createdPermissions['show_schools'],
+            $createdPermissions['show_detail_school'],
+            $createdPermissions['add_school'],
+            $createdPermissions['edit_school'],
+            $createdPermissions['delete_school'],
             $createdPermissions['show_children'],
             $createdPermissions['show_detail_child'],
             $createdPermissions['edit_child'],
@@ -138,6 +154,12 @@ class RolePermissionSeeder extends Seeder
             $createdPermissions['show_parent_assessment_answer'],
             $createdPermissions['submit_parent_assessment'],
             $createdPermissions['download_child_report_assessment_file'],
+        ]);
+
+        $school = Role::firstOrCreate(['name' => 'sekolah', 'guard_name' => 'api']);
+        $school->syncPermissions([
+            $createdPermissions['show_school_students'],
+            $createdPermissions['show_detail_school_student'],
         ]);
     }
 }

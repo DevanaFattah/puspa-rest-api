@@ -27,6 +27,7 @@ class Child extends Model
 
     protected $fillable = [
         'family_id',
+        'school_id',
         'child_name',
         'child_birth_place',
         'child_birth_date',
@@ -47,6 +48,11 @@ class Child extends Model
     public function family(): BelongsTo
     {
         return $this->belongsTo(Family::class, 'family_id', 'id');
+    }
+
+    public function school(): BelongsTo
+    {
+        return $this->belongsTo(School::class, 'school_id', 'id');
     }
 
     public function schedules(): HasMany

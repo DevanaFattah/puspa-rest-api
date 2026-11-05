@@ -56,6 +56,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(Guardian::class, 'user_id', 'id');
     }
 
+    public function school(): HasOne
+    {
+        return $this->hasOne(School::class, 'user_id', 'id');
+    }
+
     protected function getDefaultGuardName(): string
     {
         return 'api';

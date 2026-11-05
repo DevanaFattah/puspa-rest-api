@@ -1,0 +1,146 @@
+@baseUrl = http://localhost:8000/api/v1
+
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "identifier": "adminAnnisa",
+  "password": "Annisa123."
+}
+
+###
+@token = {{login.response.body.data.token}}
+
+### coba send email verifikasi
+POST {{baseUrl}}/auth/resend-verification/01m65r0evffxw17vvv44kdvcwy
+
+### Schedules List
+GET {{baseUrl}}/schedules
+Authorization: Bearer {{token}}
+
+### Specific Schedule Detail
+GET {{baseUrl}}/schedules/01j9yabcdefghjkmnpqrstvwxz
+Authorization: Bearer {{token}}
+
+### Therapy Sessions - Status: scheduled
+GET {{baseUrl}}/therapy_sessions?status=scheduled&per_page=100&page=2
+Authorization: Bearer {{token}}
+
+### Therapy Sessions - Status: scheduled + today filter
+GET {{baseUrl}}/therapy_sessions?status=scheduled&date=2026-10-12&per_page=100
+Authorization: Bearer {{token}}
+
+### Therapy Sessions - Status: pending (overdue: past date, pending/present, no SOAP)
+GET {{baseUrl}}/therapy_sessions?status=pending
+Authorization: Bearer {{token}}
+
+### Therapy Sessions - Status: rescheduled (original sessions that were rescheduled)
+GET {{baseUrl}}/therapy_sessions?status=rescheduled
+Authorization: Bearer {{token}}
+
+### Therapy Sessions - Status: completed (present + has SOAP)
+GET {{baseUrl}}/therapy_sessions?status=completed
+Authorization: Bearer {{token}}
+
+### Single Session Detail
+GET {{baseUrl}}/therapy_sessions/01m4z392jz5qsy8ky6mgbq948q
+Authorization: Bearer {{token}}
+
+### Single Therapy SOAP Detail (by Session ID)
+GET {{baseUrl}}/therapy_soaps/01m4fybg7bergjaymvdmq4xyaf
+Authorization: Bearer {{token}}
+
+### Create Therapy SOAP
+POST {{baseUrl}}/therapy_soaps
+Authorization: Bearer {{token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "therapy_session_id": "01m4q9k69ht6r8b4acmqrver1z",
+  "performed_at": "2026-10-12 10:00:00",
+  "therapy_diagnosis": "Sensory Processing Disorder & Fine Motor Delay",
+  "interventions": "Latihan modulasi sensori proprioseptif dan penguatan cengkeraman pincer grasp",
+  "subjective": "Orang tua melaporkan anak masih sering gelisah saat duduk menulis lebih dari 10 menit.",
+  "objective": "Anak mampu fokus selama 15 menit dengan bantuan media sensorik. Pincer grasp meningkat pada aktivitas meronce manik-manik sedang.",
+  "assessment": "Peningkatan kontrol motorik halus dan atensi visual tercapai 70% dari target sesi.",
+  "plan": "Lanjutkan latihan stabilisasi postural dan integrasi sensori taktil pada sesi berikutnya.",
+  "implementation": "Melakukan kegiatan memanjat dinding panjat lunak, dilanjutkan meronce 15 butir manik dengan bantuan minimal.",
+  "advanced_assessment": "Perlu evaluasi respons terhadap input vestibular pada pertemuan ke-5.",
+  "advanced_plan": "Koordinasikan aktivitas stimulasi sensori rumahan (home program) dengan orang tua."
+}
+
+### Export Filter Options (Current Therapist)
+GET {{baseUrl}}/therapy_soaps/export
+Authorization: Bearer {{token}}
+### Export Filter Options (Current Therapist)
+GET {{baseUrl}}/therapy_soaps/export?child_id[]=01m5j5vz2txevej7j8cbep5d0g&child_id[]=01m5j5vzbbbqhjnpdc5qafd9wp&therapy_type[]=okupasi&therapy_type[]=wicara
+### Export Filter Options (Current Therapist)
+GET {{baseUrl}}/therapy_soaps/export?therapist_id[]=01m5j5vwmp2rwabnrv893ctv2j&child_id[]=01m5j5vz2txevej7j8cbep5d0g
+Authorization: Bearer {{token}}
+
+### Export SOAP Data - Daily
+GET {{baseUrl}}/therapy_soaps/export?period_type=daily&date=2026-10-19
+Authorization: Bearer {{token}}
+
+### Export SOAP Data - Weekly (Week Number)
+GET {{baseUrl}}/therapy_soaps/export?period_type=weekly&week=43&year=2026
+Authorization: Bearer {{token}}
+
+### Export SOAP Data - Monthly
+GET {{baseUrl}}/therapy_soaps/export?period_type=monthly&month=10&year=2026
+Authorization: Bearer {{token}}
+
+### Export SOAP Data - Custom Date Range
+GET {{baseUrl}}/therapy_soaps/export?period_type=custom&date_from=2026-10-01&date_to=2026-10-22&child_id[]=01m5j5vz2txevej7j8cbep5d0g&child_id[]=01m5j5vzbbbqhjnpdc5qafd9wp&therapy_type=okupasi
+Authorization: Bearer {{token}}
+
+### ==========================================================
+### MODUL SEKOLAH (SCHOOL PORTAL)
+### ==========================================================
+
+# @name loginSekolah
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "identifier": "sekolahHarapan",
+  "password": "Puspa123."
+}
+
+###
+@schoolToken = {{loginSekolah.response.body.data.token}}
+
+### 1. Dashboard Sekolah
+GET {{baseUrl}}/school/dashboard
+Authorization: Bearer {{schoolToken}}
+
+### 2. Daftar Siswa Sekolah
+GET {{baseUrl}}/school/students?per_page=10
+Authorization: Bearer {{schoolToken}}
+
+### 3. Detail Siswa Sekolah (Ganti dengan ID siswa sekolah ini)
+GET {{baseUrl}}/school/students/01m6n69m1nmacn4wb9egetdcba
+Authorization: Bearer {{schoolToken}}
+
+### 4. Admin - Daftar Seluruh Sekolah
+GET {{baseUrl}}/schools
+Authorization: Bearer {{token}}
+
+### 5. Admin - Tambah Akun Sekolah Baru
+POST {{baseUrl}}/schools
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "username": "sekolahPelita",
+  "email": "pelita@sekolah.com",
+  "password": "Puspa123.",
+  "school_name": "SD Pelita Hati",
+  "npsn": "20101003",
+  "school_phone": "081122334455",
+  "school_address": "Jl. Basuki Rahmat No. 88, Surabaya",
+  "pic_name": "Dewi Sartika, S.Pd."
+}
+

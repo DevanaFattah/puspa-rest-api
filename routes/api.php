@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\UserController as AdminUserManagement;
 use App\Http\Controllers\Admin\AssessmentController as AdminAssessmentManagement;
 use App\Http\Controllers\Admin\RolePermissionController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
+use App\Http\Controllers\Admin\SchoolController as AdminSchoolManagement;
+use App\Http\Controllers\School\SchoolPortalController;
 use App\Http\Controllers\Admin_Assessor\AssessmentController as AdminAssessorAssessmentManagement;
 use App\Http\Controllers\Admin_Assessor_Therapist\ObservationController as AdminAssessorTherapistObservationManagement;
 use App\Http\Controllers\Assessor\AssessmentController as AssessorAssessmentManagement;
@@ -211,9 +213,24 @@ Route::middleware('auth:sanctum')->group(function () {
             ->whereNumber('observation');
         Route::put('/observations/{observation}/agreement', [AdminObservationManagement::class, 'assessmentAgreement'])
             ->whereNumber('observation');
+        Route::get('/observations/{observation}', [AdminObservationManagement::class, 'therapistOptions'])
+            ->whereNumber('observation');
+
+        // ================== SCHOOL MANAGEMENT ==================
+        Route::get('/schools', [AdminSchoolManagement::class, 'index']);
+        Route::get('/schools/{school}', [AdminSchoolManagement::class, 'show'])
+            ->whereUlid('school');
+        Route::post('/schools', [AdminSchoolManagement::class, 'store']);
+        Route::put('/schools/{school}', [AdminSchoolManagement::class, 'update'])
+            ->whereUlid('school');
+        Route::delete('/schools/{school}', [AdminSchoolManagement::class, 'destroy'])
+            ->whereUlid('school');
+
 
         Route::get('/assessments/{status}/admin', [AdminAssessmentManagement::class, 'indexAssessments'])
             ->whereIn('status', ['scheduled', 'completed']); // using query filter: date, and search
+        Route::get('/assessments/{assessment}', [AdminAssessmentManagement::class, 'showAssessments'])
+            ->whereNumber('assessment');
 
         // ================== SCHEDULES (JADWAL TERAPI) - WRITE ACCESS ==================
         Route::post('/schedules', [ScheduleController::class, 'store']);
@@ -383,5 +400,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/schedules', [ScheduleController::class, 'index']);
         Route::get('/schedules/{schedule}', [ScheduleController::class, 'show'])
             ->whereUlid('schedule');
+    });
+
+    // ================== ROLE SEKOLAH (DEDICATED PORTAL) ==================
+    Route::middleware(['verified', 'role:sekolah', 'throttle:authenticated'])->prefix('school')->group(function () {
+        Route::get('/dashboard', [SchoolPortalController::class, 'dashboard']);
+        Route::get('/students', [SchoolPortalController::class, 'indexStudents']);
+        Route::get('/students/{child}', [SchoolPortalController::class, 'showStudent'])
+            ->whereUlid('child');
     });
 });
