@@ -43,3 +43,7 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+
+# REST client testing files
+*.rest
+*.http
