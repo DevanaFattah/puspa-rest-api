@@ -16,8 +16,6 @@ class AssessmentController extends Controller
 {
     use ResponseFormatter;
 
-    protected $assessmentService;
-
     private const VALID_ASSESSOR_TYPES = [
         'paedagog_assessor',
         'wicara_assessor',
@@ -26,10 +24,8 @@ class AssessmentController extends Controller
     ];
 
     public function __construct(
-        AssessmentService $assessmentService
-    ) {
-        $this->assessmentService = $assessmentService;
-    }
+        private AssessmentService $assessmentService
+    ) {}
 
     public function indexAssessorQuestionsByType(string $type): JsonResponse
     {

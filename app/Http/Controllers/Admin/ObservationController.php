@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\ResponseFormatter;
-use App\Http\Requests\AssessmentUpdateRequest;
-use App\Http\Requests\ObservationUpdateRequest;
+use App\Http\Requests\Admin\AgreeToAssessmentRequest;
+use App\Http\Requests\Admin\ObservationUpdateRequest;
 use App\Models\Observation;
 use App\Services\ObservationService;
 use Illuminate\Http\JsonResponse;
@@ -29,11 +29,18 @@ class ObservationController extends Controller
     /**
      * @throws \Exception
      */
-    public function assessmentAgreement(AssessmentUpdateRequest $request, Observation $observation): JsonResponse
+    public function assessmentAgreement(AgreeToAssessmentRequest $request, Observation $observation): JsonResponse
     {
         $data = $request->validated();
         $this->observationService->agreeToAssessment($observation, $data);
 
         return $this->successResponse([], 'Assessment Berhasil Diperbarui', 200);
+    }
+
+    public function therapistOptions(Observation $observation): JsonResponse
+    {
+        $options = $this->observationService->therapistOptions($observation);
+
+        return $this->successResponse($options, 'Opsi Terapis Berhasil Diambil', 200);
     }
 }

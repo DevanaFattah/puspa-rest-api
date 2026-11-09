@@ -22,8 +22,6 @@ class ObservationController extends Controller
 
     public function submit(ObservationSubmitRequest $request, Observation $observation): JsonResponse
     {
-        $this->authorize('submit', $observation);
-
         $data = $request->validated();
         $this->observationService->submit($observation, $data);
 

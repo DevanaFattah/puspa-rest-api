@@ -213,7 +213,7 @@ Route::middleware('auth:sanctum')->group(function () {
             ->whereNumber('observation');
         Route::put('/observations/{observation}/agreement', [AdminObservationManagement::class, 'assessmentAgreement'])
             ->whereNumber('observation');
-        Route::get('/observations/{observation}', [AdminObservationManagement::class, 'therapistOptions'])
+        Route::get('/observations/{observation}/therapist-options', [AdminObservationManagement::class, 'therapistOptions'])
             ->whereNumber('observation');
 
         // ================== SCHOOL MANAGEMENT ==================
@@ -277,6 +277,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::middleware(['role:admin|asesor', 'throttle:authenticated'])->group(function () {
             Route::prefix('assessments')->group(function () {
                 Route::patch('/{assessment}', [AdminAssessmentManagement::class, 'updateAssessmentDate'])
+                    ->whereNumber('assessment');
+                Route::get('/{assessment}/therapist-options', [AdminAssessmentManagement::class, 'therapistOptions'])
                     ->whereNumber('assessment');
                 Route::get('/{assessment}/detail', [AdminAssessorAssessmentManagement::class, 'showDetailScheduled'])
                     ->whereNumber('assessment');

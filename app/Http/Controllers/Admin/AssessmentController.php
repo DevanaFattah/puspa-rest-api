@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\ResponseFormatter;
-use App\Http\Requests\AssessmentUpdateRequest;
+use App\Http\Requests\Admin\AssessmentUpdateRequest;
 use App\Http\Resources\AssessmentListAdminResource;
 use App\Models\Assessment;
 use App\Services\AssessmentService;
@@ -60,5 +60,12 @@ class AssessmentController extends Controller
         $this->assessmentService->updateScheduledDate($assessment, $data);
 
         return $this->successResponse([], 'Jadwal Assessment Berhasil Diperbarui', 200);
+    }
+
+    public function therapistOptions(Assessment $assessment): JsonResponse
+    {
+        $options = $this->assessmentService->therapistOptions($assessment);
+
+        return $this->successResponse($options, 'Opsi Terapis Berhasil Diambil', 200);
     }
 }

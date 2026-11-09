@@ -2,13 +2,17 @@
 
 namespace App\Services;
 
+use App\Actions\Assessment\GetAssessmentsAction;
+use App\Actions\Assessment\GetAssessmentsByTypeAction;
 use App\Actions\Assessment\StoreAssessorAssessmentAction;
 use App\Actions\Assessment\StoreParentAssessmentAction;
 use App\Actions\Assessment\UpdateScheduledDateAction;
+use App\Actions\Observation\TherapistOptionsAction;
 use App\Models\Assessment;
 use App\Models\AssessmentAnswer;
 use App\Models\AssessmentQuestionGroup;
 use App\Models\Guardian;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 class AssessmentService
@@ -16,70 +20,22 @@ class AssessmentService
     private const CACHE_QUESTIONS = 'assessment_questions_';
 
     public function __construct(
+        private GetAssessmentsAction $getAssessmentsAction,
+        private GetAssessmentsByTypeAction $getAssessmentsByTypeAction,
         private StoreParentAssessmentAction $storeParentAssessmentAction,
         private StoreAssessorAssessmentAction $storeAssessorAssessmentAction,
         private UpdateScheduledDateAction $updateScheduledDateAction,
+        private TherapistOptionsAction $therapistOptionsAction,
     ) {}
 
     public function getAssessments(array $filters = [])
     {
-        return $this->queryAssessments($filters);
-    }
-
-    private function queryAssessments(array $filters)
-    {
-        return Assessment::query()
-            ->with([
-                'child:id,family_id,child_name,child_birth_date,child_gender',
-                'child.family.guardians:id,family_id,guardian_name,guardian_phone,guardian_type',
-                'assessmentDetails' => function ($q) use ($filters) {
-                    $q->with(['therapist:id,therapist_name', 'admin:id,admin_name'])
-                        ->when($filters['type'] ?? null, fn($sub) => $sub->where('type', $filters['type']));
-                },
-            ])
-            ->whereNotNull('scheduled_date')
-            ->when($filters['status'] ?? null, function ($q, $status) {
-                $q->where('parent_status', $status);
-            })
-            ->when($filters['date'] ?? null, fn($q, $date) => $q->whereDate('scheduled_date', $date))
-            ->when(
-                $filters['search'] ?? null,
-                fn($q, $search) =>
-                $q->whereHas('child', fn($c) => $c->where('child_name', 'like', "%{$search}%"))
-            )
-            ->when($filters['type'] ?? null, function ($q, $type) {
-                $q->whereHas('assessmentDetails', fn($d) => $d->where('type', $type));
-            })
-            ->orderBy('scheduled_date', 'asc')
-            ->get();
+        return $this->getAssessmentsAction->execute($filters);
     }
 
     public function getAssessmentsByType(array $filters = [])
     {
-        return Assessment::query()
-            ->with([
-                'assessmentDetails' => function ($q) use ($filters) {
-                    $q->with(['therapist:id,therapist_name', 'admin:id,admin_name'])
-                        ->when(isset($filters['type']), fn($sub) => $sub->where('type', $filters['type']));
-                },
-                'child:id,family_id,child_name',
-                'child.family:id',
-                'child.family.guardians',
-            ])
-            ->whereNotNull('scheduled_date')
-            ->when(isset($filters['status']), function ($q) use ($filters) {
-                $q->where('status', $filters['status']);
-            })
-            ->when(isset($filters['status']) && $filters['status'] === 'completed', fn($q) => $q->orderBy('scheduled_date', 'desc'))
-            ->when(isset($filters['type']), function ($q) use ($filters) {
-                $q->whereHas('assessmentDetails', fn($d) => $d->where('type', $filters['type']));
-            })
-            ->when(isset($filters['date']), fn($q) => $q->whereDate('scheduled_date', $filters['date']))
-            ->when(isset($filters['search']), function ($q) use ($filters) {
-                $q->whereHas('child', fn($c) => $c->where('child_name', 'like', "%{$filters['search']}%"));
-            })
-            ->orderBy('scheduled_date', 'asc')
-            ->get();
+        return $this->getAssessmentsByTypeAction->execute($filters);
     }
 
     public function getQuestionsByType(string $type): array
@@ -154,7 +110,26 @@ class AssessmentService
         $this->updateScheduledDateAction->execute($assessment, $data);
     }
 
+    public function therapistOptions(Assessment $assessment): Collection
+    {
+        return $this->therapistOptionsAction->executeForAssessment($assessment);
+    }
+
     public function getChildrenAssessment(string $userId)
+    {
+        return Cache::remember("guardian_{$userId}_children_assessments", 300, function () use ($userId) {
+            $guardian = Guardian::where('user_id', $userId)->firstOrFail();
+
+            return $guardian->family->children()
+                ->whereHas('assessment')
+                ->with(['assessment' => function ($query) {
+                    $query->orderBy('scheduled_date', 'asc');
+                }])
+                ->get();
+        });
+    }
+
+    public function getAssessmentById(string $userId)
     {
         return Cache::remember("guardian_{$userId}_children_assessments", 300, function () use ($userId) {
             $guardian = Guardian::where('user_id', $userId)->firstOrFail();

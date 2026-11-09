@@ -5,8 +5,10 @@ namespace App\Services;
 use App\Actions\Observation\AgreeToAssessmentAction;
 use App\Actions\Observation\RescheduleObservationAction;
 use App\Actions\Observation\SubmitObservationAction;
+use App\Actions\Observation\TherapistOptionsAction;
 use App\Models\Observation;
 use App\Models\ObservationQuestion;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 class ObservationService
@@ -17,6 +19,7 @@ class ObservationService
         private SubmitObservationAction $submitObservationAction,
         private RescheduleObservationAction $rescheduleObservationAction,
         private AgreeToAssessmentAction $agreeToAssessmentAction,
+        private TherapistOptionsAction $therapistOptionsAction,
     ) {}
 
     public function getObservations(array $filters = [])
@@ -77,5 +80,10 @@ class ObservationService
     public function agreeToAssessment(Observation $observation, array $data): void
     {
         $this->agreeToAssessmentAction->execute($observation, $data);
+    }
+
+    public function therapistOptions(Observation $observation): Collection
+    {
+        return $this->therapistOptionsAction->execute($observation);
     }
 }

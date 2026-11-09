@@ -74,8 +74,7 @@ class SubmitObservationAction
     {
         $assessment = Assessment::create([
             'observation_id' => $observation->id,
-            'child_id' => $observation->child_id,
-            'status' => 'pending',
+            'child_id' => $observation->child_id
         ]);
 
         $types = ['umum'];
