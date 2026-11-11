@@ -31,6 +31,12 @@ class ChildrenResource extends JsonResource
             'child_age' => $age,
             'child_gender' => $this->child_gender,
             'child_school' => $this->child_school,
+            'school_id' => $this->school_id,
+            'school_name' => $this->school?->school_name,
+            'school' => $this->when($this->school_id, fn() => [
+                'id' => $this->school?->id,
+                'name' => $this->school?->school_name,
+            ]),
         ];
 
         return $response;

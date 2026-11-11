@@ -23,6 +23,8 @@ use App\Http\Controllers\Assessor_Therapist\TherapySoapController as AssessorThe
 use App\Http\Controllers\Admin_Assessor_Therapist\TherapySoapController as AdminAssessorTherapistTherapySoap;
 use App\Http\Controllers\Owner\EmployeeController as OwnerEmployeeManagement;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboard;
+use App\Http\Controllers\Owner\SchoolVerificationController as OwnerSchoolVerification;
+use App\Http\Controllers\Owner\AdminRoleController as OwnerAdminRoleManagement;
 use App\Http\Controllers\Owner_Admin\UserController as OwnerAdminUserManagement;
 use App\Http\Controllers\Parent\AssessmentController as ParentAssessmentManagement;
 use App\Http\Controllers\Parent\ChildController as ParentChildManagement;
@@ -125,10 +127,24 @@ Route::middleware('auth:sanctum')->group(function () {
             ->whereIn('type', ['admin', 'therapist']);
         Route::get('/users/{user}/promote-to-assessor', [OwnerEmployeeManagement::class, 'promoteToAssessor'])
             ->whereUlid('user');
-        Route::get('/users/{user}/activate', [OwnerEmployeeManagement::class, 'activateAccount'])
+        Route::match(['get', 'post'], '/users/{user}/activate', [OwnerEmployeeManagement::class, 'activateAccount'])
             ->whereUlid('user');
         Route::get('/users/{user}/deactive', [OwnerEmployeeManagement::class, 'deleteAccount'])
             ->whereUlid('user');
+
+        // School Verification for Manager / Owner
+        Route::get('/owner/schools/unverified', [OwnerSchoolVerification::class, 'unverified']);
+        Route::post('/owner/schools/{school}/verify', [OwnerSchoolVerification::class, 'verify'])
+            ->whereUlid('school');
+        Route::post('/owner/schools/{school}/reject', [OwnerSchoolVerification::class, 'reject'])
+            ->whereUlid('school');
+
+        // Admin Roles & Permissions Management (Jenis Admin)
+        Route::get('/owner/admin-roles', [OwnerAdminRoleManagement::class, 'index']);
+        Route::post('/owner/admin-roles', [OwnerAdminRoleManagement::class, 'store']);
+        Route::put('/owner/admin-roles/{role}', [OwnerAdminRoleManagement::class, 'update']);
+        Route::delete('/owner/admin-roles/{role}', [OwnerAdminRoleManagement::class, 'destroy']);
+        Route::get('/owner/admin-roles/{role}/users', [OwnerAdminRoleManagement::class, 'users']);
 
         // RBAC Management - Khusus Role Owner saja yang bisa mengedit hak akses
         Route::put('/roles/permissions', [RolePermissionController::class, 'updatePermission']);
@@ -147,6 +163,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/children', [OwnerAdminUserManagement::class, 'indexChild']);
         Route::get('/children/{child}', [AdminUserManagement::class, 'showChild'])
             ->whereUlid('child');
+
+        // School Read Access for Admin & Owner
+        Route::get('/schools', [AdminSchoolManagement::class, 'index']);
+        Route::get('/schools/{school}', [AdminSchoolManagement::class, 'show'])
+            ->whereUlid('school');
 
         // ================== PRESENSI & RESCHEDULE ==================
         Route::get('/sessions/today', [AttendanceController::class, 'todaySessions']);
@@ -217,9 +238,6 @@ Route::middleware('auth:sanctum')->group(function () {
             ->whereNumber('observation');
 
         // ================== SCHOOL MANAGEMENT ==================
-        Route::get('/schools', [AdminSchoolManagement::class, 'index']);
-        Route::get('/schools/{school}', [AdminSchoolManagement::class, 'show'])
-            ->whereUlid('school');
         Route::post('/schools', [AdminSchoolManagement::class, 'store']);
         Route::put('/schools/{school}', [AdminSchoolManagement::class, 'update'])
             ->whereUlid('school');
@@ -230,6 +248,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/assessments/{status}/admin', [AdminAssessmentManagement::class, 'indexAssessments'])
             ->whereIn('status', ['scheduled', 'completed']); // using query filter: date, and search
         Route::get('/assessments/{assessment}', [AdminAssessmentManagement::class, 'showAssessments'])
+            ->whereNumber('assessment');
+        Route::post('/assessments/{assessment}/send-to-school', [AdminAssessmentManagement::class, 'sendToSchool'])
             ->whereNumber('assessment');
 
         // ================== SCHEDULES (JADWAL TERAPI) - WRITE ACCESS ==================

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Owner;
 
+use App\Actions\Owner\ActivateAdminWithRoleAction;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\ResponseFormatter;
 use App\Http\Resources\AdminsUnverifiedResource;
@@ -10,6 +11,7 @@ use App\Models\User;
 use App\Services\OwnerService;
 use App\Services\VerificationService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
@@ -52,9 +54,11 @@ class EmployeeController extends Controller
         return $this->successResponse([], 'Terapis Berhasil Ditetaapkan Sebagai Asesor', 200);
     }
 
-    public function activateAccount(User $user): JsonResponse
+    public function activateAccount(Request $request, User $user, ActivateAdminWithRoleAction $action): JsonResponse
     {
-        $this->ownerService->activateAccount($user);
+        $role = $request->input('role') ?? $request->query('role') ?? $request->input('role_id');
+        $action->execute($user, $role);
+
         return $this->successResponse([], 'Akun berhasil diaktifkan', 200);
     }
 
