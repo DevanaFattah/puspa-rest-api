@@ -28,6 +28,7 @@ class School extends Model
         'user_id',
         'school_name',
         'npsn',
+        'jenjang',
         'school_phone',
         'school_address',
         'pic_name',

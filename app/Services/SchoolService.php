@@ -19,16 +19,30 @@ class SchoolService
             ->count();
 
         $studentsWithAssessment = Child::where('school_id', $school->id)
-            ->whereHas('assessment')
+            ->whereHas('assessment', function ($q) {
+                $q->whereNotNull('report_file')
+                    ->orWhereNotNull('sent_to_school_at');
+            })
+            ->count();
+
+        $studentsDownloaded = Child::where('school_id', $school->id)
+            ->whereHas('assessment', function ($q) {
+                $q->whereNotNull('school_downloaded_at');
+            })
             ->count();
 
         return [
             'school_name'                => $school->school_name,
             'npsn'                       => $school->npsn,
+            'jenjang'                    => $school->jenjang,
             'pic_name'                   => $school->pic_name,
+            'school_phone'               => $school->school_phone,
+            'school_address'             => $school->school_address,
             'total_students'             => $totalStudents,
             'students_with_observation'  => $studentsWithObservation,
             'students_with_assessment'   => $studentsWithAssessment,
+            'students_downloaded'        => $studentsDownloaded,
+            'downloaded_assessments_count' => $studentsDownloaded,
         ];
     }
 
@@ -46,6 +60,7 @@ class SchoolService
                 $query->where('child_gender', $filters['gender']);
             })
             ->with([
+                'family.guardians:id,family_id,guardian_name,guardian_phone,guardian_type',
                 'observation:id,child_id,status',
                 'assessment:id,child_id,status',
             ])

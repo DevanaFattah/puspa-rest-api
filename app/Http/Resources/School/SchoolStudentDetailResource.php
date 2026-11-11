@@ -16,8 +16,9 @@ class SchoolStudentDetailResource extends JsonResource
 
         $guardians = $this->family?->guardians?->map(function ($g) {
             return [
-                'guardian_name' => $g->guardian_name,
-                'guardian_type' => $g->guardian_type,
+                'guardian_name'  => $g->guardian_name,
+                'guardian_type'  => $g->guardian_type,
+                'guardian_phone' => $g->guardian_phone ?? '-',
             ];
         }) ?? [];
 
@@ -58,6 +59,8 @@ class SchoolStudentDetailResource extends JsonResource
             'child_birth_place'   => $this->child_birth_place,
             'child_birth_date'    => $birthDate?->format('Y-m-d'),
             'age'                 => $birthDate?->age,
+            'child_religion'      => $this->child_religion ?? '-',
+            'child_address'       => $this->child_address ?? '-',
             'child_complaint'     => $this->child_complaint,
             'school'              => [
                 'id'          => $this->school?->id,

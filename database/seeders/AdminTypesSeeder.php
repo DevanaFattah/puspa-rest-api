@@ -58,3 +58,4 @@ class AdminTypesSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
     }
 }
+

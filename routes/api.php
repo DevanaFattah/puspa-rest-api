@@ -251,6 +251,8 @@ Route::middleware('auth:sanctum')->group(function () {
             ->whereNumber('assessment');
         Route::post('/assessments/{assessment}/send-to-school', [AdminAssessmentManagement::class, 'sendToSchool'])
             ->whereNumber('assessment');
+        Route::post('/assessments/{assessment}/report-upload', [AdminAssessorAssessmentManagement::class, 'uploadReportFile'])
+            ->whereNumber('assessment');
 
         // ================== SCHEDULES (JADWAL TERAPI) - WRITE ACCESS ==================
         Route::post('/schedules', [ScheduleController::class, 'store']);
@@ -272,6 +274,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/therapy_soaps/{session}', [AdminAssessorTherapistTherapySoap::class, 'show'])
             ->whereUlid('session');
         Route::get('/therapy_soaps/export/filter-options', [AdminAssessorTherapistTherapySoap::class, 'exportFilterOptions']);
+        Route::get('/therapy_soaps/preview', [AdminAssessorTherapistTherapySoap::class, 'preview']);
         Route::get('/therapy_soaps/export', [AdminAssessorTherapistTherapySoap::class, 'export']);
 
         // ================== ROLE THERAPIST & ASSESSOR ==================
@@ -301,8 +304,6 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::get('/{assessment}/therapist-options', [AdminAssessmentManagement::class, 'therapistOptions'])
                     ->whereNumber('assessment');
                 Route::get('/{assessment}/detail', [AdminAssessorAssessmentManagement::class, 'showDetailScheduled'])
-                    ->whereNumber('assessment');
-                Route::post('/{assessment}/report-upload', [AdminAssessorAssessmentManagement::class, 'uploadReportFile'])
                     ->whereNumber('assessment');
                 Route::get('/{assessment}/answer/{type}', [AdminAssessorAssessmentManagement::class, 'indexAnswersAssessment'])
                     ->whereNumber('assessment')
@@ -427,8 +428,14 @@ Route::middleware('auth:sanctum')->group(function () {
     // ================== ROLE SEKOLAH (DEDICATED PORTAL) ==================
     Route::middleware(['verified', 'role:sekolah', 'throttle:authenticated'])->prefix('school')->group(function () {
         Route::get('/dashboard', [SchoolPortalController::class, 'dashboard']);
+        Route::get('/profile', [SchoolPortalController::class, 'profile']);
+        Route::put('/profile', [SchoolPortalController::class, 'updateProfile']);
         Route::get('/students', [SchoolPortalController::class, 'indexStudents']);
         Route::get('/students/{child}', [SchoolPortalController::class, 'showStudent'])
+            ->whereUlid('child');
+        Route::get('/students/{child}/assessment-report', [SchoolPortalController::class, 'downloadAssessmentReport'])
+            ->whereUlid('child');
+        Route::get('/assessments/{child}/report-download', [SchoolPortalController::class, 'downloadAssessmentReport'])
             ->whereUlid('child');
     });
 });

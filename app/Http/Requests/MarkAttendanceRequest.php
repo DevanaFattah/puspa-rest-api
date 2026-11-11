@@ -52,17 +52,15 @@ class MarkAttendanceRequest extends FormRequest
                     }
 
                     $startTime = $session->start_time ?: $session->schedule?->start_time;
-                    $endTime = $session->end_time ?: $session->schedule?->end_time;
 
-                    if ($startTime && $endTime) {
+                    if ($startTime) {
                         $nowTime = \Carbon\Carbon::now()->format('H:i');
                         $startTimeShort = substr($startTime, 0, 5);
-                        $endTimeShort = substr($endTime, 0, 5);
 
-                        if ($nowTime < $startTimeShort || $nowTime > $endTimeShort) {
+                        if ($nowTime < $startTimeShort) {
                             $validator->errors()->add(
                                 'status',
-                                "Presensi hadir hanya valid dicatat di rentang jam sesi berlangsung ({$startTimeShort} - {$endTimeShort})."
+                                "Presensi hadir belum dapat dicatat karena jam sesi belum dimulai ({$startTimeShort})."
                             );
                         }
                     }
