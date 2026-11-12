@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin_Assessor_Therapist;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\ResponseFormatter;
+use App\Http\Requests\IndexObservationsByStatusRequest;
 use App\Http\Resources\ObservationCompletedDetailResource;
 use App\Http\Resources\ObservationDetailAnswerResource;
 use App\Http\Resources\ObservationQuestionsResource;
@@ -27,23 +28,10 @@ class ObservationController extends Controller
         $this->observationService = $observationService;
     }
 
-    public function indexByStatus(Request $request, string $status): JsonResponse
+    public function indexByStatus(IndexObservationsByStatusRequest $request, string $status): JsonResponse
     {
-        $validStatus = ['pending', 'scheduled', 'completed'];
-        if (!in_array($status, $validStatus)) {
-            return $this->errorResponse(
-                'Validation Error',
-                ['type' => ['Status observasi tidak valid']],
-                422
-            );
-        }
+        $validated = $request->validated();
 
-        $validated = $request->validate([
-            'date' => ['nullable', 'date', 'date_format:Y-m-d'],
-            'search' => ['nullable', 'string', 'max:100'],
-        ]);
-
-        $validated['status'] = $status;
         $observations = $this->observationService->getObservations($validated);
 
         $resourceCollection = match ($status) {

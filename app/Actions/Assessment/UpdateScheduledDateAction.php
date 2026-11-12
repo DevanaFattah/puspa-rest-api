@@ -33,9 +33,20 @@ class UpdateScheduledDateAction
             ]);
         }
 
+        $therapistIds = collect($data['therapists'])->pluck('therapist_id')->unique();
+        $therapists   = Therapist::with('user.roles')->whereIn('id', $therapistIds)->get()->keyBy('id');
+
         foreach ($data['therapists'] as $index => $item) {
             $detail    = $details->get($item['assessment_detail_id']);
-            $therapist = Therapist::find($item['therapist_id']);
+            $therapist = $therapists->get($item['therapist_id']);
+
+            if (!$therapist->user?->hasRole('asesor')) {
+                throw ValidationException::withMessages([
+                    "therapists.{$index}.therapist_id" => [
+                        "Terapis {$therapist->therapist_name} tidak memiliki role asesor."
+                    ],
+                ]);
+            }
 
             if ($detail->type !== 'umum' && $therapist->therapist_section !== $detail->type) {
                 throw ValidationException::withMessages([

@@ -14,7 +14,9 @@ class TherapistOptionsAction
     {
         // 1. Ambil semua assessment details untuk observasi ini
         $details = AssessmentDetail::whereHas('assessment', fn($q) => $q->where('observation_id', $observation->id))
+            ->whereNot('type', 'umum')
             ->select(['id', 'type', 'therapist_id'])
+            ->with(['therapist:id,therapist_name'])
             ->get();
 
         return $this->formatDetails($details);
@@ -37,22 +39,22 @@ class TherapistOptionsAction
 
         // 3. Ambil terapis yang relevan
         $therapists = Therapist::query()
-            ->when(!$sections->contains('umum'), function ($query) use ($sections) {
-                $query->whereIn('therapist_section', $sections);
-            })
+            ->whereHas('user', fn($q) => $q->role('asesor'))
+            ->whereIn('therapist_section', $sections)
             ->select(['id', 'therapist_name', 'therapist_section'])
             ->get();
 
         // 4. Petakan terapis ke setiap assessment detail
         return $details->map(function ($detail) use ($therapists) {
-            $matchingTherapists = ($detail->type === 'umum')
-                ? $therapists
-                : $therapists->where('therapist_section', $detail->type)->values();
+            $matchingTherapists = $therapists->where('therapist_section', $detail->type)->values();
 
             return [
                 'assessment_detail_id' => $detail->id,
                 'type'                 => $detail->type,
-                'current_therapist_id' => $detail->therapist_id,
+                'current_therapist' => [
+                    "id" => $detail->therapist_id,
+                    "name" => $detail->therapist->therapist_name,
+                ],
                 'therapists'           => $matchingTherapists->map(fn($t) => [
                     'id'   => $t->id,
                     'name' => $t->therapist_name,
