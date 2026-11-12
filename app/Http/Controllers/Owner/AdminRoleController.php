@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Support\AdminMenuPermissionMap;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 
 class AdminRoleController extends Controller
@@ -24,21 +25,22 @@ class AdminRoleController extends Controller
      */
     public function index(): JsonResponse
     {
-        // Exclude clinical/parent/school roles to focus on Admin variations
-        $roles = Role::with(['permissions', 'users.admin'])
-            ->whereNotIn('name', ['owner', 'asesor', 'terapis', 'user', 'sekolah'])
+        // Exclude clinical/parent/school/executive roles to focus on Admin variations
+        $roles = Role::with('permissions')
+            ->whereNotIn('name', ['owner', 'manager', 'asesor', 'terapis', 'user', 'sekolah'])
             ->get();
 
         $data = $roles->map(function ($role) {
             $permissionNames = $role->permissions->pluck('name')->toArray();
             $checkedIds = AdminMenuPermissionMap::permissionsToMenuIds($permissionNames);
+            $usersCount = DB::table('model_has_roles')->where('role_id', $role->id)->count();
 
             return [
                 'id' => (string) $role->id,
                 'name' => $role->name,
                 'desc' => $role->name === 'admin' ? 'Akses penuh seluruh modul operasional admin.' : "Mengelola tugas {$role->name}.",
                 'checkedIds' => $checkedIds,
-                'users_count' => $role->users->count(),
+                'users_count' => $usersCount,
             ];
         });
 
@@ -92,7 +94,7 @@ class AdminRoleController extends Controller
      */
     public function users(Role $role): JsonResponse
     {
-        $users = $role->users()->with('admin')->get();
+        $users = User::role($role->name)->with('admin')->get();
 
         $data = $users->map(function (User $user) {
             return [
