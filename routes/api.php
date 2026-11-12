@@ -120,9 +120,10 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 
-    // ================== ROLE OWNER ==================
-    Route::middleware(['role:owner', 'throttle:authenticated'])->group(function () {
+    // ================== ROLE OWNER / MANAGER ==================
+    Route::middleware(['role:owner|manager', 'throttle:authenticated'])->group(function () {
         Route::get('/owners/dashboard', [OwnerDashboard::class, 'index']);
+        Route::get('/manager/dashboard', [OwnerDashboard::class, 'index']);
         Route::get('/users/{type}/unverified', [OwnerEmployeeManagement::class, 'indexUnverified'])
             ->whereIn('type', ['admin', 'therapist']);
         Route::get('/users/{user}/promote-to-assessor', [OwnerEmployeeManagement::class, 'promoteToAssessor'])
@@ -132,26 +133,38 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/users/{user}/deactive', [OwnerEmployeeManagement::class, 'deleteAccount'])
             ->whereUlid('user');
 
-        // School Verification for Manager / Owner
+        // School Verification & All Schools for Manager / Owner
+        Route::get('/owner/schools', [OwnerSchoolVerification::class, 'index']);
+        Route::get('/manager/schools', [OwnerSchoolVerification::class, 'index']);
         Route::get('/owner/schools/unverified', [OwnerSchoolVerification::class, 'unverified']);
+        Route::get('/manager/schools/unverified', [OwnerSchoolVerification::class, 'unverified']);
         Route::post('/owner/schools/{school}/verify', [OwnerSchoolVerification::class, 'verify'])
             ->whereUlid('school');
+        Route::post('/manager/schools/{school}/verify', [OwnerSchoolVerification::class, 'verify'])
+            ->whereUlid('school');
         Route::post('/owner/schools/{school}/reject', [OwnerSchoolVerification::class, 'reject'])
+            ->whereUlid('school');
+        Route::post('/manager/schools/{school}/reject', [OwnerSchoolVerification::class, 'reject'])
             ->whereUlid('school');
 
         // Admin Roles & Permissions Management (Jenis Admin)
         Route::get('/owner/admin-roles', [OwnerAdminRoleManagement::class, 'index']);
+        Route::get('/manager/admin-roles', [OwnerAdminRoleManagement::class, 'index']);
         Route::post('/owner/admin-roles', [OwnerAdminRoleManagement::class, 'store']);
+        Route::post('/manager/admin-roles', [OwnerAdminRoleManagement::class, 'store']);
         Route::put('/owner/admin-roles/{role}', [OwnerAdminRoleManagement::class, 'update']);
+        Route::put('/manager/admin-roles/{role}', [OwnerAdminRoleManagement::class, 'update']);
         Route::delete('/owner/admin-roles/{role}', [OwnerAdminRoleManagement::class, 'destroy']);
+        Route::delete('/manager/admin-roles/{role}', [OwnerAdminRoleManagement::class, 'destroy']);
         Route::get('/owner/admin-roles/{role}/users', [OwnerAdminRoleManagement::class, 'users']);
+        Route::get('/manager/admin-roles/{role}/users', [OwnerAdminRoleManagement::class, 'users']);
 
-        // RBAC Management - Khusus Role Owner saja yang bisa mengedit hak akses
+        // RBAC Management - Khusus Role Owner & Manager yang bisa mengedit hak akses
         Route::put('/roles/permissions', [RolePermissionController::class, 'updatePermission']);
     });
 
-    // ================== ROLE OWNER & ADMIN ==================
-    Route::middleware(['role:admin|owner', 'throttle:authenticated'])->group(function () {
+    // ================== ROLE OWNER, MANAGER & ADMIN ==================
+    Route::middleware(['role:admin|owner|manager', 'throttle:authenticated'])->group(function () {
         Route::get('/admins', [OwnerAdminUserManagement::class, 'indexAdmin']);
         Route::get('/admins/{admin}', [AdminUserManagement::class, 'showAdminDetail'])
             ->whereUlid('admin');
@@ -197,7 +210,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // ================== SCHEDULES & PERMISSIONS - READ ACCESS ==================
-    Route::middleware(['role:admin|owner|terapis|asesor|user', 'throttle:authenticated'])->group(function () {
+    Route::middleware(['role:admin|owner|manager|terapis|asesor|user', 'throttle:authenticated'])->group(function () {
         Route::get('/schedules', [ScheduleController::class, 'index']);
         Route::get('/schedules/{schedule}', [ScheduleController::class, 'show'])
             ->whereUlid('schedule');

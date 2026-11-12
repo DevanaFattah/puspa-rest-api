@@ -20,7 +20,7 @@ class RolePermissionController extends Controller
     {
         try {
             // Role internal/klinis Puspa Holistic (Orang Tua / Wali tidak termasuk dalam RBAC internal)
-            $roleNames = ['owner', 'admin', 'asesor', 'terapis'];
+            $roleNames = ['owner', 'manager', 'admin', 'asesor', 'terapis'];
             $roles = Role::whereIn('name', $roleNames)->with('permissions')->get()->keyBy('name');
 
             // Master capability list grouped by clinical & operational categories
@@ -121,8 +121,8 @@ class RolePermissionController extends Controller
                     foreach ($roleNames as $rName) {
                         $hasPerm = false;
 
-                        if ($rName === 'owner') {
-                            // Owner bisa segalanya (Full Authority)
+                        if ($rName === 'owner' || $rName === 'manager') {
+                            // Owner / Manager bisa segalanya (Full Authority)
                             $hasPerm = true;
                         } elseif ($rName === 'asesor') {
                             // Asesor bisa asesmen + semua kerjaan terapis
@@ -153,6 +153,7 @@ class RolePermissionController extends Controller
 
             return $this->successResponse([
                 'roles' => [
+                    ['key' => 'manager', 'name' => 'Manager / Owner', 'badge' => 'Bisa Segalanya'],
                     ['key' => 'owner', 'name' => 'Owner / Direktur', 'badge' => 'Bisa Segalanya'],
                     ['key' => 'asesor', 'name' => 'Asesor Klinis', 'badge' => 'Asesmen & Terapi'],
                     ['key' => 'admin', 'name' => 'Admin Operasional', 'badge' => 'Administrasi & Jadwal'],
@@ -192,7 +193,7 @@ class RolePermissionController extends Controller
     public function updatePermission(Request $request): JsonResponse
     {
         $request->validate([
-            'role' => 'required|string|in:owner,admin,asesor,terapis',
+            'role' => 'required|string|in:owner,manager,admin,asesor,terapis',
             'permission' => 'required|string',
             'enabled' => 'required|boolean',
         ]);

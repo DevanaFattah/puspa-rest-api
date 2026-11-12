@@ -8,7 +8,7 @@ class StoreAdminRoleRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasRole('owner') ?? false;
+        return $this->user()?->hasAnyRole(['owner', 'manager']) ?? false;
     }
 
     public function rules(): array
@@ -29,4 +29,3 @@ class StoreAdminRoleRequest extends FormRequest
         ];
     }
 }
-
