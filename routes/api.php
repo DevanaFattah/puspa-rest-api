@@ -244,8 +244,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware(['role:admin|terapis|asesor', 'throttle:authenticated'])->group(function () {
         // for status pending using query: search
         // for status scheduled & completed using query: date, search
-        Route::get('/observations/{status}', [AdminAssessorTherapistObservationManagement::class, 'indexByStatus'])
-            ->whereIn('status', ['pending', 'scheduled', 'completed']);
+        Route::get('/observations/{status}', [AdminAssessorTherapistObservationManagement::class, 'indexByStatus']);
         Route::get('/observations/{observation}/detail', [AdminAssessorTherapistObservationManagement::class, 'showDetailByType'])
             ->whereNumber('observation')
             ->whereIn('type', ['scheduled', 'completed', 'question', 'answer']);
