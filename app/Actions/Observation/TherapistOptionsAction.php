@@ -15,6 +15,7 @@ class TherapistOptionsAction
         // 1. Ambil semua assessment details untuk observasi ini
         $details = AssessmentDetail::whereHas('assessment', fn($q) => $q->where('observation_id', $observation->id))
             ->select(['id', 'type', 'therapist_id'])
+            ->with(['therapist:id,therapist_name'])
             ->get();
 
         return $this->formatDetails($details);
@@ -37,6 +38,7 @@ class TherapistOptionsAction
 
         // 3. Ambil terapis yang relevan
         $therapists = Therapist::query()
+            ->whereHas('user', fn($q) => $q->role('asesor'))
             ->when(!$sections->contains('umum'), function ($query) use ($sections) {
                 $query->whereIn('therapist_section', $sections);
             })
@@ -52,7 +54,10 @@ class TherapistOptionsAction
             return [
                 'assessment_detail_id' => $detail->id,
                 'type'                 => $detail->type,
-                'current_therapist_id' => $detail->therapist_id,
+                'current_therapist' => [
+                    "id" => $detail->therapist_id,
+                    "name" => $detail->therapist->therapist_name,
+                ],
                 'therapists'           => $matchingTherapists->map(fn($t) => [
                     'id'   => $t->id,
                     'name' => $t->therapist_name,
