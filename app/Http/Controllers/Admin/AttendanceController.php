@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\AttendanceExport;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\ResponseFormatter;
 use App\Http\Requests\ExportAttendanceRequest;
@@ -13,6 +14,7 @@ use App\Models\TherapySession;
 use App\Services\AttendanceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AttendanceController extends Controller
 {
@@ -121,6 +123,12 @@ class AttendanceController extends Controller
     {
         $user = $request->user();
         $filters = $request->validated();
+
+        $format = strtolower($request->input('format', 'pdf'));
+        if ($format === 'excel' || $format === 'xlsx') {
+            $fileName = 'rekap_kehadiran_' . date('Ymd_His') . '.xlsx';
+            return Excel::download(new AttendanceExport($filters), $fileName);
+        }
 
         ['pdf' => $pdf, 'file_name' => $fileName] = $this->attendanceService->export($user, $filters);
 

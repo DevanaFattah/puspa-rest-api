@@ -28,13 +28,17 @@ class School extends Model
         'user_id',
         'school_name',
         'npsn',
+        'jenjang',
         'school_phone',
         'school_address',
         'pic_name',
+        'verification_status',
+        'verified_at',
     ];
 
     protected $casts = [
         'school_phone' => 'encrypted',
+        'verified_at' => 'datetime',
     ];
 
     protected $touches = ['user'];
@@ -47,6 +51,11 @@ class School extends Model
     public function children(): HasMany
     {
         return $this->hasMany(Child::class, 'school_id', 'id');
+    }
+
+    public function therapists(): HasMany
+    {
+        return $this->hasMany(Therapist::class, 'school_id', 'id');
     }
 }
 

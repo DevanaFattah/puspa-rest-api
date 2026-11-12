@@ -38,6 +38,7 @@ class TherapistCreateRequest extends FormRequest
             'therapist_name' => ['sometimes', 'required', 'string', 'min:3', 'max:100'],
             'therapist_section' => ['sometimes', 'required', 'in:okupasi,fisio,wicara,paedagog'],
             'therapist_phone' => ['sometimes', 'required', 'string', 'max:100'],
+            'school_id' => ['nullable', 'string', 'exists:schools,id'],
         ];
     }
 

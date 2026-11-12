@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin_Assessor_Therapist;
 
+use App\Actions\TherapySoap\GetTherapySoapPreviewAction;
+use App\Exports\TherapySoapExport;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\ResponseFormatter;
 use App\Http\Requests\ExportTherapySoapRequest;
@@ -11,6 +13,7 @@ use App\Models\TherapySession;
 use App\Services\TherapySoapService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TherapySoapController extends Controller
 {
@@ -95,8 +98,66 @@ class TherapySoapController extends Controller
             $filters['therapy_type'] = $therapist->therapist_section;
         }
 
+        // Percabangan format: excel (.xlsx) vs pdf (stream)
+        $format = strtolower($request->input('format', 'pdf'));
+        if ($format === 'excel' || $format === 'xlsx') {
+            $fileName = 'catatan_soap_' . date('Ymd_His') . '.xlsx';
+            return Excel::download(new TherapySoapExport($filters), $fileName);
+        }
+
         ['pdf' => $pdf, 'file_name' => $fileName] = $this->therapySoapService->export($user, $filters);
 
         return $pdf->stream($fileName);
+    }
+
+    /**
+     * GET /therapy_soaps/preview
+     *
+     * Return first 10 rows of SOAP notes for table preview in admin/therapist export page.
+     */
+    public function preview(Request $request, GetTherapySoapPreviewAction $action): JsonResponse
+    {
+        $user = $request->user();
+        $filters = $request->all();
+
+        if (!$user->hasRole('admin')) {
+            $therapist = $user->therapist;
+            if (!$therapist) {
+                return $this->errorResponse('Therapist profile tidak ditemukan', [], 404);
+            }
+
+            $filters['therapist_id'] = $therapist->id;
+            $filters['therapy_type'] = $therapist->therapist_section;
+        }
+
+        $limit = (int) $request->input('limit', 10);
+        $soaps = $action->execute($filters, $limit);
+
+        $data = $soaps->map(function ($soap) {
+            $session = $soap->therapySession;
+            $schedule = $session?->schedule;
+            $child = $schedule?->child;
+            $therapist = $session?->substituteTherapist ?? $schedule?->therapist;
+
+            $timeStr = '-';
+            if ($soap->performed_at) {
+                $timeStr = $soap->performed_at->format('H:i');
+            } elseif ($schedule?->start_time) {
+                $timeStr = substr($schedule->start_time, 0, 5) . ' - ' . substr($schedule->end_time, 0, 5);
+            }
+
+            return [
+                'id' => $soap->id,
+                'child_name' => $child?->child_name ?? '-',
+                'medical_record_number' => $child?->medical_record_number ?? '-',
+                'therapist_name' => $therapist?->therapist_name ?? '-',
+                'therapy_type' => $schedule?->therapy_type ?? '-',
+                'date' => $soap->performed_at ? $soap->performed_at->format('d/m/Y') : ($session?->session_date ? $session->session_date->format('d/m/Y') : '-'),
+                'time' => $timeStr,
+                'diagnosis' => $soap->therapy_diagnosis ?? '-',
+            ];
+        });
+
+        return $this->successResponse($data, 'Pratinjau Catatan SOAP Berhasil Diambil', 200);
     }
 }

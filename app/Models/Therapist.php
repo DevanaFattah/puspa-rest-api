@@ -27,6 +27,7 @@ class Therapist extends Model
 
     protected $fillable = [
         'user_id',
+        'school_id',
         'therapist_name',
         'therapist_section',
         'therapist_phone',
@@ -54,6 +55,11 @@ class Therapist extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function school(): BelongsTo
+    {
+        return $this->belongsTo(School::class, 'school_id', 'id');
     }
 
     protected static function boot()

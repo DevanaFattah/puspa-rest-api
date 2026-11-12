@@ -29,6 +29,8 @@ class Assessment extends Model
         'scheduled_date',
         'report_file',
         'report_uploaded_at',
+        'sent_to_school_at',
+        'school_downloaded_at',
         'admin_id',
     ];
 
@@ -36,6 +38,8 @@ class Assessment extends Model
         'scheduled_date' => 'datetime',
         'observation_id' => 'integer',
         'report_uploaded_at' => 'datetime',
+        'sent_to_school_at' => 'datetime',
+        'school_downloaded_at' => 'datetime',
     ];
 
     public function assessmentDetails(): HasMany

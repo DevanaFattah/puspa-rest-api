@@ -25,6 +25,12 @@ class TherapistResource extends JsonResource
             'role' => $this->user->getRoleNames()->first(),
             'therapist_section' => $this->therapist_section,
             'therapist_phone' => $this->therapist_phone,
+            'school_id' => $this->school_id,
+            'school_name' => $this->school?->school_name,
+            'school' => $this->when($this->school_id, fn() => [
+                'id' => $this->school?->id,
+                'name' => $this->school?->school_name,
+            ]),
             'status' => $status,
             'created_at' => $this->created_at->format('d F Y H:i:s'),
             'updated_at' => $this->updated_at->format('d F Y H:i:s'),

@@ -41,9 +41,9 @@ class StoreTherapySoapRequest extends FormRequest
       'objective'           => ['required', 'string'],
       'assessment'          => ['required', 'string'],
       'plan'                => ['required', 'string'],
-      'implementation'      => ['required', 'string'],
-      'advanced_assessment' => ['required', 'string'],
-      'advanced_plan'       => ['required', 'string'],
+      'implementation'      => ['nullable', 'string'],
+      'advanced_assessment' => ['nullable', 'string'],
+      'advanced_plan'       => ['nullable', 'string'],
     ];
   }
   /**
