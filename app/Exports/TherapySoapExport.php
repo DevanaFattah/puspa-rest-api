@@ -161,3 +161,4 @@ class TherapySoapExport implements FromCollection, WithHeadings, WithMapping, Wi
         ];
     }
 }
+

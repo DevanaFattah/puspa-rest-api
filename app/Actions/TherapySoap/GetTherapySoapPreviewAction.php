@@ -71,3 +71,4 @@ class GetTherapySoapPreviewAction
             ->get();
     }
 }
+
