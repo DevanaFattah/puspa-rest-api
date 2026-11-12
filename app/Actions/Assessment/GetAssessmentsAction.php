@@ -3,10 +3,11 @@
 namespace App\Actions\Assessment;
 
 use App\Models\Assessment;
+use Illuminate\Database\Eloquent\Collection;
 
 class GetAssessmentsAction
 {
-  public function execute(array $filters): Assessment
+  public function execute(array $filters): Collection
   {
     return Assessment::query()
       ->with([

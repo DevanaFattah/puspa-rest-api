@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin_Assessor_Therapist;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\ResponseFormatter;
-use App\Http\Requests\GetObservationsByStatusRequest;
+use App\Http\Requests\IndexObservationsByStatusRequest;
 use App\Http\Resources\ObservationCompletedDetailResource;
 use App\Http\Resources\ObservationDetailAnswerResource;
 use App\Http\Resources\ObservationQuestionsResource;
@@ -28,7 +28,7 @@ class ObservationController extends Controller
         $this->observationService = $observationService;
     }
 
-    public function indexByStatus(GetObservationsByStatusRequest $request, string $status): JsonResponse
+    public function indexByStatus(IndexObservationsByStatusRequest $request, string $status): JsonResponse
     {
         $validated = $request->validated();
 

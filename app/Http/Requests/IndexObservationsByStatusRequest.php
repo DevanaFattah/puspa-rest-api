@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class GetObservationsByStatusRequest extends FormRequest
+class IndexObservationsByStatusRequest extends FormRequest
 {
     public function authorize(): bool
     {

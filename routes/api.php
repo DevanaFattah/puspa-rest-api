@@ -227,8 +227,7 @@ Route::middleware('auth:sanctum')->group(function () {
             ->whereUlid('school');
 
 
-        Route::get('/assessments/{status}/admin', [AdminAssessmentManagement::class, 'indexAssessments'])
-            ->whereIn('status', ['scheduled', 'completed']); // using query filter: date, and search
+        Route::get('/assessments/{status}/admin', [AdminAssessmentManagement::class, 'indexAssessments']); // using query filter: date, and search
         Route::get('/assessments/{assessment}', [AdminAssessmentManagement::class, 'showAssessments'])
             ->whereNumber('assessment');
 
