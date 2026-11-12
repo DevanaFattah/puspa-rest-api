@@ -16,6 +16,33 @@ class SchoolVerificationController extends Controller
     use ResponseFormatter;
 
     /**
+     * Get list of all schools for Owner / Manager UI (All Sekolah menu).
+     */
+    public function index(Request $request): JsonResponse
+    {
+        $search = $request->query('search');
+
+        $schools = School::with(['user'])
+            ->withCount('children')
+            ->when($search, function ($q, $search) {
+                $q->where('school_name', 'like', "%{$search}%")
+                  ->orWhere('npsn', 'like', "%{$search}%")
+                  ->orWhereHas('user', function ($uq) use ($search) {
+                      $uq->where('username', 'like', "%{$search}%")
+                         ->orWhere('email', 'like', "%{$search}%");
+                  });
+            })
+            ->latest()
+            ->get();
+
+        return $this->successResponse(
+            OwnerSchoolResource::collection($schools),
+            'Daftar Semua Sekolah Berhasil Diambil',
+            200
+        );
+    }
+
+    /**
      * Get list of unverified schools waiting for approval.
      */
     public function unverified(Request $request): JsonResponse
@@ -63,4 +90,3 @@ class SchoolVerificationController extends Controller
         );
     }
 }
-

@@ -17,11 +17,27 @@ class OwnerSchoolResource extends JsonResource
         $isVerified = ($this->verification_status === 'verified') || ($this->user?->is_active ?? false);
         $statusLabel = $isVerified ? 'Terverifikasi' : ($this->verification_status === 'rejected' ? 'Ditolak' : 'Tidak Terverifikasi');
 
+        $jenjangMap = [
+            'PAUD' => 'Pendidikan Anak Usia Dini',
+            'SD'   => 'Sekolah Dasar',
+            'SMP'  => 'Sekolah Menengah Pertama',
+            'SMA'  => 'Sekolah Menengah Atas',
+            'SMK'  => 'Sekolah Menengah Kejuruan',
+        ];
+
+        $rawJenjang = strtoupper((string) ($this->jenjang ?? 'SD'));
+        $jenjangKode = isset($jenjangMap[$rawJenjang]) ? $rawJenjang : ($this->jenjang ?: 'SD');
+        $jenjangLabel = $jenjangMap[$jenjangKode] ?? ($this->jenjang ?: 'Sekolah Dasar');
+
         return [
             'id' => $this->id,
             'namaSekolah' => $this->school_name,
             'school_name' => $this->school_name,
             'npsn' => $this->npsn,
+            'jenjang' => $this->jenjang,
+            'jenjangKode' => $jenjangKode,
+            'jenjangLabel' => $jenjangLabel,
+            'peran' => 'Sekolah',
             'username' => $this->user?->username ?? '-',
             'email' => $this->user?->email ?? '-',
             'noTelepon' => $this->school_phone ?? '-',
@@ -37,4 +53,3 @@ class OwnerSchoolResource extends JsonResource
         ];
     }
 }
-
