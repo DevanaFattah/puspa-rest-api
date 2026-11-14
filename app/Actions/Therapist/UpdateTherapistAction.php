@@ -22,9 +22,10 @@ class UpdateTherapistAction
                 'therapist_name',
                 'therapist_phone',
                 'therapist_section',
+                'school_id',
             ]));
 
-            return $therapist->fresh()->load('user');
+            return $therapist->fresh()->load(['user', 'school']);
         });
     }
 }

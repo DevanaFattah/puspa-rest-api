@@ -28,9 +28,10 @@ class CreateTherapistAction
                 'therapist_name' => $data['therapist_name'],
                 'therapist_phone' => $data['therapist_phone'],
                 'therapist_section' => $data['therapist_section'],
+                'school_id' => $data['school_id'] ?? null,
             ]);
 
-            return $therapist->load('user');
+            return $therapist->load(['user', 'school']);
         });
     }
 }

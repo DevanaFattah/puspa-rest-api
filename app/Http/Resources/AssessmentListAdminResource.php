@@ -67,6 +67,10 @@ class AssessmentListAdminResource extends JsonResource
             'scheduled_time' => $scheduled->format('H.i'),
             'completed_at' => $completedAtStr,
             'status' => $this->status,
+            'is_sent_to_school' => !is_null($this->sent_to_school_at),
+            'sent_to_school_at' => $this->sent_to_school_at?->format('d/m/Y H:i'),
+            'school_name' => $child?->school?->school_name ?? $child?->child_school ?? '-',
+            'school_id' => $child?->school_id,
         ];
     }
 }

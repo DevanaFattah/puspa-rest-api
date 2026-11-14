@@ -66,7 +66,7 @@ class UserController extends Controller
 
     public function showTherapistDetail(Therapist $therapist): JsonResponse
     {
-        $therapist->load('user');
+        $therapist->load(['user', 'school']);
         $response = new TherapistResource($therapist);
 
         return $this->successResponse($response, 'Detail Terapis', 200);
