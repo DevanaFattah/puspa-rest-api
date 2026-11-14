@@ -18,6 +18,7 @@ class StoreSchoolRequest extends FormRequest
             'email'          => ['required', 'email', 'max:100', 'unique:users,email'],
             'password'       => ['required', 'string', 'min:8', 'regex:/^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/'],
             'school_name'    => ['required', 'string', 'max:150'],
+            'jenjang'        => ['nullable', 'string', 'max:50'],
             'npsn'           => ['nullable', 'string', 'max:20', 'unique:schools,npsn'],
             'school_phone'   => ['nullable', 'string', 'max:20'],
             'school_address' => ['nullable', 'string', 'max:255'],

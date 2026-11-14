@@ -66,12 +66,15 @@ class SchoolController extends Controller
             $user->assignRole('sekolah');
 
             return School::create([
-                'user_id'        => $user->id,
-                'school_name'    => $data['school_name'],
-                'npsn'           => $data['npsn'] ?? null,
-                'school_phone'   => $data['school_phone'] ?? null,
-                'school_address' => $data['school_address'] ?? null,
-                'pic_name'       => $data['pic_name'] ?? null,
+                'user_id'             => $user->id,
+                'school_name'         => $data['school_name'],
+                'npsn'                => $data['npsn'] ?? null,
+                'jenjang'             => $data['jenjang'] ?? null,
+                'school_phone'        => $data['school_phone'] ?? null,
+                'school_address'      => $data['school_address'] ?? null,
+                'pic_name'            => $data['pic_name'] ?? null,
+                'verification_status' => 'verified',
+                'verified_at'         => now(),
             ]);
         });
 
