@@ -86,6 +86,18 @@ class RolePermissionSeeder extends Seeder
             $createdPermissions['show_detail_school'],
         ]);
 
+        $manager = Role::firstOrCreate(['name' => 'manager', 'guard_name' => 'api']);
+        $manager->syncPermissions([
+            $createdPermissions['show_admins'],
+            $createdPermissions['show_detail_admin'],
+            $createdPermissions['show_therapists'],
+            $createdPermissions['show_detail_therapist'],
+            $createdPermissions['show_children'],
+            $createdPermissions['show_detail_child'],
+            $createdPermissions['show_schools'],
+            $createdPermissions['show_detail_school'],
+        ]);
+
         $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'api']);
         $admin->syncPermissions([
             $createdPermissions['show_admins'],

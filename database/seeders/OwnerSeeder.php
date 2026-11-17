@@ -24,6 +24,7 @@ class OwnerSeeder extends Seeder
         ]);
 
         $role = Role::findByName('owner', 'api');
-        $user->assignRole($role);
+        $managerRole = Role::findByName('manager', 'api');
+        $user->assignRole([$role, $managerRole]);
     }
 }
