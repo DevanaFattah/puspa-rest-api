@@ -23,11 +23,15 @@ class CreateAdminRoleAction
             $menuIds = $data['checkedIds'] ?? AdminMenuPermissionMap::WAJIB_LEAF_IDS;
             $permissionNames = AdminMenuPermissionMap::menuIdsToPermissions($menuIds);
 
-            $permissions = Permission::whereIn('name', $permissionNames)
-                ->where('guard_name', 'api')
-                ->get();
+            $permissions = collect($permissionNames)->map(function ($permName) {
+                return Permission::firstOrCreate([
+                    'name' => $permName,
+                    'guard_name' => 'api',
+                ]);
+            });
 
             $role->syncPermissions($permissions);
+            app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
             return $role;
         });

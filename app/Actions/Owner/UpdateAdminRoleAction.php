@@ -22,10 +22,14 @@ class UpdateAdminRoleAction
 
             if (isset($data['checkedIds'])) {
                 $permissionNames = AdminMenuPermissionMap::menuIdsToPermissions($data['checkedIds']);
-                $permissions = Permission::whereIn('name', $permissionNames)
-                    ->where('guard_name', 'api')
-                    ->get();
+                $permissions = collect($permissionNames)->map(function ($permName) {
+                    return Permission::firstOrCreate([
+                        'name' => $permName,
+                        'guard_name' => 'api',
+                    ]);
+                });
                 $role->syncPermissions($permissions);
+                app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
             }
 
             return $role->fresh(['permissions']);

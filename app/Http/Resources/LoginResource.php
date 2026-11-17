@@ -10,12 +10,16 @@ class LoginResource extends JsonResource
     public function toArray(Request $request): array
     {
         $user = $this->resource['user'];
+        $permissions = $user->getAllPermissions()->pluck('name')->toArray();
+        $menus = \App\Support\AdminMenuPermissionMap::permissionsToMenuIds($permissions);
 
         return [
             'user_id'       => $user->id,
             'username'      => $user->username,
             'email'         => $user->email,
             'role'          => $user->getRoleNames()->first(),
+            'permissions'   => $permissions,
+            'menus'         => $menus,
             'tokenType'     => 'Bearer',
             'token'         => $this->resource['token'],
             'expires_at'    => now()->addDays(7)->toDateTimeString(),

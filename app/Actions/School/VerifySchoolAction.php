@@ -21,8 +21,8 @@ class VerifySchoolAction
                 'verified_at' => now(),
             ]);
 
-            if ($school->user) {
-                $school->user->update([
+            if ($school->user_id) {
+                \App\Models\User::where('id', $school->user_id)->update([
                     'is_active' => true,
                 ]);
             }

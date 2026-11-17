@@ -34,6 +34,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'username',
         'email',
         'password',
+        'is_active',
+        'email_verified_at',
     ];
 
     protected $casts = [
@@ -70,7 +72,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $query->with(['admin' => fn($q) => $q->select('id', 'user_id', 'admin_name', 'admin_phone')])
             ->where('is_active', 0)
-            ->whereHas('roles', fn($q) => $q->where('name', 'admin'));
+            ->whereHas('admin');
     }
 
     public function scopeUnverifiedTherapists($query)

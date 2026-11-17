@@ -27,6 +27,8 @@ class SchoolStudentListResource extends JsonResource
             'guardian_type'      => $guardian?->guardian_type ?? '-',
             'observation_status' => $this->observation?->status,
             'assessment_status'  => $this->assessment?->status,
+            'has_report'         => !empty($this->assessment?->report_file) && !empty($this->assessment?->sent_to_school_at),
+            'sent_to_school_at'  => $this->assessment?->sent_to_school_at?->format('Y-m-d H:i'),
             'created_at'         => $this->created_at?->format('Y-m-d H:i'),
         ];
     }

@@ -48,6 +48,15 @@ class ObservationController extends Controller
 
     public function showDetailByType(Request $request, Observation $observation): JsonResponse
     {
+        $user = auth()->user();
+        $isStaff = $user && ($user->hasRole('admin') || $user->hasRole('owner') || $user->hasRole('manager'));
+        if (!$isStaff && $user && ($user->hasRole('terapis') || $user->hasRole('asesor'))) {
+            $myTherapistId = $user->therapist?->id;
+            if (!$myTherapistId || $observation->therapist_id !== $myTherapistId) {
+                return $this->errorResponse('Forbidden', ['error' => 'Anda tidak memiliki hak akses untuk jadwal observasi ini.'], 403);
+            }
+        }
+
         $validated = $request->validate([
             'type' => ['required', 'string', 'in:scheduled,completed,question,answer'],
         ]);

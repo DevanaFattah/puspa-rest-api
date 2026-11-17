@@ -66,6 +66,10 @@ class TherapySessionDetailResource extends JsonResource
                 'new_session_date_formatted' => $newDate
                     ? Carbon::parse($newDate)->translatedFormat('d F Y')
                     : null,
+                'start_time'         => $newSession?->start_time ? substr($newSession->start_time, 0, 5) : null,
+                'end_time'           => $newSession?->end_time ? substr($newSession->end_time, 0, 5) : null,
+                'new_start_time'     => $newSession?->start_time ? substr($newSession->start_time, 0, 5) : null,
+                'new_end_time'       => $newSession?->end_time ? substr($newSession->end_time, 0, 5) : null,
             ];
         }
 

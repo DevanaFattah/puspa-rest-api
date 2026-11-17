@@ -81,7 +81,6 @@ class StoreAssessorAssessmentAction
 
             $detail->update([
                 'completed_at' => now(),
-                'therapist_id' => auth()->user()->therapist->id,
             ]);
 
             $hasIncompleteDetails = AssessmentDetail::where('assessment_id', $assessment->id)

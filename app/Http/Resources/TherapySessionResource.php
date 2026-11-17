@@ -99,6 +99,10 @@ class TherapySessionResource extends JsonResource
                 'new_session_date'   => $newSessionDate?->format('Y-m-d'),
                 'new_session_date_formatted' => $newSessionDate?->translatedFormat('d F Y'),
                 'new_therapist_name' => $newTherapist?->therapist_name ?? '-',
+                'start_time'         => $newSession?->start_time ? substr($newSession->start_time, 0, 5) : null,
+                'end_time'           => $newSession?->end_time ? substr($newSession->end_time, 0, 5) : null,
+                'new_start_time'     => $newSession?->start_time ? substr($newSession->start_time, 0, 5) : null,
+                'new_end_time'       => $newSession?->end_time ? substr($newSession->end_time, 0, 5) : null,
             ] : null,
 
             'created_at'             => $this->created_at?->toIso8601String(),

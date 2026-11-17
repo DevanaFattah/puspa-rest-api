@@ -21,7 +21,7 @@ class CreateAdminAction
                 'is_active' => false,
             ])->save();
 
-            $user->assignRole('admin');
+            // Role is not assigned yet until verified by Manager
 
             $admin = Admin::create([
                 'user_id' => $user->id,

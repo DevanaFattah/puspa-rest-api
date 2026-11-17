@@ -16,17 +16,27 @@ class UpdateChildWithFamilyAction
     public function execute(Child $child, array $data): Child
     {
         return DB::transaction(function () use ($child, $data) {
-            $child->update(Arr::whereNotNull(Arr::only($data, [
+            $childData = Arr::only($data, [
                 'child_name',
                 'child_gender',
                 'child_religion',
                 'child_birth_place',
                 'child_birth_date',
+                'school_id',
                 'child_school',
                 'child_address',
                 'child_complaint',
                 'child_service_choice'
-            ])));
+            ]);
+
+            // Auto-resolve school_id if child_school name is provided but school_id is missing, or sync child_school name
+            if (empty($childData['school_id']) && !empty($childData['child_school'])) {
+                $childData['school_id'] = \App\Models\School::where('school_name', $childData['child_school'])->value('id');
+            } elseif (!empty($childData['school_id']) && empty($childData['child_school'])) {
+                $childData['child_school'] = \App\Models\School::find($childData['school_id'])?->school_name;
+            }
+
+            $child->update(Arr::whereNotNull($childData));
 
             if ($this->hasGuardianData($data)) {
                 $primaryGuardian = $child->family->guardians()->whereNotNull('user_id')->first()

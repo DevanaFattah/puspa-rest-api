@@ -43,25 +43,30 @@ class MarkAttendanceRequest extends FormRequest
                     $sessionDateStr = $session->session_date ? $session->session_date->format('Y-m-d') : null;
                     $todayStr = \Carbon\Carbon::today()->toDateString();
 
-                    if ($sessionDateStr && $sessionDateStr !== $todayStr) {
+                    // 1. Tolak jika tanggal sesi belum terjadi (masa depan / session_date > today)
+                    if ($sessionDateStr && $sessionDateStr > $todayStr) {
                         $validator->errors()->add(
                             'status',
-                            'Presensi hadir hanya dapat dicatat pada hari H tanggal sesi berlangsung (' . $session->session_date->format('d/m/Y') . ').'
+                            'Presensi hadir tidak dapat dicatat untuk sesi tanggal mendatang (' . $session->session_date->format('d/m/Y') . ').'
                         );
                         return;
                     }
 
-                    $startTime = $session->start_time ?: $session->schedule?->start_time;
+                    // 2. Jika sesi hari ini (hari H), tolak hanya jika jam sesi belum dimulai (now < start_time).
+                    // Jika sesi tanggal lampau (session_date < today), izinkan admin mencatat status Hadir susulan.
+                    if ($sessionDateStr === $todayStr) {
+                        $startTime = $session->start_time ?: $session->schedule?->start_time;
 
-                    if ($startTime) {
-                        $nowTime = \Carbon\Carbon::now()->format('H:i');
-                        $startTimeShort = substr($startTime, 0, 5);
+                        if ($startTime) {
+                            $nowTime = \Carbon\Carbon::now()->format('H:i');
+                            $startTimeShort = substr($startTime, 0, 5);
 
-                        if ($nowTime < $startTimeShort) {
-                            $validator->errors()->add(
-                                'status',
-                                "Presensi hadir belum dapat dicatat karena jam sesi belum dimulai ({$startTimeShort})."
-                            );
+                            if ($nowTime < $startTimeShort) {
+                                $validator->errors()->add(
+                                    'status',
+                                    "Presensi hadir belum dapat dicatat karena jam sesi belum dimulai ({$startTimeShort})."
+                                );
+                            }
                         }
                     }
                 }

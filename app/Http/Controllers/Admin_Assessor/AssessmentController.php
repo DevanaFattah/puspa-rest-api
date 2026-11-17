@@ -46,7 +46,7 @@ class AssessmentController extends Controller
     public function showDetailScheduled(Assessment $assessment): JsonResponse
     {
         $assessment->load([
-            'assessmentDetails' => fn($query) => $query->with('admin'),
+            'assessmentDetails' => fn($query) => $query->with(['admin', 'therapist']),
             'child',
             'child.family.guardians'
         ]);

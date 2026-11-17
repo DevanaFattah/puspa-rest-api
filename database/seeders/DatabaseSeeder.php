@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             OwnerSeeder::class,
             AdminSeeder::class,
+            AdminTypesSeeder::class,
             TherapistSeeder::class,
 
             // Observation Questions

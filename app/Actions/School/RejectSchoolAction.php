@@ -20,8 +20,8 @@ class RejectSchoolAction
                 'verification_status' => 'rejected',
             ]);
 
-            if ($school->user) {
-                $school->user->update([
+            if ($school->user_id) {
+                \App\Models\User::where('id', $school->user_id)->update([
                     'is_active' => false,
                 ]);
             }

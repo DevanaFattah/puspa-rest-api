@@ -8,11 +8,7 @@ class AdminMenuPermissionMap
      * Complete mapping between Frontend 12 Leaf Menu IDs and Spatie Permission Names.
      */
     public const MENU_TO_PERMISSIONS = [
-        'dashboard' => [
-            'show_admins',
-            'show_therapists',
-            'show_children',
-        ],
+        'dashboard' => [],
         'admin' => [
             'show_admins',
             'show_detail_admin',
@@ -26,6 +22,13 @@ class AdminMenuPermissionMap
             'add_therapist',
             'edit_therapist',
             'delete_therapist',
+        ],
+        'sekolah' => [
+            'show_schools',
+            'show_detail_school',
+            'add_school',
+            'edit_school',
+            'delete_school',
         ],
         'pasien_anak' => [
             'show_children',
@@ -104,9 +107,9 @@ class AdminMenuPermissionMap
                 continue;
             }
 
-            // If at least one matching permission exists for that menu, mark checked
-            $intersect = array_intersect($requiredPerms, $permissionNames);
-            if (!empty($intersect)) {
+            // Check if primary permission exists for that menu
+            $primaryPerm = $requiredPerms[0];
+            if (in_array($primaryPerm, $permissionNames)) {
                 $menuIds[] = $menuId;
             }
         }

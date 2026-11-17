@@ -42,6 +42,8 @@ class ParentAssessmentResource extends JsonResource
 
         $childDeleted = $this->child?->trashed() ?? false;
 
+        $assignedTherapistIds = $details->pluck('therapist_id')->filter()->unique()->values()->toArray();
+
         return [
             'assessment_id' => $this->id,
             'child_name' => $this->child->child_name ?? 'N/A',
@@ -49,6 +51,7 @@ class ParentAssessmentResource extends JsonResource
             'guardian_name' => $primaryGuardian?->guardian_name,
             'guardian_phone' => $primaryGuardian?->guardian_phone,
             'types' => $types,
+            'assigned_therapist_ids' => $assignedTherapistIds,
             'scheduled_date' => $formattedScheduledDate,
             'scheduled_time' => $formattedScheduledTime,
             'admin_name' => $adminName,

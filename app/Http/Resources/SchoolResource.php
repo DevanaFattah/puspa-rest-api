@@ -9,8 +9,8 @@ class SchoolResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        $isVerified = ($this->verification_status === 'verified') || ($this->user?->is_active ?? false);
-        $statusLabel = $isVerified ? 'Terverifikasi' : ($this->verification_status === 'rejected' ? 'Ditolak' : 'Tidak Terverifikasi');
+        $isVerified = ($this->verification_status === 'verified' && ($this->user?->is_active ?? false));
+        $statusLabel = $isVerified ? 'Terverifikasi' : ($this->verification_status === 'rejected' ? 'Ditolak' : 'Menunggu Verifikasi');
 
         $jenjangMap = [
             'PAUD' => 'Pendidikan Anak Usia Dini',
@@ -44,6 +44,7 @@ class SchoolResource extends JsonResource
             'verification_status' => $this->verification_status ?? ($isVerified ? 'verified' : 'pending'),
             'students_count' => $this->whenCounted('children'),
             'created_at'     => $this->created_at?->format('Y-m-d H:i'),
+            'updated_at'     => $this->updated_at?->format('d F Y H:i:s') ?? $this->created_at?->format('d F Y H:i:s') ?? '-',
             'tanggalPendaftaran' => $this->created_at?->format('d F Y H:i:s') ?? '-',
         ];
     }

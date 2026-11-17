@@ -53,6 +53,10 @@ class AssessmentListResource extends JsonResource
 
         $firstDetailId = $details->first()?->id;
 
+        $firstDetail = $details->first();
+        $firstTherapistId = $details->first(fn($d) => !empty($d->therapist_id))?->therapist_id ?? $firstDetail?->therapist_id;
+        $therapistIds = $details->pluck('therapist_id')->filter()->unique()->values()->toArray();
+
         return [
             'assessment_detail_id' => $firstDetailId,
             'assessment_id' => $this->id,
@@ -62,6 +66,8 @@ class AssessmentListResource extends JsonResource
             'guardian_phone' => $guardian?->guardian_phone,
             'type' => $types,
             'administrator' => $adminName,
+            'therapist_id' => $firstTherapistId,
+            'therapist_ids' => $therapistIds,
             'assessor' => $assessors ?: null,
             'scheduled_date' => $scheduled->format('d/m/Y'),
             'scheduled_time' => $scheduled->format('H.i'),

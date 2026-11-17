@@ -30,13 +30,23 @@ class CreatePatientAction
                 ]);
             }
 
+            $schoolId = $data['school_id'] ?? null;
+            $schoolName = $data['child_school'] ?? null;
+            if (!$schoolId && !empty($schoolName)) {
+                $schoolId = \App\Models\School::where('school_name', $schoolName)->value('id');
+            }
+            if ($schoolId && empty($schoolName)) {
+                $schoolName = \App\Models\School::find($schoolId)?->school_name;
+            }
+
             $child = Child::create([
                 'family_id' => $familyId,
+                'school_id' => $schoolId,
                 'child_name' => $data['child_name'],
                 'child_gender' => $data['child_gender'],
                 'child_birth_place' => $data['child_birth_place'],
                 'child_birth_date' => $data['child_birth_date'],
-                'child_school' => $data['child_school'] ?? null,
+                'child_school' => $schoolName,
                 'child_address' => $data['child_address'],
                 'child_complaint' => $data['child_complaint'],
                 'child_service_choice' => $data['child_service_choice'],

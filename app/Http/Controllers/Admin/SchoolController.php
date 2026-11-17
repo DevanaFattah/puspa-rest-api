@@ -23,7 +23,7 @@ class SchoolController extends Controller
         $search = $request->query('search');
 
         $schools = School::query()
-            ->with('user:id,username,email')
+            ->with('user:id,username,email,is_active')
             ->withCount('children')
             ->when($search, function ($q, $search) {
                 $q->where('school_name', 'like', "%{$search}%")
@@ -41,7 +41,7 @@ class SchoolController extends Controller
 
     public function show(School $school): JsonResponse
     {
-        $school->load('user:id,username,email')->loadCount('children');
+        $school->load('user:id,username,email,is_active')->loadCount('children');
 
         return $this->successResponse(
             new SchoolResource($school),
@@ -59,7 +59,7 @@ class SchoolController extends Controller
                 'username'          => $data['username'],
                 'email'             => $data['email'],
                 'password'          => Hash::make($data['password']),
-                'is_active'         => true,
+                'is_active'         => false,
                 'email_verified_at' => now(),
             ]);
 
@@ -73,12 +73,12 @@ class SchoolController extends Controller
                 'school_phone'        => $data['school_phone'] ?? null,
                 'school_address'      => $data['school_address'] ?? null,
                 'pic_name'            => $data['pic_name'] ?? null,
-                'verification_status' => 'verified',
-                'verified_at'         => now(),
+                'verification_status' => 'pending',
+                'verified_at'         => null,
             ]);
         });
 
-        $school->load('user:id,username,email');
+        $school->load('user:id,username,email,is_active');
 
         return $this->successResponse(
             new SchoolResource($school),

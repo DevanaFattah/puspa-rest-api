@@ -42,6 +42,19 @@ class AssessmentScheduledDetailResource extends JsonResource
 
         $typesString = $allTypes->implode(', ');
 
+        $assessors = $this->assessmentDetails->map(function ($detail) {
+            return [
+                'type' => $detail->type,
+                'therapist_id' => $detail->therapist_id,
+                'therapist_name' => $detail->therapist?->therapist_name ?? 'Belum ditentukan',
+            ];
+        })->values()->toArray();
+
+        $assessorsString = $this->assessmentDetails->map(function ($detail) {
+            $name = $detail->therapist?->therapist_name;
+            return $name ? ucfirst($detail->type) . ': ' . $name : null;
+        })->filter()->implode(', ');
+
         return [
             'assessment_id'     => $this->id,
             'child_name'        => $child?->child_name,
@@ -58,6 +71,8 @@ class AssessmentScheduledDetailResource extends JsonResource
             'parent_phone'      => $guardian?->guardian_phone,
             'admin_name'        => $admin?->admin_name ?? 'Belum ditentukan',
             'type'              => $typesString ?: 'Belum ditentukan',
+            'assessors'         => $assessors,
+            'assessor_names'    => $assessorsString ?: null,
         ];
     }
 }

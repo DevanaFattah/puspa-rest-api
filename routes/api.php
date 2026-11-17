@@ -163,50 +163,63 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/roles/permissions', [RolePermissionController::class, 'updatePermission']);
     });
 
-    // ================== ROLE OWNER, MANAGER & ADMIN ==================
+    // ================== ROLE OWNER, MANAGER & ADMIN (WITH PERMISSION CHECKS) ==================
     Route::middleware(['role:admin|owner|manager', 'throttle:authenticated'])->group(function () {
-        Route::get('/admins', [OwnerAdminUserManagement::class, 'indexAdmin']);
-        Route::get('/admins/{admin}', [AdminUserManagement::class, 'showAdminDetail'])
-            ->whereUlid('admin');
+        Route::middleware('role_or_permission:owner|manager|show_admins')->group(function () {
+            Route::get('/admins', [OwnerAdminUserManagement::class, 'indexAdmin']);
+            Route::get('/admins/{admin}', [AdminUserManagement::class, 'showAdminDetail'])
+                ->whereUlid('admin');
+        });
 
-        Route::get('/therapists', [OwnerAdminUserManagement::class, 'indexTherapist']);
-        Route::get('/therapists/{therapist}', [AdminUserManagement::class, 'showTherapistDetail'])
-            ->whereUlid('therapist');
+        Route::middleware('role_or_permission:owner|manager|show_therapists')->group(function () {
+            Route::get('/therapists', [OwnerAdminUserManagement::class, 'indexTherapist']);
+            Route::get('/therapists/{therapist}', [AdminUserManagement::class, 'showTherapistDetail'])
+                ->whereUlid('therapist');
+        });
 
-        Route::get('/children', [OwnerAdminUserManagement::class, 'indexChild']);
-        Route::get('/children/{child}', [AdminUserManagement::class, 'showChild'])
-            ->whereUlid('child');
+        Route::middleware('role_or_permission:owner|manager|show_children')->group(function () {
+            Route::get('/children', [OwnerAdminUserManagement::class, 'indexChild']);
+            Route::get('/children/{child}', [AdminUserManagement::class, 'showChild'])
+                ->whereUlid('child');
+        });
 
         // School Read Access for Admin & Owner
-        Route::get('/schools', [AdminSchoolManagement::class, 'index']);
-        Route::get('/schools/{school}', [AdminSchoolManagement::class, 'show'])
-            ->whereUlid('school');
+        Route::middleware('role_or_permission:owner|manager|show_schools')->group(function () {
+            Route::get('/schools', [AdminSchoolManagement::class, 'index']);
+            Route::get('/schools/{school}', [AdminSchoolManagement::class, 'show'])
+                ->whereUlid('school');
+        });
 
         // ================== PRESENSI & RESCHEDULE ==================
-        Route::get('/sessions/today', [AttendanceController::class, 'todaySessions']);
-        Route::get('/sessions/rescheduled', [AttendanceController::class, 'rescheduledSessions']);
-        Route::get('/sessions/export', [AttendanceController::class, 'export']);
-        Route::post('/sessions/qr-scan', [AttendanceController::class, 'scanQrCode']);
-        Route::get('/sessions/{session}/qr', [AttendanceController::class, 'getQrCode'])
-            ->whereUlid('session');
-        Route::post('/sessions/{session}/attendance', [AttendanceController::class, 'markAttendance'])
-            ->whereUlid('session');
-        Route::put('/sessions/{session}/attendance', [AttendanceController::class, 'updateAttendance'])
-            ->whereUlid('session');
-        Route::post('/sessions/{session}/reschedule', [RescheduleController::class, 'store'])
-            ->whereUlid('session');
+        Route::middleware('role_or_permission:owner|manager|mark_attendance_qr')->group(function () {
+            Route::get('/sessions/today', [AttendanceController::class, 'todaySessions']);
+            Route::get('/sessions/rescheduled', [AttendanceController::class, 'rescheduledSessions']);
+            Route::get('/sessions/export', [AttendanceController::class, 'export']);
+            Route::post('/sessions/qr-scan', [AttendanceController::class, 'scanQrCode']);
+            Route::get('/sessions/{session}/qr', [AttendanceController::class, 'getQrCode'])
+                ->whereUlid('session');
+            Route::post('/sessions/{session}/attendance', [AttendanceController::class, 'markAttendance'])
+                ->whereUlid('session');
+            Route::put('/sessions/{session}/attendance', [AttendanceController::class, 'updateAttendance'])
+                ->whereUlid('session');
+            Route::post('/sessions/{session}/reschedule', [RescheduleController::class, 'store'])
+                ->whereUlid('session');
+        });
+
         // ================== KEUANGAN / FINANCE ==================
-        Route::get('/finance/children-guardians', [FinanceController::class, 'childrenWithGuardians']);
-        Route::get('/finance/invoices', [FinanceController::class, 'indexInvoices']);
-        Route::post('/finance/invoices', [FinanceController::class, 'storeInvoice']);
-        Route::put('/finance/invoices/{id}', [FinanceController::class, 'updateInvoice'])->whereUlid('id');
-        Route::delete('/finance/invoices/{id}', [FinanceController::class, 'deleteInvoice'])->whereUlid('id');
-        Route::post('/finance/invoices/{id}/pay', [FinanceController::class, 'payInvoice'])->whereUlid('id');
-        Route::get('/finance/invoices/{id}/refund-attendance', [FinanceController::class, 'attendanceForRefund'])->whereUlid('id');
-        Route::post('/finance/invoices/{id}/refund', [FinanceController::class, 'refundInvoice'])->whereUlid('id');
-        Route::get('/finance/credits', [FinanceController::class, 'credits']);
-        Route::get('/finance/credits/child/{childId}', [FinanceController::class, 'childCredit'])->whereUlid('childId');
-        Route::get('/finance/transactions', [FinanceController::class, 'transactions']);
+        Route::middleware('role_or_permission:owner|manager|manage_invoices')->group(function () {
+            Route::get('/finance/children-guardians', [FinanceController::class, 'childrenWithGuardians']);
+            Route::get('/finance/invoices', [FinanceController::class, 'indexInvoices']);
+            Route::post('/finance/invoices', [FinanceController::class, 'storeInvoice']);
+            Route::put('/finance/invoices/{id}', [FinanceController::class, 'updateInvoice'])->whereUlid('id');
+            Route::delete('/finance/invoices/{id}', [FinanceController::class, 'deleteInvoice'])->whereUlid('id');
+            Route::post('/finance/invoices/{id}/pay', [FinanceController::class, 'payInvoice'])->whereUlid('id');
+            Route::get('/finance/invoices/{id}/refund-attendance', [FinanceController::class, 'attendanceForRefund'])->whereUlid('id');
+            Route::post('/finance/invoices/{id}/refund', [FinanceController::class, 'refundInvoice'])->whereUlid('id');
+            Route::get('/finance/credits', [FinanceController::class, 'credits']);
+            Route::get('/finance/credits/child/{childId}', [FinanceController::class, 'childCredit'])->whereUlid('childId');
+            Route::get('/finance/transactions', [FinanceController::class, 'transactions']);
+        });
     });
 
     // ================== SCHEDULES & PERMISSIONS - READ ACCESS ==================
@@ -218,56 +231,66 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/roles/matrix', [RolePermissionController::class, 'matrix']);
     });
 
-    // ================== ROLE ADMIN ==================
-    Route::middleware(['role:admin', 'throttle:authenticated'])->group(function () {
+    // ================== ROLE ADMIN (WITH PERMISSION CHECKS) ==================
+    Route::middleware(['role:admin|owner|manager', 'throttle:authenticated'])->group(function () {
         Route::get('/admins/dashboard/stats', [AdminDashboard::class, 'index']);
         Route::get('/admins/dashboard/today-schedule', [AdminDashboard::class, 'todayTherapySchedule']);
         Route::get('/admins/profile', [AdminProfileManagement::class, 'showProfile']);
         Route::post('/admins/{admin}/profile', [AdminProfileManagement::class, 'updateProfile'])
             ->whereUlid('admin');
-        Route::post('/admins', [AdminUserManagement::class, 'storeAdmin']);
-        Route::put('/admins/{admin}', [AdminUserManagement::class, 'updateAdmin'])
+
+        Route::middleware('role_or_permission:owner|manager|add_admin')->post('/admins', [AdminUserManagement::class, 'storeAdmin']);
+        Route::middleware('role_or_permission:owner|manager|edit_admin')->put('/admins/{admin}', [AdminUserManagement::class, 'updateAdmin'])
             ->whereUlid('admin');
-        Route::delete('/admins/{admin}', [AdminUserManagement::class, 'destroyAdmin'])
+        Route::middleware('role_or_permission:owner|manager|delete_admin')->delete('/admins/{admin}', [AdminUserManagement::class, 'destroyAdmin'])
             ->whereUlid('admin');
 
-        Route::post('/therapists', [AdminUserManagement::class, 'storeTherapist']);
-        Route::put('/therapists/{therapist}', [AdminUserManagement::class, 'updateTherapist'])
+        Route::middleware('role_or_permission:owner|manager|add_therapist')->post('/therapists', [AdminUserManagement::class, 'storeTherapist']);
+        Route::middleware('role_or_permission:owner|manager|edit_therapist')->put('/therapists/{therapist}', [AdminUserManagement::class, 'updateTherapist'])
             ->whereUlid('therapist');
-        Route::delete('/therapists/{therapist}', [AdminUserManagement::class, 'destroyTherapist'])
+        Route::middleware('role_or_permission:owner|manager|delete_therapist')->delete('/therapists/{therapist}', [AdminUserManagement::class, 'destroyTherapist'])
             ->whereUlid('therapist');
 
-        Route::post('/children', [AdminUserManagement::class, 'storeChild']);
-        Route::put('/children/{child}', [AdminUserManagement::class, 'updateChild'])
+        Route::middleware('role_or_permission:owner|manager|show_children')->post('/children', [AdminUserManagement::class, 'storeChild']);
+        Route::middleware('role_or_permission:owner|manager|edit_child')->put('/children/{child}', [AdminUserManagement::class, 'updateChild'])
             ->whereUlid('child');
-        Route::delete('/children/{child}', [AdminUserManagement::class, 'destroyChild'])
+        Route::middleware('role_or_permission:owner|manager|delete_child')->delete('/children/{child}', [AdminUserManagement::class, 'destroyChild'])
             ->whereUlid('child');
 
-        Route::put('/observations/{observation}', [AdminObservationManagement::class, 'updateObservationDate'])
-            ->whereNumber('observation');
-        Route::put('/observations/{observation}/agreement', [AdminObservationManagement::class, 'assessmentAgreement'])
-            ->whereNumber('observation');
-        Route::get('/observations/{observation}/therapist-options', [AdminObservationManagement::class, 'therapistOptions'])
-            ->whereNumber('observation');
+        Route::middleware('role_or_permission:owner|manager|show_observations')->group(function () {
+            Route::put('/observations/{observation}', [AdminObservationManagement::class, 'updateObservationDate'])
+                ->whereNumber('observation');
+            Route::put('/observations/{observation}/agreement', [AdminObservationManagement::class, 'assessmentAgreement'])
+                ->whereNumber('observation');
+            Route::get('/observations/{observation}/therapist-options', [AdminObservationManagement::class, 'therapistOptions'])
+                ->whereNumber('observation');
+        });
 
         // ================== SCHOOL MANAGEMENT ==================
-        Route::post('/schools', [AdminSchoolManagement::class, 'store']);
-        Route::put('/schools/{school}', [AdminSchoolManagement::class, 'update'])
+        Route::middleware('role_or_permission:owner|manager|add_school')->post('/schools', [AdminSchoolManagement::class, 'store']);
+        Route::middleware('role_or_permission:owner|manager|edit_school')->put('/schools/{school}', [AdminSchoolManagement::class, 'update'])
             ->whereUlid('school');
-        Route::delete('/schools/{school}', [AdminSchoolManagement::class, 'destroy'])
+        Route::middleware('role_or_permission:owner|manager|delete_school')->delete('/schools/{school}', [AdminSchoolManagement::class, 'destroy'])
             ->whereUlid('school');
 
-
-        Route::get('/assessments/{status}/admin', [AdminAssessmentManagement::class, 'indexAssessments']); // using query filter: date, and search
-        Route::get('/assessments/{assessment}', [AdminAssessmentManagement::class, 'showAssessments'])
-            ->whereNumber('assessment');
-        Route::post('/assessments/{assessment}/send-to-school', [AdminAssessmentManagement::class, 'sendToSchool'])
-            ->whereNumber('assessment');
-        Route::post('/assessments/{assessment}/report-upload', [AdminAssessorAssessmentManagement::class, 'uploadReportFile'])
-            ->whereNumber('assessment');
+        Route::middleware('role_or_permission:owner|manager|show_assessments')->group(function () {
+            Route::get('/assessments/{status}/admin', [AdminAssessmentManagement::class, 'indexAssessments']); // using query filter: date, and search
+            Route::get('/assessments/{assessment}', [AdminAssessmentManagement::class, 'showAssessments'])
+                ->whereNumber('assessment');
+            Route::post('/assessments/{assessment}/send-to-school', [AdminAssessmentManagement::class, 'sendToSchool'])
+                ->whereNumber('assessment');
+            Route::post('/assessments/{assessment}/report-upload', [AdminAssessorAssessmentManagement::class, 'uploadReportFile'])
+                ->whereNumber('assessment');
+        });
 
         // ================== SCHEDULES (JADWAL TERAPI) - WRITE ACCESS ==================
-        Route::post('/schedules', [ScheduleController::class, 'store']);
+        Route::middleware('role_or_permission:owner|manager|manage_schedules')->group(function () {
+            Route::post('/schedules', [ScheduleController::class, 'store']);
+            Route::put('/schedules/{schedule}', [ScheduleController::class, 'update'])
+                ->whereUlid('schedule');
+            Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])
+                ->whereUlid('schedule');
+        });
         Route::put('/schedules/{schedule}', [ScheduleController::class, 'update'])
             ->whereUlid('schedule');
         Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])

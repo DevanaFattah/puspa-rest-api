@@ -62,7 +62,7 @@ class SchoolService
             ->with([
                 'family.guardians:id,family_id,guardian_name,guardian_phone,guardian_type',
                 'observation:id,child_id,status',
-                'assessment:id,child_id,status',
+                'assessment:id,child_id,status,report_file,sent_to_school_at',
             ])
             ->latest('created_at')
             ->paginate($perPage);
@@ -72,7 +72,7 @@ class SchoolService
     {
         return $child->load([
             'school:id,school_name,npsn',
-            'family.guardians:id,family_id,guardian_name,guardian_type',
+            'family.guardians:id,family_id,guardian_name,guardian_phone,guardian_type',
             'observation',
             'assessment.assessmentDetails',
         ]);

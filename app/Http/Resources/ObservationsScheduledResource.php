@@ -31,7 +31,9 @@ class ObservationsScheduledResource extends JsonResource
             'administrator' => $this->admin?->admin_name,
             'scheduled_date' => $scheduled_date_formatted->format('d/m/Y'), // Only date
             'scheduled_time' => $scheduled_date_formatted->format('H.i'), // Only hour:minute
-            'therapist_name' => $this->therapist->therapist_name,
+            'therapist_id' => $this->therapist_id,
+            'observer' => $this->therapist?->therapist_name ?? '-',
+            'therapist_name' => $this->therapist?->therapist_name ?? '-',
             'status' => $this->status,
         ];
 

@@ -55,7 +55,7 @@ class AssessmentPolicy
             ->where('type', $requiredSection)
             ->first();
 
-        if (!$assessmentDetail) {
+        if (!$assessmentDetail || empty($assessmentDetail->therapist_id) || $assessmentDetail->therapist_id !== $user->therapist->id) {
             return false;
         }
 

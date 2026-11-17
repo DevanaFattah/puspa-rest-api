@@ -65,8 +65,10 @@ class AssessmentController extends Controller
             'type' => ['nullable', 'string', 'in:fisio,okupasi,wicara,paedagog'],
             'date' => ['nullable', 'date', 'date_format:Y-m-d'],
             'search' => ['nullable', 'string', 'max:100'],
+            'my_assessments' => ['nullable'],
         ]);
 
+        $validated['my_assessments'] = $request->boolean('my_assessments');
         $validated['status'] = $status;
         $user = $request->user();
 
@@ -98,8 +100,10 @@ class AssessmentController extends Controller
         $validated = $request->validate([
             'date' => ['nullable', 'date', 'date_format:Y-m-d'],
             'search' => ['nullable', 'string', 'max:100'],
+            'my_patients' => ['nullable'],
         ]);
 
+        $validated['my_patients'] = $request->boolean('my_patients');
         $validated['status'] = $status;
         $user = $request->user();
 

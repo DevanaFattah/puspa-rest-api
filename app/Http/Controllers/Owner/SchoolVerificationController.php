@@ -50,7 +50,7 @@ class SchoolVerificationController extends Controller
         $schools = School::with(['user'])
             ->where(function ($q) {
                 $q->where('verification_status', 'pending')
-                    ->orWhereHas('user', fn($u) => $u->where('is_active', false));
+                    ->orWhereNull('verification_status');
             })
             ->latest()
             ->get();

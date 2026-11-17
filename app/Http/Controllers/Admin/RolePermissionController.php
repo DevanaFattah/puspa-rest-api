@@ -178,12 +178,14 @@ class RolePermissionController extends Controller
 
         $roles = $user->getRoleNames();
         $permissions = $user->getAllPermissions()->pluck('name');
+        $menus = \App\Support\AdminMenuPermissionMap::permissionsToMenuIds($permissions->toArray());
 
         return $this->successResponse([
             'user_id' => $user->id,
             'email' => $user->email,
             'roles' => $roles,
             'permissions' => $permissions,
+            'menus' => $menus,
         ], 'Berhasil mengambil permission pengguna');
     }
 

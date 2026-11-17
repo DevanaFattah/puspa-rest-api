@@ -9,6 +9,9 @@ class GetAssessmentsByTypeAction
 {
   public function execute(array $filters): Collection
   {
+    $myTherapistId = auth()->user()?->therapist?->id;
+    $filterMyAssessments = !empty($filters['my_assessments']) && $myTherapistId;
+
     return Assessment::query()
       ->with([
         'assessmentDetails' => function ($q) use ($filters) {
@@ -24,8 +27,17 @@ class GetAssessmentsByTypeAction
         $q->where('status', $filters['status']);
       })
       ->when(isset($filters['status']) && $filters['status'] === 'completed', fn($q) => $q->orderBy('scheduled_date', 'desc'))
-      ->when(isset($filters['type']), function ($q) use ($filters) {
-        $q->whereHas('assessmentDetails', fn($d) => $d->where('type', $filters['type']));
+      ->when(isset($filters['type']), function ($q) use ($filters, $filterMyAssessments, $myTherapistId) {
+        $q->whereHas('assessmentDetails', function ($d) use ($filters, $filterMyAssessments, $myTherapistId) {
+          $d->where('type', $filters['type']);
+          if ($filterMyAssessments) {
+            $d->where('therapist_id', $myTherapistId);
+          }
+        });
+      }, function ($q) use ($filterMyAssessments, $myTherapistId) {
+        if ($filterMyAssessments) {
+          $q->whereHas('assessmentDetails', fn($d) => $d->where('therapist_id', $myTherapistId));
+        }
       })
       ->when(isset($filters['date']), fn($q) => $q->whereDate('scheduled_date', $filters['date']))
       ->when(isset($filters['search']), function ($q) use ($filters) {

@@ -18,9 +18,14 @@ class ActivateAdminWithRoleAction
     public function execute(User $user, ?string $roleNameOrId = null): User
     {
         return DB::transaction(function () use ($user, $roleNameOrId) {
-            $user->update([
+            $user->forceFill([
                 'is_active' => true,
-            ]);
+            ])->save();
+
+            // Ensure system roles exist for the api guard
+            Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'api']);
+            Role::firstOrCreate(['name' => 'manager', 'guard_name' => 'api']);
+            Role::firstOrCreate(['name' => 'owner', 'guard_name' => 'api']);
 
             if (!empty($roleNameOrId)) {
                 // Determine target role by id or name
@@ -46,12 +51,12 @@ class ActivateAdminWithRoleAction
                     $user->syncRoles($rolesToSync);
                 } else {
                     // Fallback to default admin role
-                    if (!$user->hasRole('admin')) {
+                    if (!$user->hasRole('admin', 'api')) {
                         $user->assignRole('admin');
                     }
                 }
             } else {
-                if (!$user->hasRole('admin')) {
+                if (!$user->hasRole('admin', 'api')) {
                     $user->assignRole('admin');
                 }
             }

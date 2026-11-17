@@ -31,6 +31,12 @@ class GetAssessmentsAction
       ->when($filters['type'] ?? null, function ($q, $type) {
         $q->whereHas('assessmentDetails', fn($d) => $d->where('type', $type));
       })
+      ->when(!empty($filters['my_patients']), function ($q) {
+        $myTherapistId = auth()->user()?->therapist?->id;
+        if ($myTherapistId) {
+          $q->whereHas('assessmentDetails', fn($d) => $d->where('therapist_id', $myTherapistId));
+        }
+      })
       ->orderBy('scheduled_date', 'asc')
       ->get();
   }

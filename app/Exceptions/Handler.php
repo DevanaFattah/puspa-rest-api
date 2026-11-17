@@ -68,12 +68,22 @@ class Handler extends ExceptionHandler
             }
         });
 
-        // 403 Forbidden (Missing Abilities)
+        // 403 Forbidden (Missing Abilities / Permissions)
         $this->renderable(function (MissingAbilityException $e, $request) {
             if ($this->isApiRequest($request)) {
                 return $this->apiErrorResponse(
                     'Forbidden',
                     'Anda tidak memiliki izin untuk mengakses resource ini.',
+                    403
+                );
+            }
+        });
+
+        $this->renderable(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, $request) {
+            if ($this->isApiRequest($request)) {
+                return $this->apiErrorResponse(
+                    'Forbidden',
+                    'Anda tidak memiliki izin untuk mengakses fitur ini.',
                     403
                 );
             }

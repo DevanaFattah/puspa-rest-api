@@ -97,12 +97,16 @@ class AdminRoleController extends Controller
         $users = User::role($role->name)->with('admin')->get();
 
         $data = $users->map(function (User $user) {
+            $name = $user->admin?->admin_name ?? $user->username;
+            $phone = $user->admin?->admin_phone ?? '-';
             return [
                 'user_id' => $user->id,
                 'admin_id' => $user->admin?->id,
-                'admin_name' => $user->admin?->admin_name ?? $user->username,
+                'name' => $name,
+                'admin_name' => $name,
                 'email' => $user->email,
-                'admin_phone' => $user->admin?->admin_phone,
+                'phone' => $phone,
+                'admin_phone' => $phone,
                 'is_active' => $user->is_active,
                 'created_at' => $user->created_at?->format('d F Y H:i:s'),
             ];

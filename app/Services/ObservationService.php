@@ -28,17 +28,24 @@ class ObservationService
         $search = $filters['search'] ?? '';
         $date = $filters['date'] ?? '';
 
-        if (!empty($search) || !empty($date)) {
-            return $this->queryObservations($status, $search, $date);
+        $user = auth()->user();
+        $isStaff = $user && ($user->hasRole('admin') || $user->hasRole('owner') || $user->hasRole('manager'));
+        $therapistId = null;
+        if (!$isStaff && $user && ($user->hasRole('terapis') || $user->hasRole('asesor'))) {
+            $therapistId = $user->therapist?->id;
         }
 
-        $key = "observations_{$status}";
+        if (!empty($search) || !empty($date) || !empty($therapistId)) {
+            return $this->queryObservations($status, $search, $date, $therapistId);
+        }
+
+        $key = "observations_{$status}_all";
         return Cache::remember($key, self::CACHE_TTL, function () use ($status) {
-            return $this->queryObservations($status, '', '');
+            return $this->queryObservations($status, '', '', null);
         });
     }
 
-    private function queryObservations(string $status, $search, $date)
+    private function queryObservations(string $status, $search, $date, ?string $therapistId = null)
     {
         return Observation::with([
             'child:id,family_id,child_name,child_school,child_gender,child_birth_date',
@@ -47,6 +54,7 @@ class ObservationService
             'therapist:id,therapist_name'
         ])
             ->where('status', $status)
+            ->when(!empty($therapistId), fn($q) => $q->where('therapist_id', $therapistId))
             ->when(!empty($search), fn($q) => $q->whereHas(
                 'child',
                 fn($c) => $c->where('child_name', 'like', "%{$search}%")

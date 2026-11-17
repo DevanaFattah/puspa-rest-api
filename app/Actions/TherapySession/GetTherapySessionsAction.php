@@ -46,7 +46,7 @@ class GetTherapySessionsAction
                 'soap:id,therapy_session_id',
                 // Needed to detect if session was rescheduled (as original)
                 'rescheduleOriginal:id,original_session_id,new_session_id,requested_by,reason',
-                'rescheduleOriginal.newSession:id,session_date,therapist_id',
+                'rescheduleOriginal.newSession:id,session_date,therapist_id,start_time,end_time',
                 'rescheduleOriginal.newSession.substituteTherapist:id,therapist_name',
             ])
             // Filter by my_sessions / Role Scoping
