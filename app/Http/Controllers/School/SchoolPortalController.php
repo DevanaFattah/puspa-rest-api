@@ -11,6 +11,7 @@ use App\Models\Child;
 use App\Services\SchoolService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class SchoolPortalController extends Controller
@@ -127,20 +128,29 @@ class SchoolPortalController extends Controller
             return $this->errorResponse('Laporan asesmen belum tersedia untuk siswa ini', [], 404);
         }
 
-        // Catat timestamp unduhan pertama kali (tanpa mengunci unduhan berikutnya)
-        if (!$assessment->school_downloaded_at) {
-            $assessment->update(['school_downloaded_at' => now()]);
+        $reportPath = config('puspa.storage.assessment_reports', 'assessment/reports');
+        $candidatePaths = [
+            Storage::disk('local')->path($reportPath . '/' . $assessment->report_file),
+            storage_path('app/' . $reportPath . '/' . $assessment->report_file),
+            storage_path('app/public/' . $assessment->report_file),
+            storage_path('app/' . $assessment->report_file),
+        ];
+
+        $filePath = null;
+        foreach ($candidatePaths as $candidate) {
+            if (file_exists($candidate)) {
+                $filePath = $candidate;
+                break;
+            }
         }
 
-        $filePath = storage_path('app/public/' . $assessment->report_file);
-        if (!file_exists($filePath)) {
-            // Coba cek path relatif tanpa public jika disimpan langsung di storage/app/
-            $altPath = storage_path('app/' . $assessment->report_file);
-            if (file_exists($altPath)) {
-                $filePath = $altPath;
-            } else {
-                return $this->errorResponse('Berkas fisik laporan asesmen tidak ditemukan di penyimpanan server', [], 404);
-            }
+        if (!$filePath) {
+            return $this->errorResponse('Berkas fisik laporan asesmen tidak ditemukan di penyimpanan server', [], 404);
+        }
+
+        // Catat timestamp unduhan pertama kali hanya setelah berkas fisik terverifikasi ada di disk
+        if (!$assessment->school_downloaded_at) {
+            $assessment->update(['school_downloaded_at' => now()]);
         }
 
         $downloadFileName = 'Laporan_Asesmen_' . Str::slug($child->child_name) . '.pdf';

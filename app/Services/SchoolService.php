@@ -21,7 +21,7 @@ class SchoolService
         $studentsWithAssessment = Child::where('school_id', $school->id)
             ->whereHas('assessment', function ($q) {
                 $q->whereNotNull('report_file')
-                    ->orWhereNotNull('sent_to_school_at');
+                    ->whereNotNull('sent_to_school_at');
             })
             ->count();
 
