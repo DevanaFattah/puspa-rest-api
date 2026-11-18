@@ -164,8 +164,9 @@ class FinanceController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'mode' => 'required|in:dikembalikan,catat',
-            'kehadiran' => 'required|numeric',
-            'total_sesi' => 'required|numeric',
+            'kehadiran' => 'nullable|numeric',
+            'total_sesi' => 'nullable|numeric',
+            'jumlah' => 'nullable|numeric',
         ]);
 
         if ($validator->fails()) {

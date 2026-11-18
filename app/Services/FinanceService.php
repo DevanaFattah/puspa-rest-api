@@ -20,7 +20,9 @@ class FinanceService
      */
     public function getChildrenWithGuardians()
     {
-        return Child::with(['family.guardians'])->get()->map(function ($child) {
+        return Child::whereHas('schedules', function ($query) {
+            $query->where('status', 'aktif');
+        })->with(['family.guardians'])->get()->map(function ($child) {
             $guardian = $child->family?->guardians?->first();
             return [
                 'child_id' => $child->id,
@@ -381,24 +383,73 @@ class FinanceService
      */
     public function getAttendanceForRefund(string $invoiceId)
     {
-        $invoice = Invoice::with('items')->findOrFail($invoiceId);
-        $totalSessions = $invoice->items->sum('session_count') ?: 8;
+        $invoice = Invoice::with(['items', 'child'])->findOrFail($invoiceId);
+        $totalSessions = (int) ($invoice->items->sum('session_count') ?: 8);
 
-        // Count present sessions for child
-        $presentCount = TherapySession::whereHas('schedule', function ($q) use ($invoice) {
-            $q->where('child_id', $invoice->child_id);
-        })->where('status', 'present')->count();
+        $itemsBreakdown = [];
+        $totalHadir = 0;
+        $totalIzinSakit = 0;
+        $totalTidakHadir = 0;
+        $totalNilaiSisa = 0;
 
-        // Ensure within 0 and totalSessions
-        $calculatedPresent = min($totalSessions, max(0, $presentCount > 0 ? $presentCount : $totalSessions));
+        foreach ($invoice->items as $item) {
+            $therapyType = $item->therapy_type;
+            $sessionCount = (int) ($item->session_count ?: 4);
+            $pricePerSession = (float) ($item->price_per_session ?: ($totalSessions > 0 ? ($invoice->total_amount / $totalSessions) : 0));
+
+            $sessionQuery = TherapySession::whereHas('schedule', function ($q) use ($invoice, $therapyType) {
+                $q->where('child_id', $invoice->child_id);
+                if (!empty($therapyType)) {
+                    $q->where('therapy_type', 'like', "%{$therapyType}%");
+                }
+            });
+
+            if (!empty($invoice->start_date) && !empty($invoice->end_date)) {
+                $sessionQuery->whereBetween('session_date', [$invoice->start_date, $invoice->end_date]);
+            }
+
+            $sessions = $sessionQuery->get();
+            $hadir = $sessions->filter(fn($s) => in_array(strtolower($s->status ?? ''), ['present', 'hadir']))->count();
+            $izin = $sessions->filter(fn($s) => in_array(strtolower($s->status ?? ''), ['excused', 'izin', 'sick', 'sakit']))->count();
+            $alpa = $sessions->filter(fn($s) => in_array(strtolower($s->status ?? ''), ['absent', 'alpa', 'cancelled']))->count();
+
+            $sisaSesi = $izin;
+            $nilaiSisa = $sisaSesi * $pricePerSession;
+
+            $totalHadir += $hadir;
+            $totalIzinSakit += $izin;
+            $totalTidakHadir += $alpa;
+            $totalNilaiSisa += $nilaiSisa;
+
+            $itemsBreakdown[] = [
+                'therapy_type' => $therapyType,
+                'session_count' => $sessionCount,
+                'price_per_session' => $pricePerSession,
+                'hadir' => $hadir,
+                'izin_sakit' => $izin,
+                'tidak_hadir' => $alpa,
+                'nilai_sisa' => $nilaiSisa,
+            ];
+        }
+
+        if (empty($itemsBreakdown)) {
+            $presentCount = TherapySession::whereHas('schedule', function ($q) use ($invoice) {
+                $q->where('child_id', $invoice->child_id);
+            })->whereIn('status', ['present', 'hadir'])->count();
+            $totalHadir = min($totalSessions, max(0, $presentCount > 0 ? $presentCount : $totalSessions));
+        }
 
         return [
             'invoice_id' => $invoice->id,
             'child_id' => $invoice->child_id,
-            'child_name' => $invoice->child->child_name ?? '',
+            'child_name' => $invoice->child?->child_name ?? '',
             'total_sessions' => $totalSessions,
-            'present_sessions' => $calculatedPresent,
+            'present_sessions' => $totalHadir,
+            'izin_sakit_sessions' => $totalIzinSakit,
+            'tidak_hadir_sessions' => $totalTidakHadir,
+            'nilai_sisa' => $totalNilaiSisa,
             'harga_per_sesi' => $totalSessions > 0 ? round($invoice->total_amount / $totalSessions) : 0,
+            'breakdown' => $itemsBreakdown,
         ];
     }
 
@@ -411,11 +462,19 @@ class FinanceService
             $invoice = Invoice::findOrFail($id);
 
             $mode = $data['mode']; // 'dikembalikan' or 'catat'
-            $kehadiran = (int) ($data['kehadiran'] ?? 8);
-            $totalSesi = (int) ($data['total_sesi'] ?? 8);
-            $sisaSesi = max(0, $totalSesi - $kehadiran);
-            $hargaPerSesi = $totalSesi > 0 ? ($invoice->total_amount / $totalSesi) : 0;
-            $nilaiSisaSesi = $sisaSesi * $hargaPerSesi;
+            $kehadiran = isset($data['kehadiran']) ? (int) $data['kehadiran'] : null;
+            $totalSesi = isset($data['total_sesi']) ? (int) $data['total_sesi'] : null;
+
+            if (isset($data['jumlah']) && is_numeric($data['jumlah'])) {
+                $nilaiSisaSesi = (float) $data['jumlah'];
+                $sisaSesi = ($totalSesi !== null && $kehadiran !== null) ? max(0, $totalSesi - $kehadiran) : 0;
+            } else {
+                $kehadiran = $kehadiran ?? 8;
+                $totalSesi = $totalSesi ?? 8;
+                $sisaSesi = max(0, $totalSesi - $kehadiran);
+                $hargaPerSesi = $totalSesi > 0 ? ($invoice->total_amount / $totalSesi) : 0;
+                $nilaiSisaSesi = $sisaSesi * $hargaPerSesi;
+            }
 
             $tanggal = $data['tanggal'] ?? now()->toDateString();
 
@@ -435,7 +494,7 @@ class FinanceService
                     'receipt_number' => $noResi,
                     'proof_file_path' => $proofFilePath,
                     'payment_date' => $tanggal,
-                    'notes' => "Pengembalian dana sisa {$sisaSesi} sesi",
+                    'notes' => $data['notes'] ?? ($sisaSesi > 0 ? "Pengembalian dana sisa {$sisaSesi} sesi" : "Pengembalian dana"),
                 ]);
 
                 $invoice->update(['status' => 'DIKEMBALIKAN']);
@@ -459,7 +518,7 @@ class FinanceService
                     'payment_method' => '-',
                     'amount' => $nilaiSisaSesi,
                     'payment_date' => $tanggal,
-                    'notes' => "Sisa {$sisaSesi} sesi dialihkan ke periode berikutnya",
+                    'notes' => $data['catatan'] ?? ($sisaSesi > 0 ? "Sisa {$sisaSesi} sesi dialihkan ke periode berikutnya" : "Dialihkan ke periode berikutnya"),
                 ]);
 
                 $invoice->update(['status' => 'PERIODE BERIKUTNYA']);
@@ -564,7 +623,7 @@ class FinanceService
         $totalPengembalian = $allPayments->where('transaction_type', 'Pengembalian dana')->sum('amount');
 
         $perPage = $filters['per_page'] ?? 10;
-        $paginated = $query->orderBy('payment_date', 'desc')->paginate($perPage);
+        $paginated = $query->orderBy('payment_date', 'desc')->orderBy('created_at', 'desc')->paginate($perPage);
 
         return [
             'summary' => [

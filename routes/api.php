@@ -214,8 +214,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('/finance/invoices/{id}', [FinanceController::class, 'updateInvoice'])->whereUlid('id');
             Route::delete('/finance/invoices/{id}', [FinanceController::class, 'deleteInvoice'])->whereUlid('id');
             Route::post('/finance/invoices/{id}/pay', [FinanceController::class, 'payInvoice'])->whereUlid('id');
-            Route::get('/finance/invoices/{id}/refund-attendance', [FinanceController::class, 'attendanceForRefund'])->whereUlid('id');
-            Route::post('/finance/invoices/{id}/refund', [FinanceController::class, 'refundInvoice'])->whereUlid('id');
+            Route::get('/finance/invoices/{id}/refund-attendance', [FinanceController::class, 'attendanceForRefund']);
+            Route::post('/finance/invoices/{id}/refund', [FinanceController::class, 'refundInvoice']);
             Route::get('/finance/credits', [FinanceController::class, 'credits']);
             Route::get('/finance/credits/child/{childId}', [FinanceController::class, 'childCredit'])->whereUlid('childId');
             Route::get('/finance/transactions', [FinanceController::class, 'transactions']);
