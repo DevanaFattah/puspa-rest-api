@@ -21,6 +21,7 @@ class StorePatientRequest extends FormRequest
             'guardian_type' => ['required', 'string', 'in:ayah,ibu,wali'],
 
             // Child Data
+            'medical_record_number' => ['nullable', 'string', 'max:20'],
             'child_name' => ['required', 'string', 'max:100'],
             'child_gender' => ['required', 'string', 'in:laki-laki,perempuan'],
             'child_birth_place' => ['required', 'string', 'max:100'],

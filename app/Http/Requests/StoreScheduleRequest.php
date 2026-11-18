@@ -16,6 +16,7 @@ class StoreScheduleRequest extends FormRequest
     {
         return [
             'child_id' => 'required|string|exists:children,id',
+            'medical_record_number' => ['nullable', 'string', 'max:20'],
             'therapy_type' => 'required|in:okupasi,fisio,wicara,paedagog',
             'therapist_id' => [
                 'required',

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Child;
 use App\Models\Schedule;
 use App\Models\TherapySession;
 use Carbon\Carbon;
@@ -57,6 +58,13 @@ class ScheduleService
     public function createSchedule(array $data): Schedule
     {
         return DB::transaction(function () use ($data) {
+            if (!empty($data['child_id']) && !empty($data['medical_record_number'])) {
+                $child = Child::find($data['child_id']);
+                if ($child && empty($child->medical_record_number)) {
+                    $child->update(['medical_record_number' => $data['medical_record_number']]);
+                }
+            }
+
             $schedule = Schedule::create($data);
 
             // Auto-generate therapy_sessions based on day_of_week and total_meetings

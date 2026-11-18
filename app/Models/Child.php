@@ -28,6 +28,7 @@ class Child extends Model
     protected $fillable = [
         'family_id',
         'school_id',
+        'medical_record_number',
         'child_name',
         'child_birth_place',
         'child_birth_date',

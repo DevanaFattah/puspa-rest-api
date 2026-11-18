@@ -42,6 +42,7 @@ class CreatePatientAction
             $child = Child::create([
                 'family_id' => $familyId,
                 'school_id' => $schoolId,
+                'medical_record_number' => $data['medical_record_number'] ?? null,
                 'child_name' => $data['child_name'],
                 'child_gender' => $data['child_gender'],
                 'child_birth_place' => $data['child_birth_place'],
