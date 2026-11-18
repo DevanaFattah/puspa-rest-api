@@ -14,9 +14,15 @@ class ChildService
         private CreatePatientAction $createPatientAction,
     ) {}
 
-    public function getAllChild(): Collection
+    public function getAllChild(array $filters = []): Collection
     {
         return Child::with('family.guardians.user')
+            ->when(!empty($filters['has_completed_assessment']), function ($q) {
+                $q->whereHas('assessment', function ($sub) {
+                    $sub->where('status', 'completed')
+                        ->where('parent_status', 'completed');
+                });
+            })
             ->orderBy('created_at', 'desc')
             ->get();
     }

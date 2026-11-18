@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Owner_Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\ResponseFormatter;
+use App\Http\Requests\IndexChildRequest;
 use App\Http\Resources\AdminResource;
 use App\Http\Resources\ChildrenResource;
 use App\Http\Resources\TherapistResource;
@@ -49,9 +50,9 @@ class UserController extends Controller
         return $this->successResponse($response, 'Daftar Semua Terapis', 200);
     }
 
-    public function indexChild(): JsonResponse
+    public function indexChild(IndexChildRequest $request): JsonResponse
     {
-        $children = $this->childService->getAllChild();
+        $children = $this->childService->getAllChild($request->validated());
         $response = ChildrenResource::collection($children);
 
         return $this->successResponse($response, 'Daftar Semua Anak', 200);
