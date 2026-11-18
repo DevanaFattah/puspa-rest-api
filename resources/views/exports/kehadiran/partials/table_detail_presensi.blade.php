@@ -30,7 +30,7 @@
         if (in_array($statusRaw, ['hadir', 'present'])) {
             $statusClass = 'badge-hadir';
             $statusText = 'Hadir';
-        } elseif (in_array($statusRaw, ['izin', 'excused'])) {
+        } elseif (in_array($statusRaw, ['izin', 'excused', 'therapist_excused', 'therapist_absent'])) {
             $statusClass = 'badge-izin';
             $statusText = 'Izin';
         } elseif (in_array($statusRaw, ['sakit', 'sick'])) {
