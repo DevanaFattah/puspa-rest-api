@@ -27,27 +27,27 @@
         @php
         // Resolve status badge class
         $statusRaw = strtolower($session['status'] ?? '');
-        if ($statusRaw === 'present') {
-        $statusClass = 'badge-hadir';
-        $statusText = 'Hadir';
-        } elseif ($statusRaw === 'excused') {
-        $statusClass = 'badge-izin';
-        $statusText = 'Izin';
-        } elseif ($statusRaw === 'sick') {
-        $statusClass = 'badge-sakit';
-        $statusText = 'Sakit';
-        } elseif ($statusRaw === 'cancelled') {
-        $statusClass = 'badge-alpa';
-        $statusText = 'Alpa';
-        } elseif ($statusRaw === 'reschedule') {
-        $statusClass = 'badge-reschedule';
-        $statusText = 'Reschedule';
+        if (in_array($statusRaw, ['hadir', 'present'])) {
+            $statusClass = 'badge-hadir';
+            $statusText = 'Hadir';
+        } elseif (in_array($statusRaw, ['izin', 'excused'])) {
+            $statusClass = 'badge-izin';
+            $statusText = 'Izin';
+        } elseif (in_array($statusRaw, ['sakit', 'sick'])) {
+            $statusClass = 'badge-sakit';
+            $statusText = 'Sakit';
+        } elseif (in_array($statusRaw, ['alpa', 'absent', 'cancelled'])) {
+            $statusClass = 'badge-alpa';
+            $statusText = 'Alpa';
+        } elseif (in_array($statusRaw, ['reschedule', 'rescheduled'])) {
+            $statusClass = 'badge-reschedule';
+            $statusText = 'Reschedule';
         } elseif ($statusRaw === 'pending') {
-        $statusClass = 'badge-pending';
-        $statusText = 'Pending';
+            $statusClass = 'badge-pending';
+            $statusText = 'Pending';
         } else {
-        $statusClass = 'badge-pending';
-        $statusText = ucfirst($session['status']) ?? '-';
+            $statusClass = 'badge-pending';
+            $statusText = ucfirst($session['status'] ?? '-');
         }
 
         // Resolve therapy type dot if present

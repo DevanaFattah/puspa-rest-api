@@ -137,7 +137,15 @@ class ExportAttendanceAction
             return 'reschedule';
         }
 
-        return $session->status;
+        return match (strtolower($session->status ?? '')) {
+            'present'             => 'hadir',
+            'sick'                => 'sakit',
+            'excused'             => 'izin',
+            'absent', 'cancelled' => 'alpa',
+            'rescheduled'         => 'reschedule',
+            'pending'             => 'pending',
+            default               => strtolower($session->status ?? 'pending'),
+        };
     }
 
     /**
