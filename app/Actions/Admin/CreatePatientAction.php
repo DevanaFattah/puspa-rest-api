@@ -15,7 +15,7 @@ class CreatePatientAction
     public function execute(array $data): Child
     {
         return DB::transaction(function () use ($data) {
-            $familyId = $this->findExistingFamily($data);
+            $familyId = $data['family_id'] ?? $this->findExistingFamily($data);
 
             if (!$familyId) {
                 $family = Family::create();
