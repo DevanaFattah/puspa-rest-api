@@ -67,6 +67,12 @@ class UpdateScheduledDateAction
                 ]);
             }
 
+            if ($adminId) {
+                AssessmentDetail::where('assessment_id', $assessment->id)
+                    ->whereNull('admin_id')
+                    ->update(['admin_id' => $adminId]);
+            }
+
             $assessment->update([
                 'scheduled_date' => $date,
                 'status'         => 'scheduled',

@@ -68,6 +68,12 @@ class AgreeToAssessmentAction
                 ]);
             }
 
+            if ($adminId) {
+                AssessmentDetail::whereHas('assessment', fn($q) => $q->where('observation_id', $observation->id))
+                    ->whereNull('admin_id')
+                    ->update(['admin_id' => $adminId]);
+            }
+
             Assessment::where('observation_id', $observation->id)
                 ->update([
                     'scheduled_date' => $date,

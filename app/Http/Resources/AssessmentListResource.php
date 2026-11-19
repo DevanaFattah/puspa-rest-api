@@ -49,7 +49,9 @@ class AssessmentListResource extends JsonResource
             ->unique()
             ->implode(', ');
 
-        $adminName = $details->first()?->admin?->admin_name;
+        $adminName = $details->first(fn($d) => !empty($d->admin?->admin_name))?->admin?->admin_name
+            ?? $details->whereNotNull('admin_id')->first()?->admin?->admin_name
+            ?? $details->first()?->admin?->admin_name;
 
         $firstDetailId = $details->first()?->id;
 

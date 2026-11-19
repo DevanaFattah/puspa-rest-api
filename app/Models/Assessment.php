@@ -31,7 +31,6 @@ class Assessment extends Model
         'report_uploaded_at',
         'sent_to_school_at',
         'school_downloaded_at',
-        'admin_id',
     ];
 
     protected $casts = [
