@@ -391,18 +391,20 @@ class FinanceService
         $totalIzinSakit = 0;
         $totalTidakHadir = 0;
         $totalNilaiSisa = 0;
+        $totalNilaiHangus = 0;
 
         foreach ($invoice->items as $item) {
             $therapyType = $item->therapy_type;
             $sessionCount = (int) ($item->session_count ?: 4);
             $pricePerSession = (float) ($item->price_per_session ?: ($totalSessions > 0 ? ($invoice->total_amount / $totalSessions) : 0));
 
-            $sessionQuery = TherapySession::whereHas('schedule', function ($q) use ($invoice, $therapyType) {
-                $q->where('child_id', $invoice->child_id);
-                if (!empty($therapyType)) {
-                    $q->where('therapy_type', 'like', "%{$therapyType}%");
-                }
-            });
+            $sessionQuery = TherapySession::with('rescheduleOriginal')
+                ->whereHas('schedule', function ($q) use ($invoice, $therapyType) {
+                    $q->where('child_id', $invoice->child_id);
+                    if (!empty($therapyType)) {
+                        $q->where('therapy_type', 'like', "%{$therapyType}%");
+                    }
+                });
 
             if (!empty($invoice->start_date) && !empty($invoice->end_date)) {
                 $sessionQuery->whereBetween('session_date', [$invoice->start_date, $invoice->end_date]);
@@ -410,25 +412,38 @@ class FinanceService
 
             $sessions = $sessionQuery->get();
             $hadir = $sessions->filter(fn($s) => in_array(strtolower($s->status ?? ''), ['present', 'hadir']))->count();
-            $izin = $sessions->filter(fn($s) => in_array(strtolower($s->status ?? ''), ['excused', 'izin', 'sick', 'sakit']))->count();
+            // Hanya sesi izin/sakit yang BELUM di-reschedule yang berhak atas pengembalian dana
+            $izin = $sessions->filter(function ($s) {
+                $status = strtolower($s->status ?? '');
+                $isExcused = in_array($status, ['excused', 'izin', 'sick', 'sakit', 'therapist_excused', 'therapist_absent']);
+                return $isExcused && $s->rescheduleOriginal === null;
+            })->count();
             $alpa = $sessions->filter(fn($s) => in_array(strtolower($s->status ?? ''), ['absent', 'alpa', 'cancelled']))->count();
 
             $sisaSesi = $izin;
             $nilaiSisa = $sisaSesi * $pricePerSession;
+            $nilaiHangus = $alpa * $pricePerSession;
+            $nilaiTerpakai = $hadir * $pricePerSession;
 
             $totalHadir += $hadir;
             $totalIzinSakit += $izin;
             $totalTidakHadir += $alpa;
             $totalNilaiSisa += $nilaiSisa;
+            $totalNilaiHangus += $nilaiHangus;
 
             $itemsBreakdown[] = [
+                'terapi' => $therapyType,
                 'therapy_type' => $therapyType,
                 'session_count' => $sessionCount,
                 'price_per_session' => $pricePerSession,
+                'harga_per_sesi' => $pricePerSession,
                 'hadir' => $hadir,
+                'izin' => $izin,
                 'izin_sakit' => $izin,
                 'tidak_hadir' => $alpa,
                 'nilai_sisa' => $nilaiSisa,
+                'nilai_hangus' => $nilaiHangus,
+                'nilai_terpakai' => $nilaiTerpakai,
             ];
         }
 
@@ -449,7 +464,15 @@ class FinanceService
             'tidak_hadir_sessions' => $totalTidakHadir,
             'nilai_sisa' => $totalNilaiSisa,
             'harga_per_sesi' => $totalSessions > 0 ? round($invoice->total_amount / $totalSessions) : 0,
+            'items' => $itemsBreakdown,
             'breakdown' => $itemsBreakdown,
+            'summary' => [
+                'total_dibayar' => (float) $invoice->total_amount,
+                'nilai_dapat_dikembalikan' => (float) $totalNilaiSisa,
+                'total_sesi_dapat_dikembalikan' => (int) $totalIzinSakit,
+                'nilai_hangus' => (float) $totalNilaiHangus,
+                'nilai_sesi_terpakai' => (float) max(0, $invoice->total_amount - $totalNilaiSisa - $totalNilaiHangus),
+            ],
         ];
     }
 
@@ -623,7 +646,10 @@ class FinanceService
         $totalPengembalian = $allPayments->where('transaction_type', 'Pengembalian dana')->sum('amount');
 
         $perPage = $filters['per_page'] ?? 10;
-        $paginated = $query->orderBy('payment_date', 'desc')->orderBy('created_at', 'desc')->paginate($perPage);
+        $paginated = $query->orderBy('payment_date', 'desc')
+                           ->orderBy('created_at', 'desc')
+                           ->orderBy('id', 'desc')
+                           ->paginate($perPage);
 
         return [
             'summary' => [

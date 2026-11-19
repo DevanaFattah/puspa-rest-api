@@ -166,7 +166,14 @@ class FinanceController extends Controller
             'mode' => 'required|in:dikembalikan,catat',
             'kehadiran' => 'nullable|numeric',
             'total_sesi' => 'nullable|numeric',
+            'sisa_sesi' => 'nullable|numeric',
             'jumlah' => 'nullable|numeric',
+            'tanggal' => 'nullable|string',
+            'metode_pengembalian' => 'nullable|string',
+            'no_resi' => 'nullable|string',
+            'periode_tujuan' => 'nullable|string',
+            'catatan' => 'nullable|string',
+            'bukti_file' => 'nullable|file|max:5120',
         ]);
 
         if ($validator->fails()) {
