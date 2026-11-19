@@ -12,6 +12,9 @@ class GetAssessmentsByTypeAction
     $myTherapistId = auth()->user()?->therapist?->id;
     $filterMyAssessments = !empty($filters['my_assessments']) && $myTherapistId;
 
+    $type = $filters['type'] ?? null;
+    $status = $filters['status'] ?? null;
+
     return Assessment::query()
       ->with([
         'assessmentDetails' => function ($q) use ($filters) {
@@ -23,22 +26,27 @@ class GetAssessmentsByTypeAction
         'child.family.guardians',
       ])
       ->whereNotNull('scheduled_date')
-      ->when(isset($filters['status']), function ($q) use ($filters) {
-        $q->where('status', $filters['status']);
-      })
-      ->when(isset($filters['status']) && $filters['status'] === 'completed', fn($q) => $q->orderBy('scheduled_date', 'desc'))
-      ->when(isset($filters['type']), function ($q) use ($filters, $filterMyAssessments, $myTherapistId) {
-        $q->whereHas('assessmentDetails', function ($d) use ($filters, $filterMyAssessments, $myTherapistId) {
-          $d->where('type', $filters['type']);
+      ->when(!empty($type), function ($q) use ($type, $status, $filterMyAssessments, $myTherapistId) {
+        $q->whereHas('assessmentDetails', function ($d) use ($type, $status, $filterMyAssessments, $myTherapistId) {
+          $d->where('type', $type);
           if ($filterMyAssessments) {
             $d->where('therapist_id', $myTherapistId);
           }
+          if ($status === 'completed') {
+            $d->whereNotNull('completed_at');
+          } elseif ($status === 'scheduled') {
+            $d->whereNull('completed_at');
+          }
         });
-      }, function ($q) use ($filterMyAssessments, $myTherapistId) {
+      }, function ($q) use ($status, $filterMyAssessments, $myTherapistId) {
+        if ($status) {
+          $q->where('status', $status);
+        }
         if ($filterMyAssessments) {
           $q->whereHas('assessmentDetails', fn($d) => $d->where('therapist_id', $myTherapistId));
         }
       })
+      ->when(isset($filters['status']) && $filters['status'] === 'completed', fn($q) => $q->orderBy('scheduled_date', 'desc'))
       ->when(isset($filters['date']), fn($q) => $q->whereDate('scheduled_date', $filters['date']))
       ->when(isset($filters['search']), function ($q) use ($filters) {
         $q->whereHas('child', fn($c) => $c->where('child_name', 'like', "%{$filters['search']}%"));

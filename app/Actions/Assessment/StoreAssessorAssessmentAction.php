@@ -2,6 +2,7 @@
 
 namespace App\Actions\Assessment;
 
+use App\Events\AssessmentUpdated;
 use App\Models\Assessment;
 use App\Models\AssessmentAnswer;
 use App\Models\AssessmentDetail;
@@ -93,6 +94,8 @@ class StoreAssessorAssessmentAction
                     'status' => 'completed',
                 ]);
             }
+
+            event(new AssessmentUpdated());
 
             // Clear Cache
             \Illuminate\Support\Facades\Cache::forget("guardian_" . $assessment->child->family->guardians->first()->user_id . "_children_assessments");

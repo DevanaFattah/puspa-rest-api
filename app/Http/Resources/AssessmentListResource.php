@@ -74,7 +74,7 @@ class AssessmentListResource extends JsonResource
             'scheduled_date' => $scheduled->format('d/m/Y'),
             'scheduled_time' => $scheduled->format('H.i'),
             'completed_at' => $completedAtStr,
-            'status' => $this->status,
+            'status' => $completedDetail ? 'completed' : $this->status,
         ];
     }
 }
