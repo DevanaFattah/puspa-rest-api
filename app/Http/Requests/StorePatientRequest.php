@@ -15,6 +15,7 @@ class StorePatientRequest extends FormRequest
     {
         return [
             // Parent Data
+            'family_id' => ['nullable', 'string', 'exists:families,id'],
             'parent_email' => ['required', 'email'],
             'parent_phone' => ['required', 'string', 'max:20'],
             'parent_name' => ['required', 'string', 'max:100'],

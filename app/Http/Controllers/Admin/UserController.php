@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\ResponseFormatter;
+use App\Http\Requests\Admin\SearchGuardianRequest;
 use App\Http\Requests\AdminCreateRequest;
 use App\Http\Requests\AdminUpdateRequest;
 use App\Http\Requests\ChildFamilyUpdateRequest;
 use App\Http\Requests\StorePatientRequest;
 use App\Http\Requests\TherapistCreateRequest;
 use App\Http\Requests\TherapistUpdateRequest;
+use App\Http\Resources\Admin\GuardianOptionResource;
 use App\Http\Resources\AdminResource;
 use App\Http\Resources\ChildDetailResource;
 use App\Http\Resources\TherapistResource;
@@ -109,6 +111,17 @@ class UserController extends Controller
         $this->childService->store($data);
 
         return $this->successResponse([], 'Tambah Pasien Berhasil', 201);
+    }
+
+    public function searchGuardians(SearchGuardianRequest $request): JsonResponse
+    {
+        $guardians = $this->childService->searchGuardians($request->validated('search'));
+
+        return $this->successResponse(
+            GuardianOptionResource::collection($guardians),
+            'Data orang tua berhasil ditemukan',
+            200
+        );
     }
 
     public function destroyChild(Child $child): JsonResponse

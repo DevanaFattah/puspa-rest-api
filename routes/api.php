@@ -251,6 +251,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::middleware('role_or_permission:owner|manager|delete_therapist')->delete('/therapists/{therapist}', [AdminUserManagement::class, 'destroyTherapist'])
             ->whereUlid('therapist');
 
+        Route::get('/guardians/search', [AdminUserManagement::class, 'searchGuardians']);
         Route::middleware('role_or_permission:owner|manager|show_children')->post('/children', [AdminUserManagement::class, 'storeChild']);
         Route::middleware('role_or_permission:owner|manager|edit_child')->put('/children/{child}', [AdminUserManagement::class, 'updateChild'])
             ->whereUlid('child');
