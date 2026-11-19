@@ -124,8 +124,8 @@ class SchoolPortalController extends Controller
 
         $assessment = $child->assessment;
 
-        if (!$assessment || !$assessment->report_file) {
-            return $this->errorResponse('Laporan asesmen belum tersedia untuk siswa ini', [], 404);
+        if (!$assessment || !$assessment->report_file || !$assessment->sent_to_school_at) {
+            return $this->errorResponse('Laporan asesmen belum tersedia atau belum dikirimkan ke sekolah', [], 404);
         }
 
         $reportPath = config('puspa.storage.assessment_reports', 'assessment/reports');
