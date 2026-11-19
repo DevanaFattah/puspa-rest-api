@@ -2,6 +2,7 @@
 
 namespace App\Actions\Guardian;
 
+use App\Events\ObservationUpdated;
 use App\Models\Child;
 use App\Models\Guardian;
 use App\Models\Observation;
@@ -29,12 +30,14 @@ class AddChildAction
                 ])
             );
 
-            Observation::create([
+            $observation = Observation::create([
                 'child_id' => $child->id,
                 'scheduled_date' => $this->nextWeekDay(),
                 'age_category' => Child::calculateAgeAndCategory($data['child_birth_date'])['category'],
                 'status' => 'pending',
             ]);
+
+            event(new ObservationUpdated($observation));
 
             return $child;
         });

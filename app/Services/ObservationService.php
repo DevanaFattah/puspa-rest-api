@@ -8,11 +8,14 @@ use App\Actions\Observation\SubmitObservationAction;
 use App\Actions\Observation\TherapistOptionsAction;
 use App\Models\Observation;
 use App\Models\ObservationQuestion;
+use App\Traits\ClearsCaches;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 class ObservationService
 {
+    use ClearsCaches;
+
     public const CACHE_TTL = 600;
 
     public function __construct(
@@ -77,17 +80,21 @@ class ObservationService
 
     public function submit(Observation $observation, array $data): Observation
     {
-        return $this->submitObservationAction->execute($observation, $data);
+        $result = $this->submitObservationAction->execute($observation, $data);
+        $this->clearObservationCaches();
+        return $result;
     }
 
     public function reschedule(Observation $observation, array $data): void
     {
         $this->rescheduleObservationAction->execute($observation, $data);
+        $this->clearObservationCaches();
     }
 
     public function agreeToAssessment(Observation $observation, array $data): void
     {
         $this->agreeToAssessmentAction->execute($observation, $data);
+        $this->clearObservationCaches();
     }
 
     public function therapistOptions(Observation $observation): Collection

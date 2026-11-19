@@ -14,6 +14,7 @@ trait ClearsCaches
         foreach ($statuses as $status) {
             $key = "observations_{$status}";
             Cache::forget($key);
+            Cache::forget("{$key}_all");
         }
     }
 
