@@ -53,7 +53,7 @@ class TherapistOptionsAction
                 'type'                 => $detail->type,
                 'current_therapist' => [
                     "id" => $detail->therapist_id,
-                    "name" => $detail->therapist->therapist_name,
+                    "name" => $detail->therapist?->therapist_name,
                 ],
                 'therapists'           => $matchingTherapists->map(fn($t) => [
                     'id'   => $t->id,

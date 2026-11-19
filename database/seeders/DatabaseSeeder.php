@@ -36,29 +36,29 @@ class DatabaseSeeder extends Seeder
             ParentPedagogicalAssessmentQuestionSeeder::class,
             ParentPhysioAssessmentQuestionSeeder::class,
 
-            // // Schedule & Therapy Sessions Dummy Data
-            // ScheduleSeeder::class,
+            // Schedule & Therapy Sessions Dummy Data
+            ScheduleSeeder::class,
 
-            // // Guardian User Accounts (links existing guardians to login-capable User accounts)
-            // GuardianSeeder::class,
+            // Guardian User Accounts (links existing guardians to login-capable User accounts)
+            GuardianSeeder::class,
 
-            // // Reschedule Dummy Data
-            // RescheduleSeeder::class,
+            // Reschedule Dummy Data
+            RescheduleSeeder::class,
 
-            // // Therapy SOAP Notes Dummy Data
-            // TherapySoapSeeder::class,
+            // Therapy SOAP Notes Dummy Data
+            TherapySoapSeeder::class,
 
-            // // Observation & Clinical Assessments Data
-            // ObservationAssessmentSeeder::class,
+            // Observation & Clinical Assessments Data
+            ObservationAssessmentSeeder::class,
 
-            // // Finance Module Dummy Data (Invoices, Items, Payments, Session Credits)
-            // FinanceSeeder::class,
+            // Finance Module Dummy Data (Invoices, Items, Payments, Session Credits)
+            FinanceSeeder::class,
 
-            // // School Dummy Data
-            // SchoolSeeder::class,
+            // School Dummy Data
+            SchoolSeeder::class,
 
-            // // Full Lifecycle Flow Dummy Scenarios (5 Personas conforming to therapy_sessions_lifecycle_standard.md)
-            // LifecycleDummySeeder::class,
+            // Full Lifecycle Flow Dummy Scenarios (5 Personas conforming to therapy_sessions_lifecycle_standard.md)
+            LifecycleDummySeeder::class,
         ]);
     }
 }
